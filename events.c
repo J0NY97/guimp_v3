@@ -23,15 +23,24 @@ void	new_layer(t_guimp *guimp)
 	ui_element_pos_set2(elem, vec2(elem->pos.x, (guimp->layer_count * elem->pos.h) + (guimp->layer_count * 10) + elem->pos.y));
 	ui_element_parent_set(elem, guimp->layer_parent, UI_TYPE_ELEMENT);
 	ui_element_print(elem);
-	add_to_list(&guimp->layers, elem, UI_TYPE_ELEMENT);
+	add_to_list(&guimp->layer_elems, elem, UI_TYPE_ELEMENT);
 	guimp->layer_count += 1;
 	ft_printf("[%s] New layer added. (%d)\n", __FUNCTION__, guimp->layer_count);
 }
 
-void	new_layer_button_event(t_guimp *guimp)
+void	layer_plus_button_event(t_guimp *guimp)
 {
-	if (ui_button(guimp->new_layer_button))
+	if (ui_button(guimp->layer_plus_button))
+		ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_SHOW);
+}
+
+void	new_layer_ok_button_event(t_guimp *guimp)
+{
+	if (ui_button(guimp->new_layer_ok_button))
+	{
 		new_layer(guimp);
+		ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_SHOW);
+	}
 }
 
 void	color_swatch_event(t_guimp *guimp)

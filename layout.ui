@@ -427,7 +427,7 @@ Window toolbox_window
 }
 
 // Middle Menu
-Window middle_win
+Window main_window
 {
 	pos : 220, 25, 1700, 1030;
 	bg_color : 0xff909090;

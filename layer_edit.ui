@@ -1,0 +1,68 @@
+Element label_prefab
+{
+	pos : 10, 10, 50, 20;
+}
+Element value_prefab
+{
+	pos : 100, 10, 70, 20;
+}
+
+Label label_name
+{
+	title : "Name :";
+	label_prefab;
+}
+Input input_name
+{
+	title : "Layer";
+	value_prefab;
+}
+
+Label label_width
+{
+	pos.y : 35;
+	title : "Width :";
+	label_prefab;
+}
+Input input_width
+{
+	pos.y : 35;
+	title : "1920";
+	value_prefab;
+}
+
+Label label_height
+{
+	pos.y : 60;
+	title : "Height :";
+	label_prefab;
+}
+Input input_height
+{
+	pos.y : 60;
+	title : "1080";
+	value_prefab;
+}
+
+Button button_ok
+{
+	pos : 0.89, 0.95, 50, 20;
+	title : "OK";
+}
+Window layer_edit_window
+{
+	pos : 320, 270, 500, 500;
+	title : "New Layer";
+	bg_color : 0xff5a615a;
+	flag : hide;
+
+	label_name;
+	input_name;
+
+	label_width;
+	input_width;
+	label_height;
+	input_height;
+
+	button_ok;
+}
