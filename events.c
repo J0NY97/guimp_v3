@@ -36,5 +36,41 @@ void	new_layer_button_event(t_guimp *guimp)
 
 void	color_swatch_event(t_guimp *guimp)
 {
-	(void)guimp;	
+	Uint32	combined_slider_color;
+	char	temp[20];
+	t_ui_slider	*red_slider;
+	t_ui_slider	*green_slider;
+	t_ui_slider	*blue_slider;
+	t_ui_slider	*alpha_slider;
+	t_ui_element	input_label;
+
+	red_slider = guimp->red_slider->element;
+	green_slider = guimp->green_slider->element;
+	blue_slider = guimp->blue_slider->element;
+	alpha_slider = guimp->alpha_slider->element;
+	input_label = ((t_ui_input *)guimp->color_swatch->element)->label;
+	combined_slider_color = 0;
+	if (red_slider->update || green_slider->update || blue_slider->update || alpha_slider->update)
+	{
+		combined_slider_color = rgba_to_hex((t_rgba){.r = red_slider->value, .g = green_slider->value, .b = blue_slider->value, .a = alpha_slider->value});
+		ui_element_color_set(guimp->color_swatch, UI_STATE_DEFAULT, combined_slider_color);
+		if (!guimp->color_swatch->is_click)
+		{
+			itoa(combined_slider_color, temp, 16);
+			ui_label_text_set(&input_label, temp);
+		}
+	}
+	else if (guimp->color_swatch->is_click) // from input label set to sliders.
+	{
+		t_ui_label	*label;
+		t_rgba		input_rgba;
+
+		label = input_label.element;
+		combined_slider_color = (unsigned int)strtoul(label->text, NULL, 16);
+		input_rgba = hex_to_rgba(combined_slider_color);
+		ui_slider_value_set(guimp->red_slider, input_rgba.r);
+		ui_slider_value_set(guimp->green_slider, input_rgba.g);
+		ui_slider_value_set(guimp->blue_slider, input_rgba.b);
+		ui_slider_value_set(guimp->alpha_slider, input_rgba.a);
+	}
 }
