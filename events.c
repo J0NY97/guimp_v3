@@ -1,29 +1,59 @@
 #include "guimp.h"
 
+/*
+void	layer_element(t_guimp *guimp)
+{
+	t_ui_element	*menu; // menu
+	t_ui_element	*show; // checkbox
+	t_ui_element	*select; // radio button
+	t_ui_element	*layer; // button (probably doesnt even need to be a button, but just an element)
+	t_ui_recipe		*recipe_menu;
+	t_ui_recipe		*recipe_show;
+	t_ui_recipe		*recipe_select;
+	t_ui_recipe		*recipe_layer;
+
+	recipe_menu = ui_layout_get_recipe_by_id(&guimp->layout, "layer");
+	recipe_show = ui_layout_get_recipe_by_id(&guimp->layout, "layer_show_checkbox");
+	recipe_select = ui_layout_get_recipe_by_id(&guimp->layout, "layer_select_button");
+	recipe_layer = ui_layout_get_recipe_by_id(&guimp->layout, "layer_layer");
+
+	menu = ui_element_create_from_recipe(recipe_menu);
+}
+*/
+
 void	new_layer(t_guimp *guimp)
 {
 	t_ui_element	*elem;
 	char			*new_id;
 	char			temp[20];
 
-	if (0)//guimp->layer_count >= 5)
+	if (guimp->layer_count >= 5)
 	{
 		ft_printf("[%s] No new layer added, layer cap reached (5).\n", __FUNCTION__);
 		return ;
 	}
-	/*
-	elem = ui_element_create_from_recipe(guimp->win_toolbox, guimp->layer_recipe, &guimp->layout);
-	ui_element_pos_set2(elem, vec2(elem->pos.x, guimp->layer_count * elem->pos.h + elem->pos.y));
-	new_id = ft_strjoin(elem->id, ft_b_itoa(guimp->layer_count, temp));
-	ui_element_id_set(elem, new_id);
-	ui_menu_add(guimp->layer_parent, elem, UI_TYPE_ELEMENT);
-	*/
+	// Making new actual layer
+	t_layer	*layer;
+
+	layer = &guimp->layers[guimp->layer_count];	
+	layer->name = ft_strdup(guimp->new_layer_name_input_label->text);
+	layer->pos.x = 0;
+	layer->pos.y = 0;
+	layer->pos.w = atoi(guimp->new_layer_width_input_label->text);
+	layer->pos.h = atoi(guimp->new_layer_height_input_label->text);
+
+	ft_printf("New Layer Info : %s, %d %d.\n", layer->name, layer->pos.w, layer->pos.h);
+	
+	// Making new layer element
 	ui_layout_element_new(&guimp->layout, guimp->win_toolbox, guimp->layer_recipe);
 	elem = guimp->layout.elements->content;
+	new_id = ft_strjoin(elem->id, ft_b_itoa(guimp->layer_count, temp));
+	ui_element_id_set(elem, new_id);
 	ui_element_pos_set2(elem, vec2(elem->pos.x, (guimp->layer_count * elem->pos.h) + (guimp->layer_count * 10) + elem->pos.y));
 	ui_element_parent_set(elem, guimp->layer_parent, UI_TYPE_ELEMENT);
 	ui_element_print(elem);
 	add_to_list(&guimp->layer_elems, elem, UI_TYPE_ELEMENT);
+
 	guimp->layer_count += 1;
 	ft_printf("[%s] New layer added. (%d)\n", __FUNCTION__, guimp->layer_count);
 }
@@ -39,7 +69,8 @@ void	new_layer_ok_button_event(t_guimp *guimp)
 	if (ui_button(guimp->new_layer_ok_button))
 	{
 		new_layer(guimp);
-		ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_SHOW);
+		ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_HIDE);
+		ui_element_print(guimp->new_layer_ok_button);
 	}
 }
 

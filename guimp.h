@@ -68,6 +68,9 @@ typedef struct s_guimp
 	t_ui_layout		layout_layer_edit;
 	t_ui_window		*win_layer_edit;
 	t_ui_element	*new_layer_ok_button;
+	t_ui_label		*new_layer_name_input_label;
+	t_ui_label		*new_layer_width_input_label;
+	t_ui_label		*new_layer_height_input_label;
 }					t_guimp;
 
 // Events
