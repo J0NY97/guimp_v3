@@ -3,6 +3,7 @@ Element button_elem
 	pos : 10, 10, 50, 20;
 	bg_color : 0xffF4D35E, 0xffEE964B, 0xffF95738;
 	bg_image : "libs/libui/images/button.png", "libs/libui/images/button_hover.png", "libs/libui/images/button_click.png";
+	title : "no title";
 }
 
 Label button_label

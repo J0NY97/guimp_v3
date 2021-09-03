@@ -22,7 +22,7 @@ void	guimp_init(t_guimp *guimp)
 	SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
 	ui_layout_load(&guimp->layout, "layout.ui");
 	// Main Win
-	guimp->win_toolbox = ui_layout_get_window_by_id(&guimp->layout, "main_window");
+	guimp->win_main = ui_layout_get_window_by_id(&guimp->layout, "main_window");
 	// Toolbox Win
 	guimp->win_toolbox = ui_layout_get_window_by_id(&guimp->layout, "toolbox_window");
 	guimp->layer_recipe = ui_layout_get_recipe_by_id(&guimp->layout, "layer");
@@ -68,7 +68,6 @@ void	layer_edit_window_init(t_guimp	*guimp)
 	guimp->new_layer_name_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer_edit, "input_name")->element)->label.element;
 	guimp->new_layer_width_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer_edit, "input_width")->element)->label.element;
 	guimp->new_layer_height_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer_edit, "input_height")->element)->label.element;
-
 }
 
 int	main(void)
@@ -81,6 +80,22 @@ int	main(void)
 	guimp_init(&guimp);
 	layer_edit_window_init(&guimp);
 	run = 1;
+
+	/*
+	 * Testing
+	*/
+	t_ui_element	menu_test;
+	ui_menu_new(guimp.win_main, &menu_test);
+	ui_element_pos_set(&menu_test, vec4(0.1, 0.1, 0.8, 0.8));
+
+	t_ui_element	menu_test1;
+	ui_menu_new(guimp.win_main, &menu_test1);
+	ui_element_color_set(&menu_test1, UI_STATE_DEFAULT, 0xffb2813c);
+	ui_menu_add(&menu_test, &menu_test1, UI_TYPE_ELEMENT);
+	ui_element_pos_set(&menu_test1, vec4(0.1, 0.1, 0.8, 0.8));
+	/*
+	 * Testing END
+	*/
 	while (run)
 	{
 		while (SDL_PollEvent(&e))
@@ -90,12 +105,21 @@ int	main(void)
 			// Event
 			ui_layout_event(&guimp.layout, e);
 			ui_layout_event(&guimp.layout_layer_edit, e);
+			/*
+			 * Testing
+			*/
+			ui_menu_event(&menu_test, e);
 		}
 
 		// User
 		user_events(&guimp);
 		user_code(&guimp);
 		user_render(&guimp);
+
+		/*
+		 * Testing
+		*/
+		ui_menu_render(&menu_test);
 
 		// Render
 		ui_layout_render(&guimp.layout);
