@@ -19,17 +19,20 @@ void	user_code(t_guimp *guimp)
 
 void	guimp_init(t_guimp *guimp)
 {
+	memset(guimp, 0, sizeof(t_guimp));
 	SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
 	ui_layout_load(&guimp->layout, "layout.ui");
 	// Main Win
 	guimp->win_main = ui_layout_get_window_by_id(&guimp->layout, "main_window");
+	new_layer(&guimp->final_image, "Image", vec4i(10, 10, 1280, 720));
+	guimp->final_image_texture = NULL;
+	guimp->selected_layer = -1;
+	guimp->layer_amount = 0;
 	// Toolbox Win
 	guimp->win_toolbox = ui_layout_get_window_by_id(&guimp->layout, "toolbox_window");
 	guimp->layer_recipe = ui_layout_get_recipe_by_id(&guimp->layout, "layer");
-	guimp->layer_elems = NULL;
 	guimp->layer_parent = ui_layout_get_element_by_id(&guimp->layout, "layer_menu");
 	guimp->layer_plus_button = ui_layout_get_element_by_id(&guimp->layout, "button_add_layer");
-	guimp->layer_count = 0;
 	// Color Stuff
 	guimp->color_swatch = ui_layout_get_element_by_id(&guimp->layout, "color_swatch");
 	guimp->red_slider = ui_layout_get_element_by_id(&guimp->layout, "r_slider");
@@ -84,15 +87,8 @@ int	main(void)
 	/*
 	 * Testing
 	*/
-	t_ui_element	menu_test;
-	ui_menu_new(guimp.win_main, &menu_test);
-	ui_element_pos_set(&menu_test, vec4(0.1, 0.1, 0.8, 0.8));
-
-	t_ui_element	menu_test1;
-	ui_menu_new(guimp.win_main, &menu_test1);
-	ui_element_color_set(&menu_test1, UI_STATE_DEFAULT, 0xffb2813c);
-	ui_menu_add(&menu_test, &menu_test1, UI_TYPE_ELEMENT);
-	ui_element_pos_set(&menu_test1, vec4(0.1, 0.1, 0.8, 0.8));
+	ui_radio_new(guimp.win_toolbox, &guimp.radio_layer);
+	guimp.radio_buttons = ((t_ui_radio *)guimp.radio_layer.element)->buttons;
 	/*
 	 * Testing END
 	*/
@@ -105,21 +101,35 @@ int	main(void)
 			// Event
 			ui_layout_event(&guimp.layout, e);
 			ui_layout_event(&guimp.layout_layer_edit, e);
+
+			// Layer
+			layer_elements_event(&guimp, e);
+			layer_event(&guimp);
+
 			/*
 			 * Testing
 			*/
-			ui_menu_event(&menu_test, e);
+			ui_radio_event(&guimp.radio_layer, e);
+			/*
+			 * Testing end
+			*/
 		}
 
 		// User
 		user_events(&guimp);
 		user_code(&guimp);
 		user_render(&guimp);
-
+		
+		// Layer
+		layer_elements_render(&guimp);
+		layer_draw(&guimp);
+		layer_render(&guimp);
 		/*
 		 * Testing
 		*/
-		ui_menu_render(&menu_test);
+		/*
+		 * Testing END
+		*/
 
 		// Render
 		ui_layout_render(&guimp.layout);

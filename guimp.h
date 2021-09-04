@@ -12,15 +12,22 @@
  * These are the actual layers you draw on.
  * BTW also used in the image.
 */
+/*
+ *
+*/
 typedef struct s_layer
 {
 	t_vec4i			pos;
 	char			*name;
-	SDL_Texture		*texture;
+	SDL_Surface		*surface;
 }					t_layer;
+
 
 /*
  * t_ui_window		*win_main;			main window where all the layers are and you draw on;
+ * SDL_Texture		*final_image_texture;	the texture of the final image, which will be rendered on the main window;
+ * t_layer			final_image;		this is the image where all the layers are blitted to and then showed on screen;
+ * t_layer			*selected_layer;	pointer to the currenctly selected layer, this is the one we will draw on;
  * t_layer			layers[5];			array of layers, we are capping this to 5 for now. included image at offset 0;
  *
  * t_ui_layout		layout;				the layout...;
@@ -44,18 +51,23 @@ typedef struct s_guimp
 	// Main Win
 	////////////////
 	t_ui_window		*win_main;
+	SDL_Texture		*final_image_texture;
+	t_layer			final_image;
+	int				selected_layer;
 	t_layer			layers[5];
+	int				layer_amount;
 
+	t_ui_element	radio_layer;
+	t_list			*radio_buttons; // this is the same list as the radio_layer.element->buttons
 	////////////////
 	// Toolbox Win
 	////////////////
 	t_ui_layout		layout;
 	t_ui_window		*win_toolbox;
 	t_ui_recipe		*layer_recipe;
-	t_list			*layer_elems;
+	t_ui_element	*layer_elems[5];
 	t_ui_element	*layer_parent;
 	t_ui_element	*layer_plus_button;
-	int				layer_count;
 	t_ui_element	*color_swatch;
 	t_ui_element	*red_slider;
 	t_ui_element	*green_slider;
@@ -77,5 +89,13 @@ typedef struct s_guimp
 void				color_swatch_event(t_guimp *guimp);
 void				layer_plus_button_event(t_guimp *guimp);
 void				new_layer_ok_button_event(t_guimp *guimp);
+
+// Layer
+void				layer_elements_render(t_guimp *guimp);
+void				layer_elements_event(t_guimp *guimp, SDL_Event e);
+void				new_layer(t_layer *layer, char *name, t_vec4i pos);
+void				layer_event(t_guimp *guimp);
+void				layer_draw(t_guimp *guimp);
+void				layer_render(t_guimp *guimp);
 
 #endif

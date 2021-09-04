@@ -379,27 +379,20 @@ Button button_down_layer
 	button_label;
 }
 
-Button layer_select_button
-{
-	pos : 25, -5, 160, 30;	
-}
 Checkbox layer_show_checkbox
 {
-	pos : 0, 0.25, 20, 20;
+	pos : 0, 0, 20, 20;
 	bg_image : "libs/libui/images/checkbox.png", "libs/libui/images/checkbox_hover.png", "libs/libui/images/checkbox_click.png";
 }
-Button layer_layer
+Button layer_select_button
 {
 	pos : 30, 0, 150, 20;
 	title : "Layer";
 }
 Menu layer
 {
-	pos : 10, 60, 180, 40;
+	pos : 10, 60, 180, 20;
 	bg_color : 0xffff0000;
-	layer_show_checkbox;
-	layer_layer;
-	layer_select_button;
 }
 
 Menu layer_menu
