@@ -29,6 +29,7 @@ typedef struct s_layer
  * t_layer			final_image;		this is the image where all the layers are blitted to and then showed on screen;
  * t_layer			*selected_layer;	pointer to the currenctly selected layer, this is the one we will draw on;
  * t_layer			layers[5];			array of layers, we are capping this to 5 for now. included image at offset 0;
+ * t_vec2i			mouse_pos_prev;		the last updated mouse pos for win_main;
  *
  * t_ui_layout		layout;				the layout...;
  * t_ui_window		*win_toolbox;		window of the toolbox;
@@ -56,6 +57,9 @@ typedef struct s_guimp
 	int				selected_layer;
 	t_layer			layers[5];
 	int				layer_amount;
+	t_vec2i			mouse_pos_prev;
+	int				combined_color;
+	float			zoom;
 
 	t_ui_element	radio_layer;
 	t_list			*radio_buttons; // this is the same list as the radio_layer.element->buttons

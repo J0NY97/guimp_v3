@@ -25,9 +25,12 @@ void	guimp_init(t_guimp *guimp)
 	// Main Win
 	guimp->win_main = ui_layout_get_window_by_id(&guimp->layout, "main_window");
 	new_layer(&guimp->final_image, "Image", vec4i(10, 10, 1280, 720));
+	SDL_FillRect(guimp->final_image.surface, NULL, 0xff000000); // fill image with black so the alpha:ed layers can show.
 	guimp->final_image_texture = NULL;
 	guimp->selected_layer = -1;
 	guimp->layer_amount = 0;
+	guimp->combined_color = 0xffffffff;
+	guimp->zoom = 1.0f;
 	// Toolbox Win
 	guimp->win_toolbox = ui_layout_get_window_by_id(&guimp->layout, "toolbox_window");
 	guimp->layer_recipe = ui_layout_get_recipe_by_id(&guimp->layout, "layer");
@@ -124,6 +127,8 @@ int	main(void)
 		layer_elements_render(&guimp);
 		layer_draw(&guimp);
 		layer_render(&guimp);
+
+		guimp.mouse_pos_prev = guimp.win_main->mouse_pos; // this should be done last
 		/*
 		 * Testing
 		*/
