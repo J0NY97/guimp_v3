@@ -92,6 +92,38 @@ int	main(void)
 	*/
 	ui_radio_new(guimp.win_toolbox, &guimp.radio_layer);
 	guimp.radio_buttons = ((t_ui_radio *)guimp.radio_layer.element)->buttons;
+
+	guimp.draw_button = ui_layout_get_element_by_id(&guimp.layout, "draw_button");
+	guimp.text_button = ui_layout_get_element_by_id(&guimp.layout, "text_button");
+	guimp.erase_button = ui_layout_get_element_by_id(&guimp.layout, "erase_button");
+	guimp.flood_button = ui_layout_get_element_by_id(&guimp.layout, "flood_button");
+	guimp.sticker_button = ui_layout_get_element_by_id(&guimp.layout, "sticker_button");
+	guimp.move_button = ui_layout_get_element_by_id(&guimp.layout, "move_button");
+	guimp.shape_button = ui_layout_get_element_by_id(&guimp.layout, "shape_button");
+	guimp.pipette_button = ui_layout_get_element_by_id(&guimp.layout, "pipette_button");
+	guimp.mode_button_list = NULL;
+	add_to_list(&guimp.mode_button_list, guimp.draw_button, UI_TYPE_ELEMENT);
+	add_to_list(&guimp.mode_button_list, guimp.text_button, UI_TYPE_ELEMENT);
+	add_to_list(&guimp.mode_button_list, guimp.erase_button, UI_TYPE_ELEMENT);
+	add_to_list(&guimp.mode_button_list, guimp.flood_button, UI_TYPE_ELEMENT);
+	add_to_list(&guimp.mode_button_list, guimp.sticker_button, UI_TYPE_ELEMENT);
+	add_to_list(&guimp.mode_button_list, guimp.move_button, UI_TYPE_ELEMENT);
+	add_to_list(&guimp.mode_button_list, guimp.shape_button, UI_TYPE_ELEMENT);
+	add_to_list(&guimp.mode_button_list, guimp.pipette_button, UI_TYPE_ELEMENT);
+
+	ui_radio_new(guimp.win_toolbox, &guimp.radio_mode_buttons);
+	((t_ui_radio *)guimp.radio_mode_buttons.element)->buttons = guimp.mode_button_list;
+
+	guimp.circle_button = ui_layout_get_element_by_id(&guimp.layout, "circle_button");
+	guimp.square_button = ui_layout_get_element_by_id(&guimp.layout, "square_button");
+	guimp.line_button = ui_layout_get_element_by_id(&guimp.layout, "line_button");
+	guimp.shape_button_list = NULL;
+	add_to_list(&guimp.shape_button_list, guimp.circle_button, UI_TYPE_ELEMENT);
+	add_to_list(&guimp.shape_button_list, guimp.square_button, UI_TYPE_ELEMENT);
+	add_to_list(&guimp.shape_button_list, guimp.line_button, UI_TYPE_ELEMENT);
+
+	ui_radio_new(guimp.win_toolbox, &guimp.radio_shape_buttons);
+	((t_ui_radio *)guimp.radio_shape_buttons.element)->buttons = guimp.shape_button_list;
 	/*
 	 * Testing END
 	*/
@@ -113,6 +145,8 @@ int	main(void)
 			 * Testing
 			*/
 			ui_radio_event(&guimp.radio_layer, e);
+			ui_radio_event(&guimp.radio_mode_buttons, e);
+			ui_radio_event(&guimp.radio_shape_buttons, e);
 			/*
 			 * Testing end
 			*/

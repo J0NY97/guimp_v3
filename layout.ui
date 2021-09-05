@@ -387,6 +387,7 @@ Checkbox layer_show_checkbox
 Button layer_select_button
 {
 	pos : 30, 0, 150, 20;
+	bg_color : 0xffF4D35E, 0xffEE964B, 0xffF95738;
 	title : "Layer";
 }
 Menu layer

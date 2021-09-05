@@ -71,11 +71,31 @@ typedef struct s_guimp
 	t_ui_element	*layer_elems[5];
 	t_ui_element	*layer_parent;
 	t_ui_element	*layer_plus_button;
+	// Color
 	t_ui_element	*color_swatch;
 	t_ui_element	*red_slider;
 	t_ui_element	*green_slider;
 	t_ui_element	*blue_slider;
 	t_ui_element	*alpha_slider;
+	// Mode Buttons
+	t_ui_element	*draw_button;
+	t_ui_element	*text_button;
+	t_ui_element	*erase_button;
+	t_ui_element	*flood_button;
+	t_ui_element	*sticker_button;
+	t_ui_element	*move_button;
+	t_ui_element	*shape_button;
+	t_ui_element	*pipette_button;
+	t_list			*mode_button_list; // list of the buttons;
+	t_ui_element	radio_mode_buttons; // radio of list of the drawing mode buttons;
+	// shape tools
+	t_vec2i			first_pos;
+	bool			first_set;
+	t_ui_element	*circle_button;
+	t_ui_element	*square_button;
+	t_ui_element	*line_button;
+	t_list			*shape_button_list; // list of the buttons;
+	t_ui_element	radio_shape_buttons; // radio of list of the shape buttons;
 
 	////////////////
 	// New Layer Win
