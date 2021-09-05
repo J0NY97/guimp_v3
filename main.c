@@ -24,7 +24,7 @@ void	guimp_init(t_guimp *guimp)
 	ui_layout_load(&guimp->layout, "layout.ui");
 	// Main Win
 	guimp->win_main = ui_layout_get_window_by_id(&guimp->layout, "main_window");
-	new_layer(&guimp->final_image, "Image", vec4i(10, 10, 1280, 720));
+	new_layer(&guimp->final_image, "Image", vec4i(10, 10, 1280, 720), NULL);
 	SDL_FillRect(guimp->final_image.surface, NULL, 0xff000000); // fill image with black so the alpha:ed layers can show.
 	guimp->final_image_texture = NULL;
 	guimp->selected_layer = -1;

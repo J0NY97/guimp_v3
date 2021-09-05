@@ -13,13 +13,14 @@
  * BTW also used in the image.
 */
 /*
- *
+ * bool		*show;		pointer to the layer_show_checkbox->is_click
 */
 typedef struct s_layer
 {
 	t_vec4i			pos;
 	char			*name;
 	SDL_Surface		*surface;
+	bool			*show;
 }					t_layer;
 
 
@@ -95,7 +96,7 @@ void				new_layer_ok_button_event(t_guimp *guimp);
 // Layer
 void				layer_elements_render(t_guimp *guimp);
 void				layer_elements_event(t_guimp *guimp, SDL_Event e);
-void				new_layer(t_layer *layer, char *name, t_vec4i pos);
+void				new_layer(t_layer *layer, char *name, t_vec4i pos, bool *show);
 void				layer_event(t_guimp *guimp, SDL_Event e);
 void				layer_draw(t_guimp *guimp);
 void				layer_render(t_guimp *guimp);

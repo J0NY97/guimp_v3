@@ -73,17 +73,21 @@ void	new_layer_combination(t_guimp *guimp)
 		ft_printf("[%s] No new layer added, layer cap reached (5).\n", __FUNCTION__);
 		return ;
 	}
+	// Making new layer element
+	layer_menu = new_layer_element(guimp, guimp->new_layer_name_input_label->text, guimp->layer_amount);
+	guimp->layer_elems[guimp->layer_amount] = layer_menu;
+
 	// Making new actual layer
 	t_layer	*layer;
 
 	layer = &guimp->layers[guimp->layer_amount];
-	new_layer(layer, guimp->new_layer_name_input_label->text, vec4i(0, 0, atoi(guimp->new_layer_width_input_label->text), atoi(guimp->new_layer_height_input_label->text)));
+	new_layer(layer,
+		guimp->new_layer_name_input_label->text,
+		vec4i(0, 0, atoi(guimp->new_layer_width_input_label->text), atoi(guimp->new_layer_height_input_label->text)),
+		&ui_list_get_element_by_id(((t_ui_menu *)layer_menu->element)->children, "layer_show_checkbox")->is_click);
 	ft_printf("New Layer Info : %s, %d %d.\n", layer->name, layer->pos.w, layer->pos.h);
 	
-	// Making new layer element
-	layer_menu = new_layer_element(guimp, layer->name, guimp->layer_amount);
-	guimp->layer_elems[guimp->layer_amount] = layer_menu;
-
+	
 	guimp->layer_amount += 1;
 	ft_printf("[%s] New layer added. (%d)\n", __FUNCTION__, guimp->layer_amount);
 }
@@ -99,11 +103,14 @@ void	layer_plus_button_event(t_guimp *guimp)
 
 void	new_layer_ok_button_event(t_guimp *guimp)
 {
-	if (ui_button(guimp->new_layer_ok_button))
+	if (SDL_GetWindowFlags(guimp->win_layer_edit->win) & SDL_WINDOW_SHOWN) // i dont want to have to do this (doenst really make sense since the button is_click == 0 and ui_button() should only return 1 if the is_click == 1...)
 	{
-		new_layer_combination(guimp);
-		ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_HIDE);
-		ui_element_print(guimp->new_layer_ok_button);
+		if (ui_button(guimp->new_layer_ok_button))
+		{
+			new_layer_combination(guimp);
+			ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_HIDE);
+			ui_element_print(guimp->new_layer_ok_button);
+		}
 	}
 }
 
