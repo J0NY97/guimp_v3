@@ -83,6 +83,64 @@ int	main(void)
 	SDL_Event	e;
 
 	ui_sdl_init();
+	/*
+	 * line testing
+	*/
+	/*
+	*/
+	int	w = 1000;
+	int	iter = 24000;
+	SDL_Surface	*surface = ui_surface_new(w, w);
+	int	i;
+	ft_timer_start();
+	i = -1;
+	while (++i < iter)
+	{
+		ui_surface_line_draw(surface, vec2i(0, 0), vec2i(w - 1, 0), 0x00); // left, right
+		ui_surface_line_draw(surface, vec2i(w - 1, 0), vec2i(0, 0), 0x00); // right, left
+		ui_surface_line_draw(surface, vec2i(0, 0), vec2i(0, w - 1), 0x00); // top, bot
+		ui_surface_line_draw(surface, vec2i(0, w - 1), vec2i(0, 0), 0x00); // bot , top
+
+		ui_surface_line_draw(surface, vec2i(0, 0), vec2i(w - 1, w - 1), 0x00); // top left, bot right
+		ui_surface_line_draw(surface, vec2i(w - 1, 0), vec2i(0, w - 1), 0x00); // top right, bot left
+		ui_surface_line_draw(surface, vec2i(0, w - 1), vec2i(w - 1, 0), 0x00); // bot left, top right
+		ui_surface_line_draw(surface, vec2i(w - 1, w - 1), vec2i(0, 0), 0x00); // bot right, top left
+	}
+	ft_printf("Reduced : %f\n", ft_timer_end());
+	ft_timer_start();
+	i = -1;
+	while (++i < iter)
+	{
+		ui_surface_line_draw_nik(surface, vec2i(0, 0), vec2i(w - 1, 0), 0x00); // left, right
+		ui_surface_line_draw_nik(surface, vec2i(w - 1, 0), vec2i(0, 0), 0x00); // right, left
+		ui_surface_line_draw_nik(surface, vec2i(0, 0), vec2i(0, w - 1), 0x00); // top, bot
+		ui_surface_line_draw_nik(surface, vec2i(0, w - 1), vec2i(0, 0), 0x00); // bot , top
+
+		ui_surface_line_draw_nik(surface, vec2i(0, 0), vec2i(w - 1, w - 1), 0x00); // top left, bot right
+		ui_surface_line_draw_nik(surface, vec2i(w - 1, 0), vec2i(0, w - 1), 0x00); // top right, bot left
+		ui_surface_line_draw_nik(surface, vec2i(0, w - 1), vec2i(w - 1, 0), 0x00); // bot left, top right
+		ui_surface_line_draw_nik(surface, vec2i(w - 1, w - 1), vec2i(0, 0), 0x00); // bot right, top left
+	}
+	ft_printf("Nik : %f\n", ft_timer_end());
+	ft_timer_start();
+	i = -1;
+	while (++i < iter)
+	{
+		ui_surface_line_draw_orig(surface, vec2i(0, 0), vec2i(w - 1, 0), 0x00); // left, right
+		ui_surface_line_draw_orig(surface, vec2i(w - 1, 0), vec2i(0, 0), 0x00); // right, left
+		ui_surface_line_draw_orig(surface, vec2i(0, 0), vec2i(0, w - 1), 0x00); // top, bot
+		ui_surface_line_draw_orig(surface, vec2i(0, w - 1), vec2i(0, 0), 0x00); // bot , top
+
+		ui_surface_line_draw_orig(surface, vec2i(0, 0), vec2i(w - 1, w - 1), 0x00); // top left, bot right
+		ui_surface_line_draw_orig(surface, vec2i(w - 1, 0), vec2i(0, w - 1), 0x00); // top right, bot left
+		ui_surface_line_draw_orig(surface, vec2i(0, w - 1), vec2i(w - 1, 0), 0x00); // bot left, top right
+		ui_surface_line_draw_orig(surface, vec2i(w - 1, w - 1), vec2i(0, 0), 0x00); // bot right, top left
+	}
+	ft_printf("Orig : %f\n", ft_timer_end());
+	exit(0);
+	/*
+	 * line testing END
+	*/
 	guimp_init(&guimp);
 	layer_edit_window_init(&guimp);
 	run = 1;

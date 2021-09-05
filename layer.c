@@ -114,7 +114,7 @@ void	layer_draw(t_guimp *guimp)
 		}
 		else if (guimp->pipette_button->state == UI_STATE_CLICK)
 		{
-			// actually not sure should this take it from the selected layer or the image? either or... just yoinkel koinkel from the surface pixel the color...
+			// should take the color from the image... might be a problem since we reset the image... maybe should reset it before redrawing... and not after making texture?
 		}
 		ui_surface_line_draw(active_layer->surface,
 			vec2i(0, 0),

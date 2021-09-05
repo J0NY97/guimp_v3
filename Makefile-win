@@ -35,12 +35,12 @@ ODIR = .
 CDIR = .
 
 $(ODIR)/%.o: $(CDIR)/%.c
-	@gcc -c $< -o $@ -MMD \
+	@gcc -c $< -o $@ -MMD -O3 \
 		$(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
 	@printf $(YELLOW)"\e[F\e[JCompiling $<\n"$(RESET)
 
 $(NAME): $(SRCS)
-	@gcc -o $(NAME) $(SRCS) $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
+	@gcc -O3 -o $(NAME) $(SRCS) $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
 	@echo "$(NAME) was successfully created."
 
 clean:
