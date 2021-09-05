@@ -127,7 +127,7 @@ Label r_text
 Slider r_slider
 {
 	pos : 40, 10, 130, 20;
-	value : 50, 0, 255;
+	value : 255, 0, 255;
 	slider_elem;
 	slider_label;
 	slider_button;
@@ -169,7 +169,7 @@ Label a_text
 Slider a_slider
 {
 	pos : 40, 100, 130, 20;
-	value : 50, 0, 255;
+	value : 255, 0, 255;
 	slider_elem;
 	slider_label;
 	slider_button;

@@ -15,8 +15,9 @@ void	new_layer(t_layer *layer, char *name, t_vec4i pos)
 /*
  * Selecting the layer and stuff.
 */
-void	layer_event(t_guimp *guimp)
+void	layer_event(t_guimp *guimp, SDL_Event e)
 {
+	// Element event
 	int				ii;
 	t_ui_element	*button;
 
@@ -31,6 +32,9 @@ void	layer_event(t_guimp *guimp)
 			button->state = UI_STATE_CLICK;
 		}
 	}
+	// Other layer events
+	if (SDL_GetModState() & KMOD_LCTRL && guimp->win_main->scroll)
+		guimp->zoom += (float)guimp->win_main->scroll / 10;
 }
 
 /*
@@ -40,28 +44,31 @@ void	layer_event(t_guimp *guimp)
 */
 void	layer_draw(t_guimp *guimp)
 {
-	t_vec2i	pos; // this takes all the stuff into consideration (look comment above func);
+	t_vec2i	relative_mouse_pos;
 
-	pos.x = guimp->win_main->mouse_pos.x - guimp->final_image.pos.x;
-	pos.y = guimp->win_main->mouse_pos.y - guimp->final_image.pos.y;
-	if (guimp->win_main->mouse_down == 1)
+	if (!guimp->win_main->mouse_down)
+		return ;
+	relative_mouse_pos.x = guimp->win_main->mouse_pos.x - guimp->final_image.pos.x;
+	relative_mouse_pos.y = guimp->win_main->mouse_pos.y - guimp->final_image.pos.y;
+	if (guimp->win_main->mouse_down == 1) // basically draw button
 	{
 		if (guimp->selected_layer < 0 || guimp->selected_layer >= guimp->layer_amount)
 			return ;
-		ui_surface_pixel_set(guimp->layers[guimp->selected_layer].surface, pos.x, pos.y, guimp->combined_color);
+		t_layer	*active_layer = &guimp->layers[guimp->selected_layer];
+		float aspect_x = ((float)active_layer->pos.w / ((float)active_layer->pos.w * guimp->zoom));
+		float aspect_y = ((float)active_layer->pos.h / ((float)active_layer->pos.h * guimp->zoom));
+		ui_surface_pixel_set(guimp->layers[guimp->selected_layer].surface,
+			(relative_mouse_pos.x + guimp->layers[guimp->selected_layer].pos.x) * aspect_x,
+			(relative_mouse_pos.y + guimp->layers[guimp->selected_layer].pos.y) * aspect_y,
+			guimp->combined_color);
 	}
-	else if (guimp->win_main->mouse_down == 2)
+	else if (guimp->win_main->mouse_down == 2) // move whole image by holding middle mouse and mouse motioning
 	{
-		ft_printf("mouse_pos : %d %d\n", guimp->win_main->mouse_pos.x, guimp->win_main->mouse_pos.y);
-		ft_printf("mouse_pos_prev : %d %d\n", guimp->mouse_pos_prev.x, guimp->mouse_pos_prev.y);
-		pos.x = guimp->win_main->mouse_pos.x - guimp->mouse_pos_prev.x;
-		pos.y = guimp->win_main->mouse_pos.y - guimp->mouse_pos_prev.y;
-		guimp->final_image.pos = vec4i(pos.x + guimp->final_image.pos.x, pos.y + guimp->final_image.pos.y, guimp->final_image.pos.w, guimp->final_image.pos.h);
-	}
-	else if (SDL_GetModState() & KMOD_LCTRL && guimp->win_main->scroll)
-	{
-		ft_printf("ctrl is donw\n");
-//		guimp->zoom += guimp->win_main->scroll / 10;
+		t_vec2i	mouse_pos;
+
+		mouse_pos.x = guimp->win_main->mouse_pos.x - guimp->win_main->mouse_pos_prev.x;
+		mouse_pos.y = guimp->win_main->mouse_pos.y - guimp->win_main->mouse_pos_prev.y;
+		guimp->final_image.pos = vec4i(mouse_pos.x + guimp->final_image.pos.x, mouse_pos.y + guimp->final_image.pos.y, guimp->final_image.pos.w, guimp->final_image.pos.h);
 	}
 }
 
@@ -87,6 +94,6 @@ void	layer_render(t_guimp *guimp)
 	else
 		SDL_UpdateTexture(guimp->final_image_texture, NULL, guimp->final_image.surface->pixels, guimp->final_image.surface->pitch); // kuulemma slow function
 	SDL_SetRenderTarget(guimp->win_main->renderer, guimp->win_main->texture);
-	SDL_RenderCopy(guimp->win_main->renderer, guimp->final_image_texture, NULL, &(SDL_Rect){guimp->final_image.pos.x, guimp->final_image.pos.y, guimp->final_image.pos.w * guimp->zoom, guimp->final_image.pos.h * guimp->zoom}); // here you should apply the zoom and stuff
+	SDL_RenderCopy(guimp->win_main->renderer, guimp->final_image_texture, NULL, &(SDL_Rect){guimp->final_image.pos.x, guimp->final_image.pos.y, guimp->final_image.pos.w * guimp->zoom, guimp->final_image.pos.h * guimp->zoom});
 	SDL_SetRenderTarget(guimp->win_main->renderer, NULL);
 }

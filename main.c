@@ -107,7 +107,7 @@ int	main(void)
 
 			// Layer
 			layer_elements_event(&guimp, e);
-			layer_event(&guimp);
+			layer_event(&guimp, e);
 
 			/*
 			 * Testing
@@ -128,7 +128,6 @@ int	main(void)
 		layer_draw(&guimp);
 		layer_render(&guimp);
 
-		guimp.mouse_pos_prev = guimp.win_main->mouse_pos; // this should be done last
 		/*
 		 * Testing
 		*/

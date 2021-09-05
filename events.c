@@ -91,7 +91,10 @@ void	new_layer_combination(t_guimp *guimp)
 void	layer_plus_button_event(t_guimp *guimp)
 {
 	if (ui_button(guimp->layer_plus_button))
+	{
 		ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_SHOW);
+		SDL_RaiseWindow(guimp->win_layer_edit->win);
+	}
 }
 
 void	new_layer_ok_button_event(t_guimp *guimp)

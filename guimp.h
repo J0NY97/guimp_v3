@@ -29,7 +29,6 @@ typedef struct s_layer
  * t_layer			final_image;		this is the image where all the layers are blitted to and then showed on screen;
  * t_layer			*selected_layer;	pointer to the currenctly selected layer, this is the one we will draw on;
  * t_layer			layers[5];			array of layers, we are capping this to 5 for now. included image at offset 0;
- * t_vec2i			mouse_pos_prev;		the last updated mouse pos for win_main;
  *
  * t_ui_layout		layout;				the layout...;
  * t_ui_window		*win_toolbox;		window of the toolbox;
@@ -57,7 +56,6 @@ typedef struct s_guimp
 	int				selected_layer;
 	t_layer			layers[5];
 	int				layer_amount;
-	t_vec2i			mouse_pos_prev;
 	int				combined_color;
 	float			zoom;
 
@@ -98,7 +96,7 @@ void				new_layer_ok_button_event(t_guimp *guimp);
 void				layer_elements_render(t_guimp *guimp);
 void				layer_elements_event(t_guimp *guimp, SDL_Event e);
 void				new_layer(t_layer *layer, char *name, t_vec4i pos);
-void				layer_event(t_guimp *guimp);
+void				layer_event(t_guimp *guimp, SDL_Event e);
 void				layer_draw(t_guimp *guimp);
 void				layer_render(t_guimp *guimp);
 
