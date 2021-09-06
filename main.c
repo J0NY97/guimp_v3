@@ -87,7 +87,6 @@ int	main(void)
 	 * line testing
 	*/
 	/*
-	*/
 	int	w = 1000;
 	int	iter = 24000;
 	SDL_Surface	*surface = ui_surface_new(w, w);
@@ -138,6 +137,7 @@ int	main(void)
 	}
 	ft_printf("Orig : %f\n", ft_timer_end());
 	exit(0);
+	*/
 	/*
 	 * line testing END
 	*/

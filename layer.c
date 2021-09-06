@@ -99,6 +99,8 @@ void	layer_draw(t_guimp *guimp)
 			// This should probably be remade aswell. circle, square, line (aka tube..?)
 			if (guimp->line_button->state == UI_STATE_CLICK)
 			{
+				if (!guimp->win_main->mouse_down_last_frame)
+					return ;
 				if (!guimp->first_set)
 				{
 					guimp->first_pos = actual_pos;
@@ -132,6 +134,14 @@ void	layer_draw(t_guimp *guimp)
 			vec2i(0, 350),
 			vec2i(1279, 350),
 			guimp->combined_color);
+		// Dotted
+		/*
+			*/
+		ui_surface_line_draw_dot(active_layer->surface,
+			vec2i(0, 100),
+			vec2i(1279, 100),
+			guimp->combined_color);
+
 	}
 }
 
