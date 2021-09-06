@@ -416,6 +416,7 @@ Window toolbox_window
 	other_tool_menu;
 	yet_another_menu;
 	layer_menu;
+	flag : resizeable;
 }
 
 // Middle Menu

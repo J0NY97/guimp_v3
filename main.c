@@ -31,6 +31,7 @@ void	guimp_init(t_guimp *guimp)
 	guimp->layer_amount = 0;
 	guimp->combined_color = 0xffffffff;
 	guimp->zoom = 1.0f;
+	guimp->hidden_surface = ui_surface_new(guimp->win_main->pos.w, guimp->win_main->pos.h);
 	// Toolbox Win
 	guimp->win_toolbox = ui_layout_get_window_by_id(&guimp->layout, "toolbox_window");
 	guimp->layer_recipe = ui_layout_get_recipe_by_id(&guimp->layout, "layer");
@@ -185,6 +186,7 @@ int	main(void)
 	/*
 	 * Testing END
 	*/
+	new_layer_combination(&guimp); // lets make default 1 layer;
 	while (run)
 	{
 		while (SDL_PollEvent(&e))

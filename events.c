@@ -31,8 +31,6 @@ t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name, int nth_layer)
 	ui_element_print(show);
 	ui_element_print(select);
 
-	add_to_list(&((t_ui_radio *)guimp->radio_layer.element)->buttons, select, UI_TYPE_ELEMENT);
-//	exit(0);
 	return (menu);
 }
 
@@ -76,6 +74,9 @@ void	new_layer_combination(t_guimp *guimp)
 	// Making new layer element
 	layer_menu = new_layer_element(guimp, guimp->new_layer_name_input_label->text, guimp->layer_amount);
 	guimp->layer_elems[guimp->layer_amount] = layer_menu;
+	// adding layer to the radio buttons;
+	layer_button = ui_list_get_element_by_id(((t_ui_menu *)layer_menu->element)->children, "layer_select_button");
+	add_to_list(&((t_ui_radio *)guimp->radio_layer.element)->buttons, layer_button, UI_TYPE_ELEMENT);
 
 	// Making new actual layer
 	t_layer	*layer;
@@ -87,6 +88,10 @@ void	new_layer_combination(t_guimp *guimp)
 		&ui_list_get_element_by_id(((t_ui_menu *)layer_menu->element)->children, "layer_show_checkbox")->is_click);
 	ft_printf("New Layer Info : %s, %d %d.\n", layer->name, layer->pos.w, layer->pos.h);
 	
+	// Make the new layer the selected layer
+	guimp->selected_layer = guimp->layer_amount;
+	// make function for radio to togggle on specific button through code.
+	((t_ui_radio *)guimp->radio_layer.element)->active = layer_button;
 	
 	guimp->layer_amount += 1;
 	ft_printf("[%s] New layer added. (%d)\n", __FUNCTION__, guimp->layer_amount);

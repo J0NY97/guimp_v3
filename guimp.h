@@ -30,6 +30,8 @@ typedef struct s_layer
  * t_layer			final_image;		this is the image where all the layers are blitted to and then showed on screen;
  * t_layer			*selected_layer;	pointer to the currenctly selected layer, this is the one we will draw on;
  * t_layer			layers[5];			array of layers, we are capping this to 5 for now. included image at offset 0;
+ * SDL_Surface		*hidden_surface;	the surface where all the tool preshowers will be drawn on;
+ * SDL_Texture		*hidden_texture;	the texture where all the tool preshowers will be drawn on;
  *
  * t_ui_layout		layout;				the layout...;
  * t_ui_window		*win_toolbox;		window of the toolbox;
@@ -45,6 +47,10 @@ typedef struct s_layer
  * t_ui_element		*green_slider;		<-
  * t_ui_element		*blue_slider;		<-
  * t_ui_element		*alpha_slider;		not niklas atleast;
+ *
+ * Tools:
+ * t_vec2i			first_pos;				screen position of first mouse click;
+ * t_vec2i			first_pos_converted;	position on the actual layer position;
 */
 typedef struct s_guimp
 {
@@ -56,6 +62,8 @@ typedef struct s_guimp
 	t_layer			final_image;
 	int				selected_layer;
 	t_layer			layers[5];
+	SDL_Surface		*hidden_surface;
+	SDL_Texture		*hidden_texture;
 	int				layer_amount;
 	int				combined_color;
 	float			zoom;
@@ -90,6 +98,7 @@ typedef struct s_guimp
 	t_ui_element	radio_mode_buttons; // radio of list of the drawing mode buttons;
 	// shape tools
 	t_vec2i			first_pos;
+	t_vec2i			first_pos_converted;
 	bool			first_set;
 	t_ui_element	*circle_button;
 	t_ui_element	*square_button;
@@ -114,6 +123,7 @@ void				layer_plus_button_event(t_guimp *guimp);
 void				new_layer_ok_button_event(t_guimp *guimp);
 
 // Layer
+void				new_layer_combination(t_guimp *guimp);
 void				layer_elements_render(t_guimp *guimp);
 void				layer_elements_event(t_guimp *guimp, SDL_Event e);
 void				new_layer(t_layer *layer, char *name, t_vec4i pos, bool *show);

@@ -11,6 +11,7 @@ void	new_layer(t_layer *layer, char *name, t_vec4i pos, bool *show)
 	layer->surface = ui_surface_new(pos.w, pos.h);
 	layer->show = show;
 	SDL_FillRect(layer->surface, NULL, 0x00000000);
+	ui_surface_print(layer->surface);
 }
 
 /*
@@ -55,20 +56,18 @@ void	layer_draw(t_guimp *guimp)
 {
 	t_vec2i	relative_mouse_pos;
 
-	if (!guimp->win_main->mouse_down)
-		return ;
 	relative_mouse_pos.x = guimp->win_main->mouse_pos.x - guimp->final_image.pos.x;
 	relative_mouse_pos.y = guimp->win_main->mouse_pos.y - guimp->final_image.pos.y;
-	if (guimp->win_main->mouse_down == 1) // if left click on the win_main
+	if (guimp->selected_layer < 0 || guimp->selected_layer >= guimp->layer_amount)
+		return ;
+	t_layer	*active_layer = &guimp->layers[guimp->selected_layer];
+	float aspect_x = ((float)active_layer->pos.w / ((float)active_layer->pos.w * guimp->zoom));
+	float aspect_y = ((float)active_layer->pos.h / ((float)active_layer->pos.h * guimp->zoom));
+	t_vec2i	actual_pos = vec2i(
+			(relative_mouse_pos.x + guimp->layers[guimp->selected_layer].pos.x) * aspect_x,
+			(relative_mouse_pos.y + guimp->layers[guimp->selected_layer].pos.y) * aspect_y);
+//	if (guimp->win_main->mouse_down == 1) // if left click on the win_main
 	{
-		if (guimp->selected_layer < 0 || guimp->selected_layer >= guimp->layer_amount)
-			return ;
-		t_layer	*active_layer = &guimp->layers[guimp->selected_layer];
-		float aspect_x = ((float)active_layer->pos.w / ((float)active_layer->pos.w * guimp->zoom));
-		float aspect_y = ((float)active_layer->pos.h / ((float)active_layer->pos.h * guimp->zoom));
-		t_vec2i	actual_pos = vec2i(
-				(relative_mouse_pos.x + guimp->layers[guimp->selected_layer].pos.x) * aspect_x,
-				(relative_mouse_pos.y + guimp->layers[guimp->selected_layer].pos.y) * aspect_y);
 		if (guimp->draw_button->state == UI_STATE_CLICK) // basic draw
 		{
 			ui_surface_pixel_set(active_layer->surface,
@@ -96,20 +95,25 @@ void	layer_draw(t_guimp *guimp)
 		}
 		else if (guimp->shape_button->state == UI_STATE_CLICK)
 		{
-			// This should probably be remade aswell. circle, square, line (aka tube..?)
 			if (guimp->line_button->state == UI_STATE_CLICK)
 			{
-				if (!guimp->win_main->mouse_down_last_frame)
+				if (guimp->first_set)
+					ui_surface_line_draw(guimp->hidden_surface,
+						guimp->first_pos,
+						guimp->win_main->mouse_pos,
+						guimp->combined_color);
+				if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
 					return ;
 				if (!guimp->first_set)
 				{
-					guimp->first_pos = actual_pos;
+					guimp->first_pos_converted = actual_pos;
+					guimp->first_pos = guimp->win_main->mouse_pos;
 					guimp->first_set = 1;
 				}
 				else
 				{
 					ui_surface_line_draw(active_layer->surface,
-						guimp->first_pos, actual_pos, guimp->combined_color);
+						guimp->first_pos_converted, actual_pos, guimp->combined_color);
 					guimp->first_set = 0;
 				}
 			}
@@ -118,30 +122,6 @@ void	layer_draw(t_guimp *guimp)
 		{
 			// should take the color from the image... might be a problem since we reset the image... maybe should reset it before redrawing... and not after making texture?
 		}
-		ui_surface_line_draw(active_layer->surface,
-			vec2i(0, 0),
-			vec2i(1279, 719),
-			guimp->combined_color);
-		ui_surface_line_draw(active_layer->surface,
-			vec2i(1279, 0),
-			vec2i(0, 719),
-			guimp->combined_color);
-		ui_surface_line_draw(active_layer->surface,
-			vec2i(600, 0),
-			vec2i(600, 719),
-			guimp->combined_color);
-		ui_surface_line_draw(active_layer->surface,
-			vec2i(0, 350),
-			vec2i(1279, 350),
-			guimp->combined_color);
-		// Dotted
-		/*
-			*/
-		ui_surface_line_draw_dot(active_layer->surface,
-			vec2i(0, 100),
-			vec2i(1279, 100),
-			guimp->combined_color);
-
 	}
 }
 
@@ -164,10 +144,20 @@ void	layer_render(t_guimp *guimp)
 			&(SDL_Rect){guimp->layers[ii].pos.x, guimp->layers[ii].pos.y,
 				guimp->layers[ii].pos.w, guimp->layers[ii].pos.h});
 	}
+	if (guimp->hidden_texture == NULL)
+		guimp->hidden_texture = SDL_CreateTextureFromSurface(guimp->win_main->renderer, guimp->hidden_surface);
+	else
+		SDL_UpdateTexture(guimp->hidden_texture, NULL, guimp->hidden_surface->pixels, guimp->hidden_surface->pitch);
 	if (guimp->final_image_texture == NULL)
 		guimp->final_image_texture = SDL_CreateTextureFromSurface(guimp->win_main->renderer, guimp->final_image.surface);
 	else
-		SDL_UpdateTexture(guimp->final_image_texture, NULL, guimp->final_image.surface->pixels, guimp->final_image.surface->pitch); // kuulemma slow function
+		SDL_UpdateTexture(guimp->final_image_texture, NULL, guimp->final_image.surface->pixels, guimp->final_image.surface->pitch);
+	// final image
+	/*
+	SDL_SetTextureBlendMode(guimp->win_main->texture, SDL_BLENDMODE_BLEND);
+	SDL_SetTextureBlendMode(guimp->final_image_texture, SDL_BLENDMODE_BLEND);
+	*/
+
 	SDL_SetRenderTarget(guimp->win_main->renderer, guimp->win_main->texture);
 	SDL_RenderCopy(guimp->win_main->renderer, guimp->final_image_texture, NULL, &(SDL_Rect){guimp->final_image.pos.x, guimp->final_image.pos.y, guimp->final_image.pos.w * guimp->zoom, guimp->final_image.pos.h * guimp->zoom});
 	SDL_SetRenderTarget(guimp->win_main->renderer, NULL);
@@ -175,4 +165,21 @@ void	layer_render(t_guimp *guimp)
 	SDL_FillRect(guimp->final_image.surface, NULL, 0xff000000);
 	SDL_SetRenderTarget(guimp->win_main->renderer, guimp->final_image_texture);
 	SDL_RenderClear(guimp->win_main->renderer);
+
+	// Hidden surface
+
+	SDL_SetTextureAlphaMod(guimp->hidden_texture, 255);
+	SDL_SetTextureBlendMode(guimp->hidden_texture, SDL_BLENDMODE_BLEND);
+
+	SDL_SetRenderTarget(guimp->win_main->renderer, guimp->win_main->texture);
+	SDL_RenderCopy(guimp->win_main->renderer, guimp->hidden_texture, NULL, NULL);
+
+	SDL_FillRect(guimp->hidden_surface, NULL, 0x00000000);
+	/*
+	SDL_SetRenderTarget(guimp->win_main->renderer, guimp->hidden_texture);
+	SDL_RenderClear(guimp->win_main->renderer);
+	*/
+
+	// Clear Render Target
+	SDL_SetRenderTarget(guimp->win_main->renderer, NULL);
 }
