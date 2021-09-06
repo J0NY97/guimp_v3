@@ -66,9 +66,9 @@ void	new_layer_combination(t_guimp *guimp)
 	char			*new_id;
 	char			temp[20];
 
-	if (guimp->layer_amount >= 5)
+	if (guimp->layer_amount >= MAX_LAYER_AMOUNT)
 	{
-		ft_printf("[%s] No new layer added, layer cap reached (5).\n", __FUNCTION__);
+		ft_printf("[%s] No new layer added, layer cap reached (%d).\n", __FUNCTION__, MAX_LAYER_AMOUNT);
 		return ;
 	}
 	// Making new layer element

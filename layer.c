@@ -56,20 +56,25 @@ void	layer_draw(t_guimp *guimp)
 {
 	t_vec2i	relative_mouse_pos;
 
-	relative_mouse_pos.x = guimp->win_main->mouse_pos.x - guimp->final_image.pos.x;
-	relative_mouse_pos.y = guimp->win_main->mouse_pos.y - guimp->final_image.pos.y;
 	if (guimp->selected_layer < 0 || guimp->selected_layer >= guimp->layer_amount)
 		return ;
 	t_layer	*active_layer = &guimp->layers[guimp->selected_layer];
+	relative_mouse_pos.x = guimp->win_main->mouse_pos.x - (guimp->final_image.pos.x + active_layer->pos.x);
+	relative_mouse_pos.y = guimp->win_main->mouse_pos.y - (guimp->final_image.pos.y + active_layer->pos.y);
 	float aspect_x = ((float)active_layer->pos.w / ((float)active_layer->pos.w * guimp->zoom));
 	float aspect_y = ((float)active_layer->pos.h / ((float)active_layer->pos.h * guimp->zoom));
 	t_vec2i	actual_pos = vec2i(
-			(relative_mouse_pos.x + guimp->layers[guimp->selected_layer].pos.x) * aspect_x,
-			(relative_mouse_pos.y + guimp->layers[guimp->selected_layer].pos.y) * aspect_y);
+			relative_mouse_pos.x  * aspect_x,
+			relative_mouse_pos.y  * aspect_y);
 //	if (guimp->win_main->mouse_down == 1) // if left click on the win_main
 	{
 		if (guimp->draw_button->state == UI_STATE_CLICK) // basic draw
 		{
+			/*
+			 * show hidden layer tool tip here <---------
+			*/
+			if (guimp->win_main->mouse_down != SDL_BUTTON_LEFT)
+				return ;
 			ui_surface_pixel_set(active_layer->surface,
 				actual_pos.x, actual_pos.y, guimp->combined_color);
 		}
@@ -91,7 +96,16 @@ void	layer_draw(t_guimp *guimp)
 		}
 		else if (guimp->move_button->state == UI_STATE_CLICK)
 		{
-			// do the moving on the selected layer. the moving you can yoinkel koinkel from the image moving.
+			t_vec2i	mouse_pos;
+			/*
+			 * show hidden layer tool tip here <---------
+			*/
+			if (guimp->win_main->mouse_down != SDL_BUTTON_LEFT)
+				return ;
+			mouse_pos.x = guimp->win_main->mouse_pos.x - guimp->win_main->mouse_pos_prev.x;
+			mouse_pos.y = guimp->win_main->mouse_pos.y - guimp->win_main->mouse_pos_prev.y;
+			guimp->layers[guimp->selected_layer].pos.x = mouse_pos.x + guimp->layers[guimp->selected_layer].pos.x;
+			guimp->layers[guimp->selected_layer].pos.y = mouse_pos.y + guimp->layers[guimp->selected_layer].pos.y;
 		}
 		else if (guimp->shape_button->state == UI_STATE_CLICK)
 		{
@@ -135,6 +149,7 @@ void	layer_render(t_guimp *guimp)
 {
 	int	ii;
 
+	// Blit all the layer surfaces on the final image surface;
 	ii = -1;
 	while (++ii < guimp->layer_amount)
 	{
@@ -144,6 +159,28 @@ void	layer_render(t_guimp *guimp)
 			&(SDL_Rect){guimp->layers[ii].pos.x, guimp->layers[ii].pos.y,
 				guimp->layers[ii].pos.w, guimp->layers[ii].pos.h});
 	}
+	// Make dotted outline around the final image dimensions;
+	ui_surface_rect_draw(guimp->hidden_surface,
+		vec2i(guimp->final_image.pos.x, guimp->final_image.pos.y),
+		vec2i(guimp->final_image.pos.x + (guimp->final_image.pos.w * guimp->zoom),
+			guimp->final_image.pos.y + (guimp->final_image.pos.h * guimp->zoom)),
+		0xffffbe00);
+
+	// Make dotted outline around the selected layer dimensions;
+	if (guimp->selected_layer > 0 && guimp->selected_layer < guimp->layer_amount)
+	{
+		// figure out layers position relative to image;
+		t_vec2i	relative_layer_pos;
+
+		relative_layer_pos.x = guimp->final_image.pos.x + guimp->layers[guimp->selected_layer].pos.x;
+		relative_layer_pos.y = guimp->final_image.pos.y + guimp->layers[guimp->selected_layer].pos.y;
+		ui_surface_rect_draw(guimp->hidden_surface,
+			relative_layer_pos,
+			vec2i(relative_layer_pos.x + (guimp->layers[guimp->selected_layer].pos.w * guimp->zoom),
+				relative_layer_pos.y + (guimp->layers[guimp->selected_layer].pos.h * guimp->zoom)),
+			0xffff00ff);
+	}
+
 	if (guimp->hidden_texture == NULL)
 		guimp->hidden_texture = SDL_CreateTextureFromSurface(guimp->win_main->renderer, guimp->hidden_surface);
 	else

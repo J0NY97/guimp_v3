@@ -52,6 +52,7 @@ typedef struct s_layer
  * t_vec2i			first_pos;				screen position of first mouse click;
  * t_vec2i			first_pos_converted;	position on the actual layer position;
 */
+#define MAX_LAYER_AMOUNT 5
 typedef struct s_guimp
 {
 	////////////////
@@ -61,7 +62,7 @@ typedef struct s_guimp
 	SDL_Texture		*final_image_texture;
 	t_layer			final_image;
 	int				selected_layer;
-	t_layer			layers[5];
+	t_layer			layers[MAX_LAYER_AMOUNT];
 	SDL_Surface		*hidden_surface;
 	SDL_Texture		*hidden_texture;
 	int				layer_amount;
