@@ -48,6 +48,9 @@ typedef struct s_layer
  * t_ui_element		*blue_slider;		<-
  * t_ui_element		*alpha_slider;		not niklas atleast;
  *
+ * t_ui_element		*text_input;		text input element;
+ * char				*text_input_str;	the text of text_input label;
+ *
  * Tools:
  * t_vec2i			first_pos;				screen position of first mouse click;
  * t_vec2i			first_pos_converted;	position on the actual layer position;
@@ -108,6 +111,9 @@ typedef struct s_guimp
 	t_ui_element	*line_button;
 	t_list			*shape_button_list; // list of the buttons;
 	t_ui_element	radio_shape_buttons; // radio of list of the shape buttons;
+	// text input
+	t_ui_element	*text_input;
+	char			*text_input_str;
 
 	////////////////
 	// New Layer Win

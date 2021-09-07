@@ -70,9 +70,8 @@ void	layer_draw(t_guimp *guimp)
 	{
 		if (guimp->draw_button->state == UI_STATE_CLICK) // basic draw
 		{
-			/*
-			 * show hidden layer tool tip here <---------
-			*/
+			ui_surface_circle_draw(guimp->hidden_surface,
+				guimp->win_main->mouse_pos, guimp->size * guimp->zoom, guimp->combined_color);
 			if (guimp->win_main->mouse_down != SDL_BUTTON_LEFT)
 				return ;
 			ui_surface_circle_draw_filled(active_layer->surface,
@@ -81,20 +80,35 @@ void	layer_draw(t_guimp *guimp)
 		else if (guimp->text_button->state == UI_STATE_CLICK)
 		{
 			// draw text on the layer
+			SDL_Surface	*surface;
+			guimp->text_input_str = ((t_ui_label *)((t_ui_input *)guimp->text_input->element)->label.element)->text;
+			surface = ui_surface_text_new(guimp->text_input_str, "libs/libui/fonts/ShareTechMono-Regular.ttf", guimp->size, guimp->combined_color);
+			SDL_BlitScaled(surface, NULL, guimp->hidden_surface, &(SDL_Rect){guimp->win_main->mouse_pos.x, guimp->win_main->mouse_pos.y, surface->w * guimp->zoom, surface->h * guimp->zoom});
+			if (guimp->win_main->mouse_down == SDL_BUTTON_LEFT)
+			{
+				SDL_BlitSurface(surface, NULL, active_layer->surface, &(SDL_Rect){actual_pos.x, actual_pos.y, surface->w, surface->h});
+			}
+			SDL_FreeSurface(surface);
 		}
-		else if (guimp->erase_button->state == UI_STATE_CLICK)
+		else if (guimp->erase_button->state == UI_STATE_CLICK) // erase
 		{
-			// take the background color of the layer and use that as the color.
+			ui_surface_circle_draw(guimp->hidden_surface,
+				guimp->win_main->mouse_pos, guimp->size * guimp->zoom,
+				0xffb0b0b0);
+			if (guimp->win_main->mouse_down != SDL_BUTTON_LEFT)
+				return ;
+			ui_surface_circle_draw_filled(active_layer->surface,
+				actual_pos, guimp->size, 0x00000000);
 		}
-		else if (guimp->flood_button->state == UI_STATE_CLICK)
+		else if (guimp->flood_button->state == UI_STATE_CLICK) // flood fill
 		{
 			// yoink flood fill algorithm from the first version of guimp, or tbh should probably do it from scratch again, i remember it was horrible af.
 		}
-		else if (guimp->sticker_button->state == UI_STATE_CLICK)
+		else if (guimp->sticker_button->state == UI_STATE_CLICK) // sticker
 		{
 			// choose sticker from dropdown menu and place that on the screen. blit surface the surface of the sticker surface... surface
 		}
-		else if (guimp->move_button->state == UI_STATE_CLICK)
+		else if (guimp->move_button->state == UI_STATE_CLICK) // move
 		{
 			t_vec2i	mouse_pos;
 			/*
@@ -216,8 +230,8 @@ void	layer_render(t_guimp *guimp)
 		// figure out layers position relative to image;
 		t_vec2i	relative_layer_pos;
 
-		relative_layer_pos.x = guimp->final_image.pos.x + guimp->layers[guimp->selected_layer].pos.x;
-		relative_layer_pos.y = guimp->final_image.pos.y + guimp->layers[guimp->selected_layer].pos.y;
+		relative_layer_pos.x = guimp->final_image.pos.x + (guimp->layers[guimp->selected_layer].pos.x * guimp->zoom);
+		relative_layer_pos.y = guimp->final_image.pos.y + (guimp->layers[guimp->selected_layer].pos.y * guimp->zoom);
 		ui_surface_rect_draw(guimp->hidden_surface,
 			relative_layer_pos,
 			vec2i(relative_layer_pos.x + (guimp->layers[guimp->selected_layer].pos.w * guimp->zoom),

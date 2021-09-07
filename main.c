@@ -51,6 +51,9 @@ void	guimp_init(t_guimp *guimp)
 	ui_texture_fill_rect(guimp->blue_slider->win->renderer, guimp->blue_slider->textures[UI_STATE_DEFAULT], 0xff0000ff, vec4i(0, guimp->blue_slider->pos.h / 3, guimp->blue_slider->pos.w, guimp->blue_slider->pos.h / 3));
 	// size slider get
 	guimp->size_slider = ui_layout_get_element_by_id(&guimp->layout, "size_slider");	
+	// text input
+	guimp->text_input = ui_layout_get_element_by_id(&guimp->layout, "text_input");	
+	guimp->text_input_str = ((t_ui_label *)((t_ui_input *)guimp->text_input->element)->label.element)->text;
 }
 
 void	layer_edit_window_init(t_guimp	*guimp)
