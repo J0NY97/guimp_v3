@@ -68,6 +68,7 @@ typedef struct s_guimp
 	int				layer_amount;
 	int				combined_color;
 	float			zoom;
+	int				size;
 
 	t_ui_element	radio_layer;
 	t_list			*radio_buttons; // this is the same list as the radio_layer.element->buttons
@@ -86,6 +87,7 @@ typedef struct s_guimp
 	t_ui_element	*green_slider;
 	t_ui_element	*blue_slider;
 	t_ui_element	*alpha_slider;
+	t_ui_element	*size_slider;
 	// Mode Buttons
 	t_ui_element	*draw_button;
 	t_ui_element	*text_button;

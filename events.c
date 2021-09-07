@@ -156,4 +156,6 @@ void	color_swatch_event(t_guimp *guimp)
 		ui_slider_value_set(guimp->blue_slider, input_rgba.b);
 		ui_slider_value_set(guimp->alpha_slider, input_rgba.a);
 	}
+	if (((t_ui_slider *)guimp->size_slider->element)->update)
+		guimp->size = ((t_ui_slider *)guimp->size_slider->element)->value;
 }

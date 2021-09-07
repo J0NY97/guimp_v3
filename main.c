@@ -49,6 +49,8 @@ void	guimp_init(t_guimp *guimp)
 	ui_texture_fill_rect(guimp->red_slider->win->renderer, guimp->red_slider->textures[UI_STATE_DEFAULT], 0xffff0000, vec4i(0, guimp->red_slider->pos.h / 3, guimp->red_slider->pos.w, guimp->red_slider->pos.h / 3));
 	ui_texture_fill_rect(guimp->green_slider->win->renderer, guimp->green_slider->textures[UI_STATE_DEFAULT], 0xff00ff00, vec4i(0, guimp->green_slider->pos.h / 3, guimp->green_slider->pos.w, guimp->green_slider->pos.h / 3));
 	ui_texture_fill_rect(guimp->blue_slider->win->renderer, guimp->blue_slider->textures[UI_STATE_DEFAULT], 0xff0000ff, vec4i(0, guimp->blue_slider->pos.h / 3, guimp->blue_slider->pos.w, guimp->blue_slider->pos.h / 3));
+	// size slider get
+	guimp->size_slider = ui_layout_get_element_by_id(&guimp->layout, "size_slider");	
 }
 
 void	layer_edit_window_init(t_guimp	*guimp)
@@ -142,6 +144,36 @@ int	main(void)
 	/*
 	 * line testing END
 	*/
+
+	/*
+	 * circle testing
+	*/
+/*
+	int	w = 1000;
+	int	r = w / 2;
+	int	iter = 1000;
+	SDL_Surface	*surface = ui_surface_new(w, w);
+	int	i;
+
+	ft_timer_start();
+	i = -1;
+	while (++i < iter)
+		ui_surface_circle_draw_filled(surface, vec2i(r, r), r, 0x00);
+	ft_printf("v1 : %f\n", ft_timer_end());
+
+	ft_timer_start();
+	i = -1;
+	while (++i < iter)
+		ui_surface_circle_draw_filled_v2(surface, vec2i(r, r), r, 0x00);
+	ft_printf("v2 : %f\n", ft_timer_end());
+
+	exit(0);
+ */
+	/*
+	 * circle testing
+	*/
+
+
 	guimp_init(&guimp);
 	layer_edit_window_init(&guimp);
 	run = 1;
@@ -201,12 +233,12 @@ int	main(void)
 			layer_elements_event(&guimp, e);
 			layer_event(&guimp, e);
 
-			/*
-			 * Testing
-			*/
 			ui_radio_event(&guimp.radio_layer, e);
 			ui_radio_event(&guimp.radio_mode_buttons, e);
 			ui_radio_event(&guimp.radio_shape_buttons, e);
+			/*
+			 * Testing
+			*/
 			/*
 			 * Testing end
 			*/

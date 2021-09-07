@@ -75,8 +75,8 @@ void	layer_draw(t_guimp *guimp)
 			*/
 			if (guimp->win_main->mouse_down != SDL_BUTTON_LEFT)
 				return ;
-			ui_surface_pixel_set(active_layer->surface,
-				actual_pos.x, actual_pos.y, guimp->combined_color);
+			ui_surface_circle_draw_filled(active_layer->surface,
+				actual_pos, guimp->size, guimp->combined_color);
 		}
 		else if (guimp->text_button->state == UI_STATE_CLICK)
 		{
@@ -109,7 +109,7 @@ void	layer_draw(t_guimp *guimp)
 		}
 		else if (guimp->shape_button->state == UI_STATE_CLICK)
 		{
-			if (guimp->line_button->state == UI_STATE_CLICK)
+			if (guimp->line_button->state == UI_STATE_CLICK) // line tool
 			{
 				if (guimp->first_set)
 					ui_surface_line_draw(guimp->hidden_surface,
@@ -128,6 +128,50 @@ void	layer_draw(t_guimp *guimp)
 				{
 					ui_surface_line_draw(active_layer->surface,
 						guimp->first_pos_converted, actual_pos, guimp->combined_color);
+					guimp->first_set = 0;
+				}
+			}
+			else if (guimp->square_button->state == UI_STATE_CLICK) // rect tool
+			{
+				if (guimp->first_set)
+					ui_surface_rect_draw(guimp->hidden_surface,
+						guimp->first_pos,
+						guimp->win_main->mouse_pos,
+						guimp->combined_color);
+				if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
+					return ;
+				if (!guimp->first_set)
+				{
+					guimp->first_pos_converted = actual_pos;
+					guimp->first_pos = guimp->win_main->mouse_pos;
+					guimp->first_set = 1;
+				}
+				else
+				{
+					ui_surface_rect_draw(active_layer->surface,
+						guimp->first_pos_converted, actual_pos, guimp->combined_color);
+					guimp->first_set = 0;
+				}
+			}
+			else if (guimp->circle_button->state == UI_STATE_CLICK)
+			{
+				if (guimp->first_set)
+					ui_surface_circle_draw(guimp->hidden_surface,
+						guimp->first_pos,
+						dist(guimp->first_pos, guimp->win_main->mouse_pos),
+						guimp->combined_color);
+				if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
+					return ;
+				if (!guimp->first_set)
+				{
+					guimp->first_pos_converted = actual_pos;
+					guimp->first_pos = guimp->win_main->mouse_pos;
+					guimp->first_set = 1;
+				}
+				else
+				{
+					ui_surface_circle_draw(active_layer->surface,
+						guimp->first_pos_converted, dist(guimp->first_pos_converted, actual_pos), guimp->combined_color);
 					guimp->first_set = 0;
 				}
 			}
