@@ -64,8 +64,8 @@ void	layer_draw(t_guimp *guimp)
 	float aspect_x = ((float)active_layer->pos.w / ((float)active_layer->pos.w * guimp->zoom));
 	float aspect_y = ((float)active_layer->pos.h / ((float)active_layer->pos.h * guimp->zoom));
 	t_vec2i	actual_pos = vec2i(
-			relative_mouse_pos.x  * aspect_x,
-			relative_mouse_pos.y  * aspect_y);
+			relative_mouse_pos.x * aspect_x,
+			relative_mouse_pos.y * aspect_y);
 //	if (guimp->win_main->mouse_down == 1) // if left click on the win_main
 	{
 		if (guimp->draw_button->state == UI_STATE_CLICK) // basic draw
@@ -77,17 +77,15 @@ void	layer_draw(t_guimp *guimp)
 			ui_surface_circle_draw_filled(active_layer->surface,
 				actual_pos, guimp->size, guimp->combined_color);
 		}
-		else if (guimp->text_button->state == UI_STATE_CLICK)
+		else if (guimp->text_button->state == UI_STATE_CLICK) // text
 		{
-			// draw text on the layer
 			SDL_Surface	*surface;
+
 			guimp->text_input_str = ((t_ui_label *)((t_ui_input *)guimp->text_input->element)->label.element)->text;
 			surface = ui_surface_text_new(guimp->text_input_str, "libs/libui/fonts/ShareTechMono-Regular.ttf", guimp->size, guimp->combined_color);
 			SDL_BlitScaled(surface, NULL, guimp->hidden_surface, &(SDL_Rect){guimp->win_main->mouse_pos.x, guimp->win_main->mouse_pos.y, surface->w * guimp->zoom, surface->h * guimp->zoom});
 			if (guimp->win_main->mouse_down == SDL_BUTTON_LEFT)
-			{
 				SDL_BlitSurface(surface, NULL, active_layer->surface, &(SDL_Rect){actual_pos.x, actual_pos.y, surface->w, surface->h});
-			}
 			SDL_FreeSurface(surface);
 		}
 		else if (guimp->erase_button->state == UI_STATE_CLICK) // erase
@@ -192,7 +190,14 @@ void	layer_draw(t_guimp *guimp)
 		}
 		else if (guimp->pipette_button->state == UI_STATE_CLICK)
 		{
-			// should take the color from the image... might be a problem since we reset the image... maybe should reset it before redrawing... and not after making texture?
+			if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
+				return ;
+			float img_aspect_x = ((float)guimp->final_image.pos.w / ((float)guimp->final_image.pos.w * guimp->zoom));
+			float img_aspect_y = ((float)guimp->final_image.pos.h / ((float)guimp->final_image.pos.h * guimp->zoom));
+			t_vec2i	img_pos = vec2i(
+					guimp->win_main->mouse_pos.x - guimp->final_image.pos.x,
+					guimp->win_main->mouse_pos.y - guimp->final_image.pos.y);
+			set_sliders_to_color(guimp, ui_surface_pixel_get(guimp->final_image.surface, img_pos.x * img_aspect_x, img_pos.y * img_aspect_y));
 		}
 	}
 }
@@ -207,6 +212,8 @@ void	layer_render(t_guimp *guimp)
 {
 	int	ii;
 
+	// Reset final image before redrawing;
+	SDL_FillRect(guimp->final_image.surface, NULL, 0xff000000);
 	// Blit all the layer surfaces on the final image surface;
 	ii = -1;
 	while (++ii < guimp->layer_amount)
@@ -257,7 +264,6 @@ void	layer_render(t_guimp *guimp)
 	SDL_RenderCopy(guimp->win_main->renderer, guimp->final_image_texture, NULL, &(SDL_Rect){guimp->final_image.pos.x, guimp->final_image.pos.y, guimp->final_image.pos.w * guimp->zoom, guimp->final_image.pos.h * guimp->zoom});
 	SDL_SetRenderTarget(guimp->win_main->renderer, NULL);
 
-	SDL_FillRect(guimp->final_image.surface, NULL, 0xff000000);
 	SDL_SetRenderTarget(guimp->win_main->renderer, guimp->final_image_texture);
 	SDL_RenderClear(guimp->win_main->renderer);
 

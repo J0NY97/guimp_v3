@@ -3,6 +3,7 @@ SRCS = \
 	./main.c \
 	./events.c \
 	./layer.c \
+	./help.c \
 
 OBJS = $(SRCS:.c=.o)
 

@@ -140,4 +140,7 @@ void				layer_event(t_guimp *guimp, SDL_Event e);
 void				layer_draw(t_guimp *guimp);
 void				layer_render(t_guimp *guimp);
 
+// Help
+void				set_sliders_to_color(t_guimp *guimp, Uint32 color);
+
 #endif
