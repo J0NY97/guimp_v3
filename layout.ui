@@ -425,3 +425,11 @@ Window main_window
 	pos : 220, 25, 1700, 1030;
 	bg_color : 0xff909090;
 }
+
+// remove this if not used in the final product
+Button font_button
+{
+	text_align : left;
+	button_elem;
+	button_label;
+}

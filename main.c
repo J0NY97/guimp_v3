@@ -24,28 +24,24 @@ void	user_code(t_guimp *guimp)
 */
 void	load_fonts(t_guimp *guimp)
 {
+	t_ui_recipe		*font_button_recipe;
 	t_dir_content	font_dir;
-	t_ui_element	elem;
+	t_ui_element	*elem;
 	char			*temp;
 	int				i;
+	char			tt[20];
 
 	get_dir_content(&font_dir, "fonts/");
+	font_button_recipe = ui_layout_get_recipe_by_id(&guimp->layout, "font_button");
 	i = -1;
 	while (++i < font_dir.file_amount)
 	{
-		/*
-		if (!ft_strendswith(font_dir.files[i], ".ttf"))
+		if (ft_strendswith(font_dir.files[i], ".ttf"))
 			continue ;
-		*/
-		ui_button_new(guimp->win_toolbox, &elem);
-		ui_menu_add(&((t_ui_dropdown *)guimp->font_dropdown->element)->menu, &elem);
-		ui_element_pos_set2(&elem, vec2(0, i * 20));
-		/*
-		temp = ft_strremove(font_dir.files[i], ".ttf");
-		ui_label_text_set(&((t_ui_button *)elem.element)->label, temp);
-		ft_strdel(&temp);
-		*/
-		//add_to_drop_menu(guimp->font_dropdown, &elem);
+		elem = ui_element_create_from_recipe(guimp->win_toolbox, font_button_recipe, &guimp->layout);
+		add_to_drop_menu(guimp->font_dropdown, elem);
+		ui_label_text_set(&((t_ui_button *)elem->element)->label, font_dir.files[i]);
+		ft_printf("font button %s made.\n", font_dir.files[i]);
 	}
 	free_dir_content(&font_dir);
 }
@@ -96,12 +92,10 @@ void	guimp_init(t_guimp *guimp)
 	guimp->text_input = ui_layout_get_element_by_id(&guimp->layout, "text_input");	
 	guimp->text_input_str = ((t_ui_label *)((t_ui_input *)guimp->text_input->element)->label.element)->text;
 	// loading fonts and stickers to the dropdown
-	/*
 	guimp->font_dropdown = ui_layout_get_element_by_id(&guimp->layout, "font_drop");
 	load_fonts(guimp);
 	guimp->sticker_dropdown = ui_layout_get_element_by_id(&guimp->layout, "sticker_drop");
 	load_stickers(guimp);
-	*/
 	// other buttons
 	guimp->save_button = ui_layout_get_element_by_id(&guimp->layout, "save_button");
 }
@@ -272,12 +266,23 @@ int	main(void)
 	 * Testing END
 	*/
 	new_layer_combination(&guimp); // lets make default 1 layer;
+	guimp.win_main->user_handled_event = 1;
+	guimp.win_toolbox->user_handled_event = 1;
 	while (run)
 	{
 		while (SDL_PollEvent(&e))
 		{
+			ui_window_event(guimp.win_main, e);
+			ui_window_event(guimp.win_toolbox, e);
 			if (guimp.win_toolbox->wants_to_close)
 				run = 0;
+			// dropdown elems will be evented here, we dont want anything else to get evented if its open;
+			// i hope i come up with other way of doing this.
+			if (((t_ui_dropdown *)guimp.font_dropdown->element)->menu.show)
+			{
+				ui_dropdown_event(guimp.font_dropdown, e);
+				break ;
+			}
 			// Event
 			ui_layout_event(&guimp.layout, e);
 			ui_layout_event(&guimp.layout_layer_edit, e);
