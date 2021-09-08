@@ -159,3 +159,9 @@ void	color_swatch_event(t_guimp *guimp)
 	if (((t_ui_slider *)guimp->size_slider->element)->update)
 		guimp->size = ((t_ui_slider *)guimp->size_slider->element)->value;
 }
+
+void	save_button_event(t_guimp *guimp)
+{
+	if (ui_button(guimp->save_button))
+		save_surface(guimp->final_image.surface, "image.png");
+}

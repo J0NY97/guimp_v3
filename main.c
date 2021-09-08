@@ -5,14 +5,55 @@ void	user_events(t_guimp *guimp)
 	layer_plus_button_event(guimp);
 	new_layer_ok_button_event(guimp);
 	color_swatch_event(guimp);
+	save_button_event(guimp);
 }
 
 void	user_render(t_guimp *guimp)
 {
-
+	(void)guimp;
 }
 
 void	user_code(t_guimp *guimp)
+{
+	(void)guimp;
+}
+
+/*
+ * Make ui_element of all the fonts found in the fonts dir.
+ * Adds the elements to the fonts dropdown.
+*/
+void	load_fonts(t_guimp *guimp)
+{
+	t_dir_content	font_dir;
+	t_ui_element	elem;
+	char			*temp;
+	int				i;
+
+	get_dir_content(&font_dir, "fonts/");
+	i = -1;
+	while (++i < font_dir.file_amount)
+	{
+		/*
+		if (!ft_strendswith(font_dir.files[i], ".ttf"))
+			continue ;
+		*/
+		ui_button_new(guimp->win_toolbox, &elem);
+		ui_menu_add(&((t_ui_dropdown *)guimp->font_dropdown->element)->menu, &elem);
+		ui_element_pos_set2(&elem, vec2(0, i * 20));
+		/*
+		temp = ft_strremove(font_dir.files[i], ".ttf");
+		ui_label_text_set(&((t_ui_button *)elem.element)->label, temp);
+		ft_strdel(&temp);
+		*/
+		//add_to_drop_menu(guimp->font_dropdown, &elem);
+	}
+	free_dir_content(&font_dir);
+}
+
+/*
+ * the same as the fonts, but takes stickers from the stickers dir.
+*/
+void	load_stickers(t_guimp *guimp)
 {
 	(void)guimp;
 }
@@ -54,6 +95,15 @@ void	guimp_init(t_guimp *guimp)
 	// text input
 	guimp->text_input = ui_layout_get_element_by_id(&guimp->layout, "text_input");	
 	guimp->text_input_str = ((t_ui_label *)((t_ui_input *)guimp->text_input->element)->label.element)->text;
+	// loading fonts and stickers to the dropdown
+	/*
+	guimp->font_dropdown = ui_layout_get_element_by_id(&guimp->layout, "font_drop");
+	load_fonts(guimp);
+	guimp->sticker_dropdown = ui_layout_get_element_by_id(&guimp->layout, "sticker_drop");
+	load_stickers(guimp);
+	*/
+	// other buttons
+	guimp->save_button = ui_layout_get_element_by_id(&guimp->layout, "save_button");
 }
 
 void	layer_edit_window_init(t_guimp	*guimp)

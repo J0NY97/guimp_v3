@@ -6,6 +6,19 @@
 # include "SDL.h"
 # include "SDL_ttf.h"
 # include "SDL_image.h"
+# include "dirent.h"
+
+/*
+ * char		*dir;			the path to the dir;
+ * char		**files;		char * of all the file names in the directory;
+ * int		file_amount;	self-explanatory;
+*/
+typedef struct s_dir_content
+{
+	char			*dir;
+	char			**files;
+	int				file_amount;
+}					t_dir_content;
 
 /*
  * Layer struct, not to confuse with the layer elements in the ui.
@@ -114,6 +127,11 @@ typedef struct s_guimp
 	// text input
 	t_ui_element	*text_input;
 	char			*text_input_str;
+	// drops
+	t_ui_element	*font_dropdown;
+	t_ui_element	*sticker_dropdown;
+	// buttons
+	t_ui_element	*save_button;
 
 	////////////////
 	// New Layer Win
@@ -130,6 +148,7 @@ typedef struct s_guimp
 void				color_swatch_event(t_guimp *guimp);
 void				layer_plus_button_event(t_guimp *guimp);
 void				new_layer_ok_button_event(t_guimp *guimp);
+void				save_button_event(t_guimp *guimp);
 
 // Layer
 void				new_layer_combination(t_guimp *guimp);
@@ -142,5 +161,9 @@ void				layer_render(t_guimp *guimp);
 
 // Help
 void				set_sliders_to_color(t_guimp *guimp, Uint32 color);
+void				add_to_drop_menu(t_ui_element *dropdown_elem, t_ui_element *child);
+void				get_dir_content(t_dir_content *content, char *path);
+void				free_dir_content(t_dir_content *content);
+void				save_surface(SDL_Surface *surface, char *file);
 
 #endif
