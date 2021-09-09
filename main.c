@@ -3,7 +3,6 @@
 void	user_events(t_guimp *guimp)
 {
 	layer_plus_button_event(guimp);
-	new_layer_ok_button_event(guimp);
 	color_swatch_event(guimp);
 	save_button_event(guimp);
 	edit_button_event(guimp);

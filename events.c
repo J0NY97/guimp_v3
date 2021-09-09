@@ -97,15 +97,6 @@ void	new_layer_combination(t_guimp *guimp)
 	ft_printf("[%s] New layer added. (%d)\n", __FUNCTION__, guimp->layer_amount);
 }
 
-void	layer_plus_button_event(t_guimp *guimp)
-{
-	if (ui_button(guimp->layer_plus_button))
-	{
-		ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_SHOW);
-		SDL_RaiseWindow(guimp->win_layer_edit->win);
-	}
-}
-
 void	new_layer_ok_button_event(t_guimp *guimp)
 {
 	if (SDL_GetWindowFlags(guimp->win_layer_edit->win) & SDL_WINDOW_SHOWN) // i dont want to have to do this (doenst really make sense since the button is_click == 0 and ui_button() should only return 1 if the is_click == 1...)
@@ -117,6 +108,16 @@ void	new_layer_ok_button_event(t_guimp *guimp)
 			ui_element_print(guimp->new_layer_ok_button);
 		}
 	}
+}
+
+void	layer_plus_button_event(t_guimp *guimp)
+{
+	if (ui_button(guimp->layer_plus_button))
+	{
+		ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_SHOW);
+		SDL_RaiseWindow(guimp->win_layer_edit->win);
+	}
+	new_layer_ok_button_event(guimp);
 }
 
 void	color_swatch_event(t_guimp *guimp)

@@ -441,3 +441,28 @@ Button font_button
 	button_elem;
 	button_label;
 }
+
+// save screen
+Label image_name_label
+{
+	pos : 10, 10, 50, 20;
+	title : "Name :" 
+}
+Input image_name_input
+{
+	pos : 70, 10, 50, 20;
+	title : "image.png";
+}
+Button image_save_button_ok
+{
+	pos : 50, 50, 50, 20;
+	title : "OK";
+}
+Window save_window
+{
+	pos : 320, 270, 150, 100;
+	bg_color : 0xffb0b0b0;
+	image_name_label;
+	image_name_input;
+	image_save_button_ok;
+}
