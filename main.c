@@ -6,6 +6,7 @@ void	user_events(t_guimp *guimp)
 	new_layer_ok_button_event(guimp);
 	color_swatch_event(guimp);
 	save_button_event(guimp);
+	edit_button_event(guimp);
 }
 
 void	user_render(t_guimp *guimp)
@@ -118,6 +119,7 @@ void	guimp_init(t_guimp *guimp)
 	load_stickers(guimp);
 	// other buttons
 	guimp->save_button = ui_layout_get_element_by_id(&guimp->layout, "save_button");
+	guimp->edit_button = ui_layout_get_element_by_id(&guimp->layout, "edit_image_button");
 }
 
 void	layer_edit_window_init(t_guimp	*guimp)
@@ -144,6 +146,12 @@ void	layer_edit_window_init(t_guimp	*guimp)
 	guimp->new_layer_name_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer_edit, "input_name")->element)->label.element;
 	guimp->new_layer_width_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer_edit, "input_width")->element)->label.element;
 	guimp->new_layer_height_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer_edit, "input_height")->element)->label.element;
+
+	// New Image win
+	guimp->win_image_edit = ui_layout_get_window_by_id(&guimp->layout_layer_edit, "image_edit_window");
+	guimp->new_image_ok_button = ui_layout_get_element_by_id(&guimp->layout_layer_edit, "button_ok_image");
+	guimp->new_image_width_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer_edit, "input_width_image")->element)->label.element;
+	guimp->new_image_height_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer_edit, "input_height_image")->element)->label.element;
 }
 
 int	main(void)

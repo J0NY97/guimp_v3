@@ -134,6 +134,7 @@ typedef struct s_guimp
 	t_ui_element	sticker_radio;
 	// buttons
 	t_ui_element	*save_button;
+	t_ui_element	*edit_button;
 
 	////////////////
 	// New Layer Win
@@ -144,6 +145,14 @@ typedef struct s_guimp
 	t_ui_label		*new_layer_name_input_label;
 	t_ui_label		*new_layer_width_input_label;
 	t_ui_label		*new_layer_height_input_label;
+
+	////////////////
+	// New Image Win
+	/////////////////
+	t_ui_window		*win_image_edit;
+	t_ui_element	*new_image_ok_button;
+	t_ui_label		*new_image_width_input_label;
+	t_ui_label		*new_image_height_input_label;
 }					t_guimp;
 
 // Events
@@ -151,12 +160,14 @@ void				color_swatch_event(t_guimp *guimp);
 void				layer_plus_button_event(t_guimp *guimp);
 void				new_layer_ok_button_event(t_guimp *guimp);
 void				save_button_event(t_guimp *guimp);
+void				edit_button_event(t_guimp *guimp);
 
 // Layer
 void				new_layer_combination(t_guimp *guimp);
 void				layer_elements_render(t_guimp *guimp);
 void				layer_elements_event(t_guimp *guimp, SDL_Event e);
 void				new_layer(t_layer *layer, char *name, t_vec4i pos, bool *show);
+void				resize_layer(t_layer *layer, t_vec2i wh);
 void				layer_event(t_guimp *guimp, SDL_Event e);
 void				layer_draw(t_guimp *guimp);
 void				layer_render(t_guimp *guimp);

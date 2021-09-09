@@ -46,7 +46,7 @@ Input input_height
 
 Button button_ok
 {
-	pos : 0.89, 0.95, 50, 20;
+	pos : 0.89, 0.90, 50, 20;
 	title : "OK";
 }
 Window layer_edit_window
@@ -65,4 +65,37 @@ Window layer_edit_window
 	input_height;
 
 	button_ok;
+}
+
+// Image Editor
+Input input_width_image
+{
+	pos.y : 35;
+	title : "1920";
+	value_prefab;
+}
+Input input_height_image
+{
+	pos.y : 60;
+	title : "1080";
+	value_prefab;
+}
+Button button_ok_image
+{
+	pos : 140, 120, 50, 20;
+	title : "OK";
+}
+Window image_edit_window
+{
+	pos : 320, 270, 200, 150;
+	title : "New Image";
+	bg_color : 0xff5a615a;
+	flag : hide;
+
+	label_width;
+	input_width_image;
+	label_height;
+	input_height_image;
+
+	button_ok_image;
 }

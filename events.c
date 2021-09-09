@@ -165,3 +165,26 @@ void	save_button_event(t_guimp *guimp)
 	if (ui_button(guimp->save_button))
 		save_surface(guimp->final_image.surface, "image.png");
 }
+
+void	new_image_ok_button_event(t_guimp *guimp)
+{
+	if (ui_button(guimp->new_image_ok_button))
+	{
+		int w = atoi(guimp->new_image_width_input_label->text);
+		int h = atoi(guimp->new_image_height_input_label->text);
+		ft_printf("we want iamge size of : %d %d\n", w, h);
+		resize_layer(&guimp->final_image, vec2i(w, h));
+	}
+}
+
+void	edit_button_event(t_guimp *guimp)
+{
+	if (ui_button(guimp->edit_button))
+	{
+		ui_window_flag_set(guimp->win_image_edit, UI_WINDOW_SHOW);
+		SDL_RaiseWindow(guimp->win_image_edit->win);
+	}
+	new_image_ok_button_event(guimp);
+}
+
+

@@ -338,12 +338,20 @@ Button save_button
 	button_elem;
 	button_label;
 }
+Button edit_image_button
+{
+	pos : 10, 40, 50, 20;
+	title : "Edit";
+	button_elem;
+	button_label;
+}
 Menu yet_another_menu
 {
-	pos : 10, 450, 200, 40;
+	pos : 10, 450, 200, 70;
 	clear_button;
 	open_button;
 	save_button;
+	edit_image_button;
 }
 
 // Layers
@@ -398,7 +406,7 @@ Menu layer
 
 Menu layer_menu
 {
-	pos : 10, 500, 200, 40;
+	pos : 10, 550, 200, 40;
 	button_add_layer;
 	button_remove_layer;
 	button_up_layer;

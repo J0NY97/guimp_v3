@@ -14,6 +14,23 @@ void	new_layer(t_layer *layer, char *name, t_vec4i pos, bool *show)
 	ui_surface_print(layer->surface);
 }
 
+void	resize_layer(t_layer *layer, t_vec2i wh)
+{
+	SDL_Surface	*new_surface;
+
+	if (!layer)
+	{
+		new_layer(layer, "no_name_given", vec4i(0, 0, wh.x, wh.y), NULL);
+		return ;
+	}
+	new_surface = ui_surface_new(wh.x, wh.y);
+	SDL_BlitScaled(layer->surface, NULL, new_surface, NULL);
+	layer->pos.w = wh.x;
+	layer->pos.h = wh.y;
+	SDL_FreeSurface(layer->surface);
+	layer->surface = new_surface;
+}
+
 /*
  * Selecting the layer and stuff.
 */
@@ -117,7 +134,6 @@ void	layer_draw(t_guimp *guimp)
 		}
 		else if (guimp->sticker_button->state == UI_STATE_CLICK) // sticker
 		{
-			// choose sticker from dropdown menu and place that on the screen. blit surface the surface of the sticker surface... surface
 			SDL_Surface	*surface;
 			t_ui_label	*label;
 			t_ui_radio	*radio;
@@ -198,7 +214,7 @@ void	layer_draw(t_guimp *guimp)
 					guimp->first_set = 0;
 				}
 			}
-			else if (guimp->circle_button->state == UI_STATE_CLICK)
+			else if (guimp->circle_button->state == UI_STATE_CLICK) // circle tool
 			{
 				if (guimp->first_set)
 					ui_surface_circle_draw(guimp->hidden_surface,
@@ -221,7 +237,7 @@ void	layer_draw(t_guimp *guimp)
 				}
 			}
 		}
-		else if (guimp->pipette_button->state == UI_STATE_CLICK)
+		else if (guimp->pipette_button->state == UI_STATE_CLICK) // pipette
 		{
 			if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
 				return ;
