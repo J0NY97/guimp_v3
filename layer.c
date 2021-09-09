@@ -80,9 +80,22 @@ void	layer_draw(t_guimp *guimp)
 		else if (guimp->text_button->state == UI_STATE_CLICK) // text
 		{
 			SDL_Surface	*surface;
+			t_ui_label	*label;
+			t_ui_radio	*radio;
+			t_ui_button	*button;
+			char		*full_font;
 
+			radio = guimp->font_radio.element;
+			if (!radio->active)
+				return ;
+			button = radio->active->element;
+			label = button->label.element;
 			guimp->text_input_str = ((t_ui_label *)((t_ui_input *)guimp->text_input->element)->label.element)->text;
-			surface = ui_surface_text_new(guimp->text_input_str, "libs/libui/fonts/ShareTechMono-Regular.ttf", guimp->size, guimp->combined_color);
+			full_font = ft_strjoin("fonts/", label->text);
+			surface = ui_surface_text_new(guimp->text_input_str, full_font, guimp->size, guimp->combined_color);
+			ft_strdel(&full_font);
+			if (!surface)
+				return ;
 			SDL_BlitScaled(surface, NULL, guimp->hidden_surface, &(SDL_Rect){guimp->win_main->mouse_pos.x, guimp->win_main->mouse_pos.y, surface->w * guimp->zoom, surface->h * guimp->zoom});
 			if (guimp->win_main->mouse_down == SDL_BUTTON_LEFT)
 				SDL_BlitSurface(surface, NULL, active_layer->surface, &(SDL_Rect){actual_pos.x, actual_pos.y, surface->w, surface->h});
@@ -105,6 +118,26 @@ void	layer_draw(t_guimp *guimp)
 		else if (guimp->sticker_button->state == UI_STATE_CLICK) // sticker
 		{
 			// choose sticker from dropdown menu and place that on the screen. blit surface the surface of the sticker surface... surface
+			SDL_Surface	*surface;
+			t_ui_label	*label;
+			t_ui_radio	*radio;
+			t_ui_button	*button;
+			char		*full_path;
+
+			radio = guimp->sticker_radio.element;
+			if (!radio->active)
+				return ;
+			button = radio->active->element;
+			label = button->label.element;
+			full_path = ft_strjoin("stickers/", label->text);
+			surface = ui_surface_image_new(full_path);
+			ft_strdel(&full_path);
+			if (!surface)
+				return ;
+			SDL_BlitScaled(surface, NULL, guimp->hidden_surface, &(SDL_Rect){guimp->win_main->mouse_pos.x, guimp->win_main->mouse_pos.y, surface->w * guimp->zoom, surface->h * guimp->zoom});
+			if (guimp->win_main->mouse_down == SDL_BUTTON_LEFT)
+				SDL_BlitSurface(surface, NULL, active_layer->surface, &(SDL_Rect){actual_pos.x, actual_pos.y, surface->w, surface->h});
+			SDL_FreeSurface(surface);
 		}
 		else if (guimp->move_button->state == UI_STATE_CLICK) // move
 		{

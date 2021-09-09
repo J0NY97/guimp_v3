@@ -51,7 +51,27 @@ void	load_fonts(t_guimp *guimp)
 */
 void	load_stickers(t_guimp *guimp)
 {
-	(void)guimp;
+	t_ui_recipe		*font_button_recipe;
+	t_dir_content	sticker_dir;
+	t_ui_element	*elem;
+	int				i;
+
+	get_dir_content(&sticker_dir, "stickers/");
+	font_button_recipe = ui_layout_get_recipe_by_id(&guimp->layout, "font_button");
+	i = -1;
+	while (++i < sticker_dir.file_amount)
+	{
+		if (ft_strendswith(sticker_dir.files[i], ".jpg"))
+			if (ft_strendswith(sticker_dir.files[i], ".png"))
+				if (ft_strendswith(sticker_dir.files[i], ".bmp"))
+					continue ;
+		elem = ui_element_create_from_recipe(guimp->win_toolbox, font_button_recipe, &guimp->layout);
+		add_to_drop_menu(guimp->sticker_dropdown, elem);
+		ui_label_text_set(&((t_ui_button *)elem->element)->label, sticker_dir.files[i]);
+		ft_printf("sticker button %s made.\n", sticker_dir.files[i]);
+	}
+	free_dir_content(&sticker_dir);
+
 }
 
 void	guimp_init(t_guimp *guimp)
@@ -262,6 +282,14 @@ int	main(void)
 
 	ui_radio_new(guimp.win_toolbox, &guimp.radio_shape_buttons);
 	((t_ui_radio *)guimp.radio_shape_buttons.element)->buttons = guimp.shape_button_list;
+
+
+	// drops
+	ui_radio_new(guimp.win_toolbox, &guimp.font_radio);
+	((t_ui_radio *)guimp.font_radio.element)->buttons = ((t_ui_menu *)((t_ui_dropdown *)guimp.font_dropdown->element)->menu.element)->children;;
+
+	ui_radio_new(guimp.win_toolbox, &guimp.sticker_radio);
+	((t_ui_radio *)guimp.sticker_radio.element)->buttons = ((t_ui_menu *)((t_ui_dropdown *)guimp.sticker_dropdown->element)->menu.element)->children;;
 	/*
 	 * Testing END
 	*/
@@ -281,8 +309,15 @@ int	main(void)
 			if (((t_ui_dropdown *)guimp.font_dropdown->element)->menu.show)
 			{
 				ui_dropdown_event(guimp.font_dropdown, e);
-				break ;
+				ui_radio_event(&guimp.font_radio, e);
 			}
+			else if (((t_ui_dropdown *)guimp.sticker_dropdown->element)->menu.show)
+			{
+				ui_dropdown_event(guimp.sticker_dropdown, e);
+				ui_radio_event(&guimp.sticker_radio, e);
+			}
+			else
+			{
 			// Event
 			ui_layout_event(&guimp.layout, e);
 			ui_layout_event(&guimp.layout_layer_edit, e);
@@ -300,6 +335,7 @@ int	main(void)
 			/*
 			 * Testing end
 			*/
+			}
 		}
 
 		// User

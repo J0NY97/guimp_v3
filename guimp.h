@@ -128,9 +128,10 @@ typedef struct s_guimp
 	t_ui_element	*text_input;
 	char			*text_input_str;
 	// drops
-	t_ui_element	test_menu;
 	t_ui_element	*font_dropdown;
 	t_ui_element	*sticker_dropdown;
+	t_ui_element	font_radio;
+	t_ui_element	sticker_radio;
 	// buttons
 	t_ui_element	*save_button;
 
