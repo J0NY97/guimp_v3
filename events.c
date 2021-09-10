@@ -163,27 +163,33 @@ void	button_move_layer_event(t_guimp *guimp)
 	{
 		if (guimp->selected_layer <= 0) // already first
 			return ;
-		if (guimp->layer_amount == guimp->selected_layer) // youre the only one
-			return ;
-		t_layer	*swap = &guimp->layers[guimp->selected_layer];
+
+		t_layer temporar = guimp->layers[guimp->selected_layer];
 		guimp->layers[guimp->selected_layer] = guimp->layers[guimp->selected_layer - 1];
-		guimp->layers[guimp->selected_layer - 1] = *swap;
+		guimp->layers[guimp->selected_layer - 1] = temporar;
+
+		vec4_swap(&guimp->layer_elems[guimp->selected_layer - 1]->pos, &guimp->layer_elems[guimp->selected_layer]->pos);
+
 		t_ui_element *temp = guimp->layer_elems[guimp->selected_layer];
 		guimp->layer_elems[guimp->selected_layer] = guimp->layer_elems[guimp->selected_layer - 1];
 		guimp->layer_elems[guimp->selected_layer - 1] = temp;
+		guimp->selected_layer--;
 	}
 	else if (ui_button(guimp->button_move_layer_down))
 	{
-		if (guimp->selected_layer >= MAX_LAYER_AMOUNT - 1) // already last
+		if (guimp->selected_layer >= guimp->layer_amount - 1) // already last, or youre the only one
 			return ;
-		if (guimp->layer_amount == guimp->selected_layer) // youre the only one
-			return ;
-		t_layer	*swap = &guimp->layers[guimp->selected_layer];
+
+		t_layer temporar = guimp->layers[guimp->selected_layer];
 		guimp->layers[guimp->selected_layer] = guimp->layers[guimp->selected_layer + 1];
-		guimp->layers[guimp->selected_layer + 1] = *swap;
+		guimp->layers[guimp->selected_layer + 1] = temporar;
+
+		vec4_swap(&guimp->layer_elems[guimp->selected_layer + 1]->pos, &guimp->layer_elems[guimp->selected_layer]->pos);
+
 		t_ui_element *temp = guimp->layer_elems[guimp->selected_layer];
-		guimp->layer_elems[guimp->selected_layer] = guimp->layer_elems[guimp->selected_layer - 1];
-		guimp->layer_elems[guimp->selected_layer - 1] = temp;
+		guimp->layer_elems[guimp->selected_layer] = guimp->layer_elems[guimp->selected_layer + 1];
+		guimp->layer_elems[guimp->selected_layer + 1] = temp;
+		guimp->selected_layer++;
 	}
 }
 
