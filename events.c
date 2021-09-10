@@ -81,19 +81,14 @@ void	new_layer_combination(t_guimp *guimp)
 	add_to_list(&((t_ui_radio *)guimp->radio_layer.element)->buttons, layer_button, UI_TYPE_ELEMENT);
 
 	// Making new actual layer
-	t_layer	*layer;
-
-	layer = &guimp->layers[guimp->layer_amount];
-	new_layer(layer,
+	layer_new(&guimp->layers[guimp->layer_amount],
 		guimp->new_layer_name_input_label->text,
 		vec4i(0, 0, atoi(guimp->new_layer_width_input_label->text), atoi(guimp->new_layer_height_input_label->text)),
 		&ui_list_get_element_by_id(((t_ui_menu *)layer_menu->element)->children, "layer_show_checkbox")->is_click);
-	ft_printf("New Layer Info : %s, %d %d.\n", layer->name, layer->pos.w, layer->pos.h);
 	
 	// Make the new layer the selected layer
 	guimp->selected_layer = guimp->layer_amount;
-	// make function for radio to togggle on specific button through code.
-	((t_ui_radio *)guimp->radio_layer.element)->active = layer_button;
+	ui_radio_button_toggle_on(&guimp->radio_layer, layer_button);
 	
 	guimp->layer_amount += 1;
 	ft_printf("[%s] New layer added. (%d)\n", __FUNCTION__, guimp->layer_amount);
@@ -115,6 +110,36 @@ void	button_add_layer_event(t_guimp *guimp)
 			ui_window_flag_set(guimp->win_layer_new, UI_WINDOW_HIDE);
 			ui_element_print(guimp->new_layer_ok_button);
 		}
+	}
+}
+
+void	button_remove_layer_event(t_guimp *guimp)
+{
+	if (ui_button(guimp->button_remove_layer))
+	{
+		if (guimp->layer_amount <= 1)
+			return ;
+		/*
+		layer_free(&guimp->layers[guimp->selected_layer]);
+		ui_menu_free(guimp->layer_elems[guimp->selected_layer]);
+		*/
+		guimp->layer_elems[guimp->selected_layer] = NULL;
+
+		int	i = -1;
+		for (; i < guimp->layer_amount - 1; ++i)
+		{
+			if (guimp->layer_elems[i] == NULL)
+			{
+				guimp->layers[i] = guimp->layers[i + 1];
+				guimp->layer_elems[i] = guimp->layer_elems[i + 1];
+				guimp->layer_elems[i + 1] = NULL;
+				ui_element_pos_set2(guimp->layer_elems[i], vec2(guimp->layer_elems[i]->pos.x, (guimp->layer_elems[i]->pos.h * i) + (10 * i) + 60));
+			}
+		}
+		guimp->layer_amount--;
+		t_ui_element *button = ui_menu_get_element_by_id(guimp->layer_elems[guimp->selected_layer], "layer_select_button");
+		if (button)
+			ui_radio_button_toggle_on(&guimp->radio_layer, button);
 	}
 }
 

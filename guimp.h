@@ -100,6 +100,7 @@ typedef struct s_guimp
 	t_ui_element	*layer_parent;
 	// Layer Buttons
 	t_ui_element	*button_add_layer;
+	t_ui_element	*button_remove_layer;
 	t_ui_element	*button_edit_layer;
 	t_ui_element	*button_move_layer_up;
 	t_ui_element	*button_move_layer_down;
@@ -180,6 +181,7 @@ typedef struct s_guimp
 // Events
 void				color_swatch_event(t_guimp *guimp);
 void				button_add_layer_event(t_guimp *guimp);
+void				button_remove_layer_event(t_guimp *guimp);
 void				button_edit_layer_event(t_guimp *guimp);
 void				button_move_layer_event(t_guimp *guimp);
 void				new_layer_ok_button_event(t_guimp *guimp);
@@ -190,7 +192,8 @@ void				edit_button_event(t_guimp *guimp);
 void				new_layer_combination(t_guimp *guimp);
 void				layer_elements_render(t_guimp *guimp);
 void				layer_elements_event(t_guimp *guimp, SDL_Event e);
-void				new_layer(t_layer *layer, char *name, t_vec4i pos, bool *show);
+void				layer_new(t_layer *layer, char *name, t_vec4i pos, bool *show);
+void				layer_free(t_layer *layer);
 void				resize_layer(t_layer *layer, t_vec2i wh);
 void				layer_event(t_guimp *guimp, SDL_Event e);
 void				layer_draw(t_guimp *guimp);

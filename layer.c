@@ -4,7 +4,7 @@
  * Not to confuse with the elements,
  * these are the actual drawing layers.
 */
-void	new_layer(t_layer *layer, char *name, t_vec4i pos, bool *show)
+void	layer_new(t_layer *layer, char *name, t_vec4i pos, bool *show)
 {
 	layer->name = ft_strdup(name);
 	layer->id = -1;
@@ -12,7 +12,16 @@ void	new_layer(t_layer *layer, char *name, t_vec4i pos, bool *show)
 	layer->surface = ui_surface_new(pos.w, pos.h);
 	layer->show = show;
 	SDL_FillRect(layer->surface, NULL, 0x00000000);
-	ui_surface_print(layer->surface);
+}
+
+/*
+ * takes in a non malloced pointer, so dont free actual 'layer';
+*/
+void	layer_free(t_layer *layer)
+{
+	ft_strdel(&layer->name);	
+	SDL_FreeSurface(layer->surface);
+	layer->show = NULL;
 }
 
 void	resize_layer(t_layer *layer, t_vec2i wh)
@@ -21,7 +30,7 @@ void	resize_layer(t_layer *layer, t_vec2i wh)
 
 	if (!layer)
 	{
-		new_layer(layer, "no_name_given", vec4i(0, 0, wh.x, wh.y), NULL);
+		layer_new(layer, "no_name_given", vec4i(0, 0, wh.x, wh.y), NULL);
 		return ;
 	}
 	new_surface = ui_surface_new(wh.x, wh.y);
@@ -44,7 +53,7 @@ void	layer_event(t_guimp *guimp, SDL_Event e)
 	ii = -1;
 	while (++ii < guimp->layer_amount)
 	{
-		button = ui_list_get_element_by_id(((t_ui_menu *)guimp->layer_elems[ii]->element)->children, "layer_select_button");
+		button = ui_menu_get_element_by_id(guimp->layer_elems[ii], "layer_select_button");
 		if (ui_button(button))
 		{
 			guimp->selected_layer = ii;
@@ -108,7 +117,7 @@ void	layer_draw(t_guimp *guimp)
 				return ;
 			button = radio->active->element;
 			label = button->label.element;
-			guimp->text_input_str = ((t_ui_label *)((t_ui_input *)guimp->text_input->element)->label.element)->text;
+			guimp->text_input_str = ui_input_label_get(guimp->text_input)->text;
 			full_font = ft_strjoin("fonts/", label->text);
 			surface = ui_surface_text_new(guimp->text_input_str, full_font, guimp->size, guimp->combined_color);
 			ft_strdel(&full_font);
@@ -282,7 +291,7 @@ void	layer_render(t_guimp *guimp)
 		0xffffbe00);
 
 	// Make dotted outline around the selected layer dimensions;
-	if (guimp->selected_layer > 0 && guimp->selected_layer < guimp->layer_amount)
+	if (guimp->selected_layer >= 0 && guimp->selected_layer < guimp->layer_amount)
 	{
 		// figure out layers position relative to image;
 		t_vec2i	relative_layer_pos;
@@ -305,11 +314,6 @@ void	layer_render(t_guimp *guimp)
 	else
 		SDL_UpdateTexture(guimp->final_image_texture, NULL, guimp->final_image.surface->pixels, guimp->final_image.surface->pitch);
 	// final image
-	/*
-	SDL_SetTextureBlendMode(guimp->win_main->texture, SDL_BLENDMODE_BLEND);
-	SDL_SetTextureBlendMode(guimp->final_image_texture, SDL_BLENDMODE_BLEND);
-	*/
-
 	SDL_SetRenderTarget(guimp->win_main->renderer, guimp->win_main->texture);
 	SDL_RenderCopy(guimp->win_main->renderer, guimp->final_image_texture, NULL, &(SDL_Rect){guimp->final_image.pos.x, guimp->final_image.pos.y, guimp->final_image.pos.w * guimp->zoom, guimp->final_image.pos.h * guimp->zoom});
 	SDL_SetRenderTarget(guimp->win_main->renderer, NULL);
@@ -318,7 +322,6 @@ void	layer_render(t_guimp *guimp)
 	SDL_RenderClear(guimp->win_main->renderer);
 
 	// Hidden surface
-
 	SDL_SetTextureAlphaMod(guimp->hidden_texture, 255);
 	SDL_SetTextureBlendMode(guimp->hidden_texture, SDL_BLENDMODE_BLEND);
 
@@ -326,10 +329,6 @@ void	layer_render(t_guimp *guimp)
 	SDL_RenderCopy(guimp->win_main->renderer, guimp->hidden_texture, NULL, NULL);
 
 	SDL_FillRect(guimp->hidden_surface, NULL, 0x00000000);
-	/*
-	SDL_SetRenderTarget(guimp->win_main->renderer, guimp->hidden_texture);
-	SDL_RenderClear(guimp->win_main->renderer);
-	*/
 
 	// Clear Render Target
 	SDL_SetRenderTarget(guimp->win_main->renderer, NULL);

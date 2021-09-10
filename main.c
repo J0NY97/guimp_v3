@@ -4,6 +4,7 @@ void	user_events(t_guimp *guimp)
 {
 	// Layer button events
 	button_add_layer_event(guimp);
+	button_remove_layer_event(guimp);
 	button_edit_layer_event(guimp);
 	button_move_layer_event(guimp);
 	// Other button events
@@ -85,7 +86,7 @@ void	guimp_init(t_guimp *guimp)
 	ui_layout_load(&guimp->layout, "layout.ui");
 	// Main Win
 	guimp->win_main = ui_layout_get_window_by_id(&guimp->layout, "main_window");
-	new_layer(&guimp->final_image, "Image", vec4i(10, 10, 1280, 720), NULL);
+	layer_new(&guimp->final_image, "Image", vec4i(10, 10, 1280, 720), NULL);
 	SDL_FillRect(guimp->final_image.surface, NULL, 0xff000000); // fill image with black so the alpha:ed layers can show.
 	guimp->final_image_texture = NULL;
 	guimp->selected_layer = -1;
@@ -101,7 +102,9 @@ void	toolbox_window_init(t_guimp *guimp)
 	guimp->win_toolbox = ui_layout_get_window_by_id(&guimp->layout, "toolbox_window");
 	guimp->layer_recipe = ui_layout_get_recipe_by_id(&guimp->layout, "layer");
 	guimp->layer_parent = ui_layout_get_element_by_id(&guimp->layout, "layer_menu");
+	// Layer buttons
 	guimp->button_add_layer = ui_layout_get_element_by_id(&guimp->layout, "button_add_layer");
+	guimp->button_remove_layer = ui_layout_get_element_by_id(&guimp->layout, "button_remove_layer");
 	guimp->button_edit_layer = ui_layout_get_element_by_id(&guimp->layout, "button_edit_layer");
 	guimp->button_move_layer_up = ui_layout_get_element_by_id(&guimp->layout, "button_move_layer_up");
 	guimp->button_move_layer_down = ui_layout_get_element_by_id(&guimp->layout, "button_move_layer_down");
@@ -361,6 +364,8 @@ int	main(void)
 				guimp.final_image.pos.x = guimp.win_main->pos.w / 2 - guimp.final_image.pos.w / 2;
 				guimp.final_image.pos.y = guimp.win_main->pos.h / 2 - guimp.final_image.pos.h / 2;
 			}
+			if (e.key.keysym.scancode == SDL_SCANCODE_P)
+				ui_element_print(((t_ui_radio *)guimp.radio_layer.element)->active);
 			// dropdown elems will be evented here, we dont want anything else to get evented if its open;
 			// i hope i come up with other way of doing this.
 			if (((t_ui_dropdown *)guimp.font_dropdown->element)->menu.show)
