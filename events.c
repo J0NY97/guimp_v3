@@ -8,6 +8,7 @@ t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name, int nth_layer)
 	t_ui_recipe		*recipe_menu;
 	t_ui_recipe		*recipe_show;
 	t_ui_recipe		*recipe_select;
+	char			temp[20];
 
 	recipe_menu = ui_layout_get_recipe_by_id(&guimp->layout, "layer");
 	recipe_show = ui_layout_get_recipe_by_id(&guimp->layout, "layer_show_checkbox");
@@ -19,6 +20,7 @@ t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name, int nth_layer)
 
 	ui_element_parent_set(menu, guimp->layer_parent, UI_TYPE_ELEMENT);
 	ui_element_pos_set2(menu, vec2(menu->pos.x, (menu->pos.h * nth_layer) + (nth_layer * 10) + menu->pos.y));
+	ui_element_id_set(menu, ft_strjoin("layer", ft_b_itoa(nth_layer, temp)));
 
 	ui_menu_add(menu, show);
 	ui_menu_add(menu, select);
@@ -97,27 +99,59 @@ void	new_layer_combination(t_guimp *guimp)
 	ft_printf("[%s] New layer added. (%d)\n", __FUNCTION__, guimp->layer_amount);
 }
 
-void	new_layer_ok_button_event(t_guimp *guimp)
+void	button_add_layer_event(t_guimp *guimp)
 {
-	if (SDL_GetWindowFlags(guimp->win_layer_edit->win) & SDL_WINDOW_SHOWN) // i dont want to have to do this (doenst really make sense since the button is_click == 0 and ui_button() should only return 1 if the is_click == 1...)
+	if (ui_button(guimp->button_add_layer))
+	{
+		ui_window_flag_set(guimp->win_layer_new, UI_WINDOW_SHOW);
+		SDL_RaiseWindow(guimp->win_layer_new->win);
+	}
+	// new layer window events
+	if (SDL_GetWindowFlags(guimp->win_layer_new->win) & SDL_WINDOW_SHOWN) // i dont want to have to do this (doenst really make sense since the button is_click == 0 and ui_button() should only return 1 if the is_click == 1...)
 	{
 		if (ui_button(guimp->new_layer_ok_button))
 		{
 			new_layer_combination(guimp);
-			ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_HIDE);
+			ui_window_flag_set(guimp->win_layer_new, UI_WINDOW_HIDE);
 			ui_element_print(guimp->new_layer_ok_button);
 		}
 	}
 }
 
-void	layer_plus_button_event(t_guimp *guimp)
+void	button_edit_layer_event(t_guimp *guimp)
 {
-	if (ui_button(guimp->layer_plus_button))
+	char	temp[20];
+
+	if (guimp->selected_layer < 0 || guimp->selected_layer >= MAX_LAYER_AMOUNT)
+		return ;
+	if (ui_button(guimp->button_edit_layer))
 	{
 		ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_SHOW);
 		SDL_RaiseWindow(guimp->win_layer_edit->win);
+		guimp->win_layer_edit->textures_recreate = 1; // this is how to fix small bug;
+		// fill with the current info of the layer
+		ui_label_text_set(&((t_ui_input *)guimp->input_edit_layer_name->element)->label,
+			guimp->layers[guimp->selected_layer].name);	
+		ui_label_text_set(&((t_ui_input *)guimp->input_edit_layer_width->element)->label,
+			ft_b_itoa(guimp->layers[guimp->selected_layer].pos.w, temp));	
+		ui_label_text_set(&((t_ui_input *)guimp->input_edit_layer_height->element)->label,
+			ft_b_itoa(guimp->layers[guimp->selected_layer].pos.h, temp));	
 	}
-	new_layer_ok_button_event(guimp);
+	// the window events
+	if (SDL_GetWindowFlags(guimp->win_layer_edit->win) & SDL_WINDOW_SHOWN) 
+	{
+		if (ui_button(guimp->button_edit_layer_ok))
+		{
+			resize_layer(&guimp->layers[guimp->selected_layer], vec2i(
+				atoi(((t_ui_label *)((t_ui_input *)guimp->input_edit_layer_width->element)->label.element)->text),
+				atoi(((t_ui_label *)((t_ui_input *)guimp->input_edit_layer_height->element)->label.element)->text)));
+			ft_strdel(&guimp->layers[guimp->selected_layer].name);
+			guimp->layers[guimp->selected_layer].name
+					= ft_strdup(((t_ui_label *)((t_ui_input *)guimp->input_edit_layer_name->element)->label.element)->text);
+			ui_label_text_set(&((t_ui_button *)ui_list_get_element_by_id(((t_ui_menu *)guimp->layer_elems[guimp->selected_layer]->element)->children, "layer_select_button")->element)->label, guimp->layers[guimp->selected_layer].name);
+			ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_HIDE);
+		}
+	}
 }
 
 void	color_swatch_event(t_guimp *guimp)
@@ -164,18 +198,13 @@ void	color_swatch_event(t_guimp *guimp)
 void	save_button_event(t_guimp *guimp)
 {
 	if (ui_button(guimp->save_button))
-		save_surface(guimp->final_image.surface, "image.png");
-}
-
-void	new_image_ok_button_event(t_guimp *guimp)
-{
-	if (ui_button(guimp->new_image_ok_button))
 	{
-		int w = atoi(guimp->new_image_width_input_label->text);
-		int h = atoi(guimp->new_image_height_input_label->text);
-		ft_printf("we want iamge size of : %d %d\n", w, h);
-		resize_layer(&guimp->final_image, vec2i(w, h));
+		ft_printf("i like to party.\n");
+		ui_window_flag_set(guimp->win_save_image, UI_WINDOW_SHOW);
+		SDL_RaiseWindow(guimp->win_save_image->win);
 	}
+	if (ui_button(guimp->button_save_image_ok))
+		save_surface(guimp->final_image.surface, ui_input_text_get(guimp->input_save_image_name));
 }
 
 void	edit_button_event(t_guimp *guimp)
@@ -185,7 +214,15 @@ void	edit_button_event(t_guimp *guimp)
 		ui_window_flag_set(guimp->win_image_edit, UI_WINDOW_SHOW);
 		SDL_RaiseWindow(guimp->win_image_edit->win);
 	}
-	new_image_ok_button_event(guimp);
+	if (ui_button(guimp->new_image_ok_button))
+	{
+		int w = atoi(guimp->new_image_width_input_label->text);
+		int h = atoi(guimp->new_image_height_input_label->text);
+		ft_printf("we want iamge size of : %d %d\n", w, h);
+		resize_layer(&guimp->final_image, vec2i(w, h));
+		SDL_DestroyTexture(guimp->final_image_texture);
+		guimp->final_image_texture = SDL_CreateTextureFromSurface(guimp->win_main->renderer, guimp->final_image.surface);
+	}
 }
 
 

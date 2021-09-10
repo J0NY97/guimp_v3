@@ -7,6 +7,7 @@
 void	new_layer(t_layer *layer, char *name, t_vec4i pos, bool *show)
 {
 	layer->name = ft_strdup(name);
+	layer->id = -1;
 	layer->pos = pos;
 	layer->surface = ui_surface_new(pos.w, pos.h);
 	layer->show = show;

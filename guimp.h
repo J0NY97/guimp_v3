@@ -27,11 +27,13 @@ typedef struct s_dir_content
 */
 /*
  * bool		*show;		pointer to the layer_show_checkbox->is_click
+ * int		id;			how manyeth in the order;
 */
 typedef struct s_layer
 {
 	t_vec4i			pos;
 	char			*name;
+	int				id;
 	SDL_Surface		*surface;
 	bool			*show;
 }					t_layer;
@@ -96,7 +98,9 @@ typedef struct s_guimp
 	t_ui_recipe		*layer_recipe;
 	t_ui_element	*layer_elems[5];
 	t_ui_element	*layer_parent;
-	t_ui_element	*layer_plus_button;
+	// Layer Buttons
+	t_ui_element	*button_add_layer;
+	t_ui_element	*button_edit_layer;
 	// Color
 	t_ui_element	*color_swatch;
 	t_ui_element	*red_slider;
@@ -139,12 +143,21 @@ typedef struct s_guimp
 	////////////////
 	// New Layer Win
 	/////////////////
-	t_ui_layout		layout_layer_edit;
-	t_ui_window		*win_layer_edit;
+	t_ui_layout		layout_layer;
+	t_ui_window		*win_layer_new;
 	t_ui_element	*new_layer_ok_button;
 	t_ui_label		*new_layer_name_input_label;
 	t_ui_label		*new_layer_width_input_label;
 	t_ui_label		*new_layer_height_input_label;
+
+	////////////////
+	// Edit Layer Win
+	/////////////////
+	t_ui_window		*win_layer_edit;
+	t_ui_element	*button_edit_layer_ok;
+	t_ui_element	*input_edit_layer_name;
+	t_ui_element	*input_edit_layer_width;
+	t_ui_element	*input_edit_layer_height;
 
 	////////////////
 	// New Image Win
@@ -153,11 +166,19 @@ typedef struct s_guimp
 	t_ui_element	*new_image_ok_button;
 	t_ui_label		*new_image_width_input_label;
 	t_ui_label		*new_image_height_input_label;
+
+	////////////////
+	// Save Image Win
+	/////////////////
+	t_ui_window		*win_save_image;
+	t_ui_element	*input_save_image_name;
+	t_ui_element	*button_save_image_ok;
 }					t_guimp;
 
 // Events
 void				color_swatch_event(t_guimp *guimp);
-void				layer_plus_button_event(t_guimp *guimp);
+void				button_add_layer_event(t_guimp *guimp);
+void				button_edit_layer_event(t_guimp *guimp);
 void				new_layer_ok_button_event(t_guimp *guimp);
 void				save_button_event(t_guimp *guimp);
 void				edit_button_event(t_guimp *guimp);

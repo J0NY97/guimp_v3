@@ -2,7 +2,10 @@
 
 void	user_events(t_guimp *guimp)
 {
-	layer_plus_button_event(guimp);
+	// Layer button events
+	button_add_layer_event(guimp);
+	button_edit_layer_event(guimp);
+	// Other button events
 	color_swatch_event(guimp);
 	save_button_event(guimp);
 	edit_button_event(guimp);
@@ -93,7 +96,8 @@ void	guimp_init(t_guimp *guimp)
 	guimp->win_toolbox = ui_layout_get_window_by_id(&guimp->layout, "toolbox_window");
 	guimp->layer_recipe = ui_layout_get_recipe_by_id(&guimp->layout, "layer");
 	guimp->layer_parent = ui_layout_get_element_by_id(&guimp->layout, "layer_menu");
-	guimp->layer_plus_button = ui_layout_get_element_by_id(&guimp->layout, "button_add_layer");
+	guimp->button_add_layer = ui_layout_get_element_by_id(&guimp->layout, "button_add_layer");
+	guimp->button_edit_layer = ui_layout_get_element_by_id(&guimp->layout, "button_edit_layer");
 	// Color Stuff
 	guimp->color_swatch = ui_layout_get_element_by_id(&guimp->layout, "color_swatch");
 	guimp->red_slider = ui_layout_get_element_by_id(&guimp->layout, "r_slider");
@@ -121,11 +125,11 @@ void	guimp_init(t_guimp *guimp)
 	guimp->edit_button = ui_layout_get_element_by_id(&guimp->layout, "edit_image_button");
 }
 
-void	layer_edit_window_init(t_guimp	*guimp)
+void	new_layer_window_init(t_guimp *guimp)
 {
 	int	result;
 
-	result = ui_layout_load(&guimp->layout_layer_edit, "layer_edit.ui");
+	result = ui_layout_load(&guimp->layout_layer, "layer_new.ui");
 	if (!result)
 	{
 		ft_printf("[%s] Couldnt open/read layout.\n", __FUNCTION__);
@@ -133,24 +137,40 @@ void	layer_edit_window_init(t_guimp	*guimp)
 	}
 	else
 		ft_printf("[%s] Layout read and returned.\n", __FUNCTION__);
-	guimp->win_layer_edit = ui_layout_get_window_by_id(&guimp->layout_layer_edit, "layer_edit_window");
-	if (!guimp->win_layer_edit)
+	guimp->win_layer_new = ui_layout_get_window_by_id(&guimp->layout_layer, "layer_edit_window");
+	if (!guimp->win_layer_new)
 	{
 		ft_printf("[%s] Couldnt find window from layout.\n", __FUNCTION__);
 		exit(0);
 	}
 	else
 		ft_printf("[%s] Correct window got.\n", __FUNCTION__);
-	guimp->new_layer_ok_button = ui_layout_get_element_by_id(&guimp->layout_layer_edit, "button_ok");
-	guimp->new_layer_name_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer_edit, "input_name")->element)->label.element;
-	guimp->new_layer_width_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer_edit, "input_width")->element)->label.element;
-	guimp->new_layer_height_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer_edit, "input_height")->element)->label.element;
+	guimp->new_layer_ok_button = ui_layout_get_element_by_id(&guimp->layout_layer, "button_ok");
+	guimp->new_layer_name_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer, "input_name")->element)->label.element;
+	guimp->new_layer_width_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer, "input_width")->element)->label.element;
+	guimp->new_layer_height_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer, "input_height")->element)->label.element;
 
 	// New Image win
-	guimp->win_image_edit = ui_layout_get_window_by_id(&guimp->layout_layer_edit, "image_edit_window");
-	guimp->new_image_ok_button = ui_layout_get_element_by_id(&guimp->layout_layer_edit, "button_ok_image");
-	guimp->new_image_width_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer_edit, "input_width_image")->element)->label.element;
-	guimp->new_image_height_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer_edit, "input_height_image")->element)->label.element;
+	guimp->win_image_edit = ui_layout_get_window_by_id(&guimp->layout_layer, "image_edit_window");
+	guimp->new_image_ok_button = ui_layout_get_element_by_id(&guimp->layout_layer, "button_ok_image");
+	guimp->new_image_width_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer, "input_width_image")->element)->label.element;
+	guimp->new_image_height_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer, "input_height_image")->element)->label.element;
+}
+
+void	edit_layer_window_init(t_guimp *guimp)
+{
+	guimp->win_layer_edit = ui_layout_get_window_by_id(&guimp->layout, "window_edit_layer");
+	guimp->button_edit_layer_ok = ui_layout_get_element_by_id(&guimp->layout, "button_edit_layer_ok");
+	guimp->input_edit_layer_name = ui_layout_get_element_by_id(&guimp->layout, "input_edit_layer_name");
+	guimp->input_edit_layer_width = ui_layout_get_element_by_id(&guimp->layout, "input_edit_layer_width");
+	guimp->input_edit_layer_height = ui_layout_get_element_by_id(&guimp->layout, "input_edit_layer_height");
+}
+
+void	save_image_window_init(t_guimp *guimp)
+{
+	guimp->win_save_image = ui_layout_get_window_by_id(&guimp->layout, "window_save_image");
+	guimp->input_save_image_name = ui_layout_get_element_by_id(&guimp->layout, "input_save_image_name");
+	guimp->button_save_image_ok = ui_layout_get_element_by_id(&guimp->layout, "button_save_image_ok");
 }
 
 int	main(void)
@@ -183,6 +203,21 @@ int	main(void)
 		ui_surface_line_draw(surface, vec2i(w - 1, w - 1), vec2i(0, 0), 0x00); // bot right, top left
 	}
 	ft_printf("Reduced : %f\n", ft_timer_end());
+	ft_timer_start();
+	i = -1;
+	while (++i < iter)
+	{
+		ui_surface_line_draw_v2(surface, vec2i(0, 0), vec2i(w - 1, 0), 0x00); // left, right
+		ui_surface_line_draw_v2(surface, vec2i(w - 1, 0), vec2i(0, 0), 0x00); // right, left
+		ui_surface_line_draw_v2(surface, vec2i(0, 0), vec2i(0, w - 1), 0x00); // top, bot
+		ui_surface_line_draw_v2(surface, vec2i(0, w - 1), vec2i(0, 0), 0x00); // bot , top
+
+		ui_surface_line_draw_v2(surface, vec2i(0, 0), vec2i(w - 1, w - 1), 0x00); // top left, bot right
+		ui_surface_line_draw_v2(surface, vec2i(w - 1, 0), vec2i(0, w - 1), 0x00); // top right, bot left
+		ui_surface_line_draw_v2(surface, vec2i(0, w - 1), vec2i(w - 1, 0), 0x00); // bot left, top right
+		ui_surface_line_draw_v2(surface, vec2i(w - 1, w - 1), vec2i(0, 0), 0x00); // bot right, top left
+	}
+	ft_printf("reduced_v2 %f\n", ft_timer_end());
 	ft_timer_start();
 	i = -1;
 	while (++i < iter)
@@ -247,9 +282,10 @@ int	main(void)
 	 * circle testing
 	*/
 
-
 	guimp_init(&guimp);
-	layer_edit_window_init(&guimp);
+	new_layer_window_init(&guimp);
+	edit_layer_window_init(&guimp);
+	save_image_window_init(&guimp);
 	run = 1;
 
 	/*
@@ -327,7 +363,7 @@ int	main(void)
 			{
 			// Event
 			ui_layout_event(&guimp.layout, e);
-			ui_layout_event(&guimp.layout_layer_edit, e);
+			ui_layout_event(&guimp.layout_layer, e);
 
 			// Layer
 			layer_elements_event(&guimp, e);
@@ -364,7 +400,7 @@ int	main(void)
 
 		// Render
 		ui_layout_render(&guimp.layout);
-		ui_layout_render(&guimp.layout_layer_edit);
+		ui_layout_render(&guimp.layout_layer);
 	}
 	return (0);
 }

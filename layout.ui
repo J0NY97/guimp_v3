@@ -371,6 +371,14 @@ Button button_remove_layer
 	button_label;
 }
 
+Button button_edit_layer
+{
+	pos : 70, 10, 20, 20;
+	title : "E";
+	button_elem;
+	button_label;
+}
+
 Button button_up_layer
 {
 	pos : 140, 10, 20, 20;
@@ -409,6 +417,7 @@ Menu layer_menu
 	pos : 10, 550, 200, 40;
 	button_add_layer;
 	button_remove_layer;
+	button_edit_layer;
 	button_up_layer;
 	button_down_layer;
 }
@@ -424,7 +433,6 @@ Window toolbox_window
 	other_tool_menu;
 	yet_another_menu;
 	layer_menu;
-	flag : resizeable;
 }
 
 // Middle Menu
@@ -443,26 +451,92 @@ Button font_button
 }
 
 // save screen
-Label image_name_label
+Label label_save_image_name
 {
 	pos : 10, 10, 50, 20;
 	title : "Name :" 
 }
-Input image_name_input
+Input input_save_image_name
 {
-	pos : 70, 10, 50, 20;
+	pos : 70, 10, 100, 20;
 	title : "image.png";
 }
-Button image_save_button_ok
+Button button_save_image_ok
 {
 	pos : 50, 50, 50, 20;
 	title : "OK";
 }
-Window save_window
+Window window_save_image
 {
-	pos : 320, 270, 150, 100;
+	pos : 320, 270, 200, 100;
+	title : "Save Image";
 	bg_color : 0xffb0b0b0;
-	image_name_label;
-	image_name_input;
-	image_save_button_ok;
+	flag : hide;
+	label_save_image_name;
+	input_save_image_name;
+	button_save_image_ok;
+}
+
+// Edit Layer Window
+Element label_edit_elem
+{
+	pos : 10, 10, 50, 20;
+}
+Element input_edit_elem
+{
+	pos : 70, 10, 100, 20;
+}
+
+Label label_edit_layer_name
+{
+	title : "Name :";
+	label_edit_elem;
+}
+Input input_edit_layer_name
+{
+	input_edit_elem;
+}
+
+Label label_edit_layer_width
+{
+	pos.y : 40;
+	title : "Width :";
+	label_edit_elem;
+}
+Input input_edit_layer_width
+{
+	pos.y : 40;
+	input_edit_elem;
+}
+
+Label label_edit_layer_height
+{
+	pos.y : 70;
+	title : "Height :";
+	label_edit_elem;
+}
+Input input_edit_layer_height
+{
+	pos.y : 70;
+	input_edit_elem;
+}
+
+Button button_edit_layer_ok
+{
+	pos : 140, 110, 50, 20;
+	title : "OK";
+}
+Window window_edit_layer
+{
+	pos : 320, 270, 200, 150;
+	bg_color : 0xffb0b0b0;
+	title : "Edit Layer";
+	flag : hide;
+	label_edit_layer_name;
+	input_edit_layer_name;
+	label_edit_layer_width;
+	input_edit_layer_width;
+	label_edit_layer_height;
+	input_edit_layer_height;
+	button_edit_layer_ok;
 }
