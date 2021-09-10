@@ -154,6 +154,39 @@ void	button_edit_layer_event(t_guimp *guimp)
 	}
 }
 
+/*
+ * The buttons that move the layers up and down.
+*/
+void	button_move_layer_event(t_guimp *guimp)
+{
+	if (ui_button(guimp->button_move_layer_up))
+	{
+		if (guimp->selected_layer <= 0) // already first
+			return ;
+		if (guimp->layer_amount == guimp->selected_layer) // youre the only one
+			return ;
+		t_layer	*swap = &guimp->layers[guimp->selected_layer];
+		guimp->layers[guimp->selected_layer] = guimp->layers[guimp->selected_layer - 1];
+		guimp->layers[guimp->selected_layer - 1] = *swap;
+		t_ui_element *temp = guimp->layer_elems[guimp->selected_layer];
+		guimp->layer_elems[guimp->selected_layer] = guimp->layer_elems[guimp->selected_layer - 1];
+		guimp->layer_elems[guimp->selected_layer - 1] = temp;
+	}
+	else if (ui_button(guimp->button_move_layer_down))
+	{
+		if (guimp->selected_layer >= MAX_LAYER_AMOUNT - 1) // already last
+			return ;
+		if (guimp->layer_amount == guimp->selected_layer) // youre the only one
+			return ;
+		t_layer	*swap = &guimp->layers[guimp->selected_layer];
+		guimp->layers[guimp->selected_layer] = guimp->layers[guimp->selected_layer + 1];
+		guimp->layers[guimp->selected_layer + 1] = *swap;
+		t_ui_element *temp = guimp->layer_elems[guimp->selected_layer];
+		guimp->layer_elems[guimp->selected_layer] = guimp->layer_elems[guimp->selected_layer - 1];
+		guimp->layer_elems[guimp->selected_layer - 1] = temp;
+	}
+}
+
 void	color_swatch_event(t_guimp *guimp)
 {
 	char	temp[20];
@@ -224,5 +257,3 @@ void	edit_button_event(t_guimp *guimp)
 		guimp->final_image_texture = SDL_CreateTextureFromSurface(guimp->win_main->renderer, guimp->final_image.surface);
 	}
 }
-
-

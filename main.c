@@ -5,6 +5,7 @@ void	user_events(t_guimp *guimp)
 	// Layer button events
 	button_add_layer_event(guimp);
 	button_edit_layer_event(guimp);
+	button_move_layer_event(guimp);
 	// Other button events
 	color_swatch_event(guimp);
 	save_button_event(guimp);
@@ -92,12 +93,18 @@ void	guimp_init(t_guimp *guimp)
 	guimp->combined_color = 0xffffffff;
 	guimp->zoom = 1.0f;
 	guimp->hidden_surface = ui_surface_new(guimp->win_main->pos.w, guimp->win_main->pos.h);
+}
+
+void	toolbox_window_init(t_guimp *guimp)
+{
 	// Toolbox Win
 	guimp->win_toolbox = ui_layout_get_window_by_id(&guimp->layout, "toolbox_window");
 	guimp->layer_recipe = ui_layout_get_recipe_by_id(&guimp->layout, "layer");
 	guimp->layer_parent = ui_layout_get_element_by_id(&guimp->layout, "layer_menu");
 	guimp->button_add_layer = ui_layout_get_element_by_id(&guimp->layout, "button_add_layer");
 	guimp->button_edit_layer = ui_layout_get_element_by_id(&guimp->layout, "button_edit_layer");
+	guimp->button_move_layer_up = ui_layout_get_element_by_id(&guimp->layout, "button_move_layer_up");
+	guimp->button_move_layer_down = ui_layout_get_element_by_id(&guimp->layout, "button_move_layer_down");
 	// Color Stuff
 	guimp->color_swatch = ui_layout_get_element_by_id(&guimp->layout, "color_swatch");
 	guimp->red_slider = ui_layout_get_element_by_id(&guimp->layout, "r_slider");
@@ -114,7 +121,7 @@ void	guimp_init(t_guimp *guimp)
 	guimp->size_slider = ui_layout_get_element_by_id(&guimp->layout, "size_slider");	
 	// text input
 	guimp->text_input = ui_layout_get_element_by_id(&guimp->layout, "text_input");	
-	guimp->text_input_str = ((t_ui_label *)((t_ui_input *)guimp->text_input->element)->label.element)->text;
+	guimp->text_input_str = ui_input_label_get(guimp->text_input)->text;
 	// loading fonts and stickers to the dropdown
 	guimp->font_dropdown = ui_layout_get_element_by_id(&guimp->layout, "font_drop");
 	load_fonts(guimp);
@@ -146,15 +153,15 @@ void	new_layer_window_init(t_guimp *guimp)
 	else
 		ft_printf("[%s] Correct window got.\n", __FUNCTION__);
 	guimp->new_layer_ok_button = ui_layout_get_element_by_id(&guimp->layout_layer, "button_ok");
-	guimp->new_layer_name_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer, "input_name")->element)->label.element;
-	guimp->new_layer_width_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer, "input_width")->element)->label.element;
-	guimp->new_layer_height_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer, "input_height")->element)->label.element;
+	guimp->new_layer_name_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout_layer, "input_name"));
+	guimp->new_layer_width_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout_layer, "input_width"));
+	guimp->new_layer_height_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout_layer, "input_height"));
 
 	// New Image win
 	guimp->win_image_edit = ui_layout_get_window_by_id(&guimp->layout_layer, "image_edit_window");
 	guimp->new_image_ok_button = ui_layout_get_element_by_id(&guimp->layout_layer, "button_ok_image");
-	guimp->new_image_width_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer, "input_width_image")->element)->label.element;
-	guimp->new_image_height_input_label = ((t_ui_input *)ui_layout_get_element_by_id(&guimp->layout_layer, "input_height_image")->element)->label.element;
+	guimp->new_image_width_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout_layer, "input_width_image"));
+	guimp->new_image_height_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout_layer, "input_height_image"));
 }
 
 void	edit_layer_window_init(t_guimp *guimp)
@@ -283,6 +290,7 @@ int	main(void)
 	*/
 
 	guimp_init(&guimp);
+	toolbox_window_init(&guimp);
 	new_layer_window_init(&guimp);
 	edit_layer_window_init(&guimp);
 	save_image_window_init(&guimp);
@@ -347,6 +355,12 @@ int	main(void)
 			ui_window_event(guimp.win_toolbox, e);
 			if (guimp.win_toolbox->wants_to_close)
 				run = 0;
+			if (e.key.keysym.scancode == SDL_SCANCODE_SPACE) // reseting the final_image to the center of the screen if it has disappeard somewhere.
+			{
+				guimp.zoom = 1.0;
+				guimp.final_image.pos.x = guimp.win_main->pos.w / 2 - guimp.final_image.pos.w / 2;
+				guimp.final_image.pos.y = guimp.win_main->pos.h / 2 - guimp.final_image.pos.h / 2;
+			}
 			// dropdown elems will be evented here, we dont want anything else to get evented if its open;
 			// i hope i come up with other way of doing this.
 			if (((t_ui_dropdown *)guimp.font_dropdown->element)->menu.show)

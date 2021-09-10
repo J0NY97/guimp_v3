@@ -379,7 +379,7 @@ Button button_edit_layer
 	button_label;
 }
 
-Button button_up_layer
+Button button_move_layer_up
 {
 	pos : 140, 10, 20, 20;
 	title : "^";
@@ -387,7 +387,7 @@ Button button_up_layer
 	button_label;
 }
 
-Button button_down_layer
+Button button_move_layer_down
 {
 	pos : 170, 10, 20, 20;
 	title : "V";
@@ -418,8 +418,8 @@ Menu layer_menu
 	button_add_layer;
 	button_remove_layer;
 	button_edit_layer;
-	button_up_layer;
-	button_down_layer;
+	button_move_layer_up;
+	button_move_layer_down;
 }
 
 // Toolbox window

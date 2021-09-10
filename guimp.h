@@ -101,6 +101,8 @@ typedef struct s_guimp
 	// Layer Buttons
 	t_ui_element	*button_add_layer;
 	t_ui_element	*button_edit_layer;
+	t_ui_element	*button_move_layer_up;
+	t_ui_element	*button_move_layer_down;
 	// Color
 	t_ui_element	*color_swatch;
 	t_ui_element	*red_slider;
@@ -179,6 +181,7 @@ typedef struct s_guimp
 void				color_swatch_event(t_guimp *guimp);
 void				button_add_layer_event(t_guimp *guimp);
 void				button_edit_layer_event(t_guimp *guimp);
+void				button_move_layer_event(t_guimp *guimp);
 void				new_layer_ok_button_event(t_guimp *guimp);
 void				save_button_event(t_guimp *guimp);
 void				edit_button_event(t_guimp *guimp);
