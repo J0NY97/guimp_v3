@@ -337,7 +337,6 @@ int	main(void)
 	ui_radio_new(guimp.win_toolbox, &guimp.radio_shape_buttons);
 	((t_ui_radio *)guimp.radio_shape_buttons.element)->buttons = guimp.shape_button_list;
 
-
 	// drops
 	ui_radio_new(guimp.win_toolbox, &guimp.font_radio);
 	((t_ui_radio *)guimp.font_radio.element)->buttons = ((t_ui_menu *)((t_ui_dropdown *)guimp.font_dropdown->element)->menu.element)->children;;
