@@ -76,7 +76,6 @@ void	load_stickers(t_guimp *guimp)
 		ft_printf("sticker button %s made.\n", sticker_dir.files[i]);
 	}
 	free_dir_content(&sticker_dir);
-
 }
 
 void	guimp_init(t_guimp *guimp)
