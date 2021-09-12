@@ -142,6 +142,7 @@ typedef struct s_guimp
 	// buttons
 	t_ui_element	*save_button;
 	t_ui_element	*edit_button;
+	t_ui_element	*clear_button;
 
 	////////////////
 	// New Layer Win
@@ -186,6 +187,7 @@ void				button_move_layer_event(t_guimp *guimp);
 void				new_layer_ok_button_event(t_guimp *guimp);
 void				save_button_event(t_guimp *guimp);
 void				edit_button_event(t_guimp *guimp);
+void				clear_button_event(t_guimp *guimp);
 
 // Layer
 void				new_layer_combination(t_guimp *guimp);

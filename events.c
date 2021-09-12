@@ -113,34 +113,45 @@ void	button_add_layer_event(t_guimp *guimp)
 	}
 }
 
+/*
+ * removes and reorders layer_elems;
+*/
+void	remove_nth_layer(t_guimp *guimp, int nth)
+{
+	t_ui_element	*button;
+	int				i;
+
+	if (nth < 0 || nth >= guimp->layer_amount)
+		return ;
+	layer_free(&guimp->layers[nth]);
+	/*
+	ui_menu_free(guimp->layer_elems[guimp->selected_layer]);
+	*/
+	guimp->layer_elems[nth] = NULL; // this should be removed when freeing it correctly;
+	i = nth;
+	for (; i < guimp->layer_amount - 1; ++i)
+	{
+		if (guimp->layer_elems[i] == NULL)
+		{
+			guimp->layers[i] = guimp->layers[i + 1];
+			guimp->layer_elems[i] = guimp->layer_elems[i + 1];
+			guimp->layer_elems[i + 1] = NULL;
+			ui_element_pos_set2(guimp->layer_elems[i], vec2(guimp->layer_elems[i]->pos.x, (guimp->layer_elems[i]->pos.h * i) + (10 * i) + 60));
+		}
+	}
+	guimp->layer_amount--;
+	guimp->selected_layer = ft_clamp(guimp->selected_layer - 1, 0, guimp->layer_amount);
+	if (guimp->layer_amount <= 0)
+		return ;
+	button = ui_menu_get_element_by_id(guimp->layer_elems[guimp->selected_layer], "layer_select_button");
+	if (button)
+		ui_radio_button_toggle_on(&guimp->radio_layer, button);
+}
+
 void	button_remove_layer_event(t_guimp *guimp)
 {
 	if (ui_button(guimp->button_remove_layer))
-	{
-		if (guimp->layer_amount <= 1)
-			return ;
-		/*
-		layer_free(&guimp->layers[guimp->selected_layer]);
-		ui_menu_free(guimp->layer_elems[guimp->selected_layer]);
-		*/
-		guimp->layer_elems[guimp->selected_layer] = NULL;
-
-		int	i = -1;
-		for (; i < guimp->layer_amount - 1; ++i)
-		{
-			if (guimp->layer_elems[i] == NULL)
-			{
-				guimp->layers[i] = guimp->layers[i + 1];
-				guimp->layer_elems[i] = guimp->layer_elems[i + 1];
-				guimp->layer_elems[i + 1] = NULL;
-				ui_element_pos_set2(guimp->layer_elems[i], vec2(guimp->layer_elems[i]->pos.x, (guimp->layer_elems[i]->pos.h * i) + (10 * i) + 60));
-			}
-		}
-		guimp->layer_amount--;
-		t_ui_element *button = ui_menu_get_element_by_id(guimp->layer_elems[guimp->selected_layer], "layer_select_button");
-		if (button)
-			ui_radio_button_toggle_on(&guimp->radio_layer, button);
-	}
+		remove_nth_layer(guimp, guimp->selected_layer);
 }
 
 void	button_edit_layer_event(t_guimp *guimp)
@@ -286,5 +297,22 @@ void	edit_button_event(t_guimp *guimp)
 		resize_layer(&guimp->final_image, vec2i(w, h));
 		SDL_DestroyTexture(guimp->final_image_texture);
 		guimp->final_image_texture = SDL_CreateTextureFromSurface(guimp->win_main->renderer, guimp->final_image.surface);
+	}
+}
+
+void	clear_button_event(t_guimp *guimp)
+{
+	int	i;
+	int	amount;
+
+	// remove all layers.
+	if (ui_button(guimp->clear_button))
+	{
+		i = -1;
+		amount = guimp->layer_amount;
+		ft_printf("[%s] Starting to remove %d layers.\n", __FUNCTION__, amount);
+		while (++i < guimp->layer_amount)
+			remove_nth_layer(guimp, 0);
+		ft_printf("[%s] %d layers removed.\n", __FUNCTION__, i);
 	}
 }

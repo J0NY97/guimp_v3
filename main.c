@@ -11,6 +11,7 @@ void	user_events(t_guimp *guimp)
 	color_swatch_event(guimp);
 	save_button_event(guimp);
 	edit_button_event(guimp);
+	clear_button_event(guimp);
 }
 
 void	user_render(t_guimp *guimp)
@@ -134,6 +135,7 @@ void	toolbox_window_init(t_guimp *guimp)
 	// other buttons
 	guimp->save_button = ui_layout_get_element_by_id(&guimp->layout, "save_button");
 	guimp->edit_button = ui_layout_get_element_by_id(&guimp->layout, "edit_image_button");
+	guimp->clear_button = ui_layout_get_element_by_id(&guimp->layout, "clear_button");
 }
 
 void	new_layer_window_init(t_guimp *guimp)
