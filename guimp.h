@@ -146,7 +146,6 @@ typedef struct s_guimp
 	////////////////
 	// New Layer Win
 	/////////////////
-	t_ui_layout		layout_layer;
 	t_ui_window		*win_layer_new;
 	t_ui_element	*new_layer_ok_button;
 	t_ui_label		*new_layer_name_input_label;

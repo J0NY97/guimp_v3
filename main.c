@@ -113,12 +113,6 @@ void	toolbox_window_init(t_guimp *guimp)
 	guimp->green_slider = ui_layout_get_element_by_id(&guimp->layout, "g_slider");
 	guimp->blue_slider = ui_layout_get_element_by_id(&guimp->layout, "b_slider");
 	guimp->alpha_slider = ui_layout_get_element_by_id(&guimp->layout, "a_slider");
-	ui_slider_render(guimp->red_slider); // this needs to go
-	ui_slider_render(guimp->blue_slider); // this needs to go
-	ui_slider_render(guimp->green_slider); // this needs to go
-	ui_surface_fill_rect(guimp->red_slider->textures[UI_STATE_DEFAULT], 0xffff0000, vec4i(0, guimp->red_slider->pos.h / 3, guimp->red_slider->pos.w, guimp->red_slider->pos.h / 3));
-	ui_surface_fill_rect(guimp->green_slider->textures[UI_STATE_DEFAULT], 0xff00ff00, vec4i(0, guimp->green_slider->pos.h / 3, guimp->green_slider->pos.w, guimp->green_slider->pos.h / 3));
-	ui_surface_fill_rect(guimp->blue_slider->textures[UI_STATE_DEFAULT], 0xff0000ff, vec4i(0, guimp->blue_slider->pos.h / 3, guimp->blue_slider->pos.w, guimp->blue_slider->pos.h / 3));
 	// size slider get
 	guimp->size_slider = ui_layout_get_element_by_id(&guimp->layout, "size_slider");	
 	// text input
@@ -144,17 +138,7 @@ void	toolbox_window_init(t_guimp *guimp)
 
 void	new_layer_window_init(t_guimp *guimp)
 {
-	int	result;
-
-	result = ui_layout_load(&guimp->layout_layer, "layer_new.ui");
-	if (!result)
-	{
-		ft_printf("[%s] Couldnt open/read layout.\n", __FUNCTION__);
-		exit(0);
-	}
-	else
-		ft_printf("[%s] Layout read and returned.\n", __FUNCTION__);
-	guimp->win_layer_new = ui_layout_get_window_by_id(&guimp->layout_layer, "layer_edit_window");
+	guimp->win_layer_new = ui_layout_get_window_by_id(&guimp->layout, "layer_edit_window");
 	if (!guimp->win_layer_new)
 	{
 		ft_printf("[%s] Couldnt find window from layout.\n", __FUNCTION__);
@@ -162,16 +146,16 @@ void	new_layer_window_init(t_guimp *guimp)
 	}
 	else
 		ft_printf("[%s] Correct window got.\n", __FUNCTION__);
-	guimp->new_layer_ok_button = ui_layout_get_element_by_id(&guimp->layout_layer, "button_ok");
-	guimp->new_layer_name_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout_layer, "input_name"));
-	guimp->new_layer_width_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout_layer, "input_width"));
-	guimp->new_layer_height_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout_layer, "input_height"));
+	guimp->new_layer_ok_button = ui_layout_get_element_by_id(&guimp->layout, "button_ok");
+	guimp->new_layer_name_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout, "input_name"));
+	guimp->new_layer_width_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout, "input_width"));
+	guimp->new_layer_height_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout, "input_height"));
 
 	// New Image win
-	guimp->win_image_edit = ui_layout_get_window_by_id(&guimp->layout_layer, "image_edit_window");
-	guimp->new_image_ok_button = ui_layout_get_element_by_id(&guimp->layout_layer, "button_ok_image");
-	guimp->new_image_width_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout_layer, "input_width_image"));
-	guimp->new_image_height_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout_layer, "input_height_image"));
+	guimp->win_image_edit = ui_layout_get_window_by_id(&guimp->layout, "image_edit_window");
+	guimp->new_image_ok_button = ui_layout_get_element_by_id(&guimp->layout, "button_ok_image");
+	guimp->new_image_width_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout, "input_width_image"));
+	guimp->new_image_height_input_label = ui_input_label_get(ui_layout_get_element_by_id(&guimp->layout, "input_height_image"));
 }
 
 void	edit_layer_window_init(t_guimp *guimp)
@@ -382,7 +366,6 @@ int	main(void)
 			{
 			// Event
 			ui_layout_event(&guimp.layout, e);
-			ui_layout_event(&guimp.layout_layer, e);
 
 			// Layer
 			layer_elements_event(&guimp, e);
@@ -419,7 +402,6 @@ int	main(void)
 
 		// Render
 		ui_layout_render(&guimp.layout);
-		ui_layout_render(&guimp.layout_layer);
 	}
 	return (0);
 }
