@@ -46,12 +46,12 @@ Input input_height
 
 Button button_ok
 {
-	pos : 0.89, 0.90, 50, 20;
+	pos : 140, 110, 50, 20;
 	title : "OK";
 }
 Window layer_edit_window
 {
-	pos : 320, 270, 500, 500;
+	pos : 320, 270, 200, 150;
 	title : "New Layer";
 	bg_color : 0xff5a615a;
 	flag : hide;

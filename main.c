@@ -116,9 +116,9 @@ void	toolbox_window_init(t_guimp *guimp)
 	ui_slider_render(guimp->red_slider); // this needs to go
 	ui_slider_render(guimp->blue_slider); // this needs to go
 	ui_slider_render(guimp->green_slider); // this needs to go
-	ui_texture_fill_rect(guimp->red_slider->win->renderer, guimp->red_slider->textures[UI_STATE_DEFAULT], 0xffff0000, vec4i(0, guimp->red_slider->pos.h / 3, guimp->red_slider->pos.w, guimp->red_slider->pos.h / 3));
-	ui_texture_fill_rect(guimp->green_slider->win->renderer, guimp->green_slider->textures[UI_STATE_DEFAULT], 0xff00ff00, vec4i(0, guimp->green_slider->pos.h / 3, guimp->green_slider->pos.w, guimp->green_slider->pos.h / 3));
-	ui_texture_fill_rect(guimp->blue_slider->win->renderer, guimp->blue_slider->textures[UI_STATE_DEFAULT], 0xff0000ff, vec4i(0, guimp->blue_slider->pos.h / 3, guimp->blue_slider->pos.w, guimp->blue_slider->pos.h / 3));
+	ui_surface_fill_rect(guimp->red_slider->textures[UI_STATE_DEFAULT], 0xffff0000, vec4i(0, guimp->red_slider->pos.h / 3, guimp->red_slider->pos.w, guimp->red_slider->pos.h / 3));
+	ui_surface_fill_rect(guimp->green_slider->textures[UI_STATE_DEFAULT], 0xff00ff00, vec4i(0, guimp->green_slider->pos.h / 3, guimp->green_slider->pos.w, guimp->green_slider->pos.h / 3));
+	ui_surface_fill_rect(guimp->blue_slider->textures[UI_STATE_DEFAULT], 0xff0000ff, vec4i(0, guimp->blue_slider->pos.h / 3, guimp->blue_slider->pos.w, guimp->blue_slider->pos.h / 3));
 	// size slider get
 	guimp->size_slider = ui_layout_get_element_by_id(&guimp->layout, "size_slider");	
 	// text input
@@ -129,6 +129,14 @@ void	toolbox_window_init(t_guimp *guimp)
 	load_fonts(guimp);
 	guimp->sticker_dropdown = ui_layout_get_element_by_id(&guimp->layout, "sticker_drop");
 	load_stickers(guimp);
+	// drops
+	ui_radio_new(guimp->win_toolbox, &guimp->font_radio);
+	((t_ui_radio *)guimp->font_radio.element)->buttons = ((t_ui_menu *)((t_ui_dropdown *)guimp->font_dropdown->element)->menu.element)->children;;
+	ui_radio_button_toggle_on(&guimp->font_radio, ((t_ui_radio *)guimp->font_radio.element)->buttons->content);
+
+	ui_radio_new(guimp->win_toolbox, &guimp->sticker_radio);
+	((t_ui_radio *)guimp->sticker_radio.element)->buttons = ((t_ui_menu *)((t_ui_dropdown *)guimp->sticker_dropdown->element)->menu.element)->children;;
+	ui_radio_button_toggle_on(&guimp->sticker_radio, ((t_ui_radio *)guimp->sticker_radio.element)->buttons->content);
 	// other buttons
 	guimp->save_button = ui_layout_get_element_by_id(&guimp->layout, "save_button");
 	guimp->edit_button = ui_layout_get_element_by_id(&guimp->layout, "edit_image_button");
@@ -336,12 +344,6 @@ int	main(void)
 	ui_radio_new(guimp.win_toolbox, &guimp.radio_shape_buttons);
 	((t_ui_radio *)guimp.radio_shape_buttons.element)->buttons = guimp.shape_button_list;
 
-	// drops
-	ui_radio_new(guimp.win_toolbox, &guimp.font_radio);
-	((t_ui_radio *)guimp.font_radio.element)->buttons = ((t_ui_menu *)((t_ui_dropdown *)guimp.font_dropdown->element)->menu.element)->children;;
-
-	ui_radio_new(guimp.win_toolbox, &guimp.sticker_radio);
-	((t_ui_radio *)guimp.sticker_radio.element)->buttons = ((t_ui_menu *)((t_ui_dropdown *)guimp.sticker_dropdown->element)->menu.element)->children;;
 	/*
 	 * Testing END
 	*/
