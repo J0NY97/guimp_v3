@@ -7,7 +7,7 @@ void	set_sliders_to_color(t_guimp *guimp, Uint32 color)
 {
 	t_ui_element	color_swatch_label;
 	t_rgba		rgba;
-	char		temp[20];
+	char		*temp;
 
 	rgba = hex_to_rgba(color);
 	color_swatch_label = ((t_ui_input *)guimp->color_swatch->element)->label;
@@ -17,8 +17,9 @@ void	set_sliders_to_color(t_guimp *guimp, Uint32 color)
 	ui_slider_value_set(guimp->alpha_slider, rgba.a);
 	guimp->combined_color = color;
 	ui_element_color_set(guimp->color_swatch, UI_STATE_DEFAULT, guimp->combined_color);
-	itoa(guimp->combined_color, temp, 16);
+	temp = ft_itoa_base(guimp->combined_color, 16);
 	ui_label_text_set(&color_swatch_label, temp);
+	ft_strdel(&temp);
 }
 
 /*

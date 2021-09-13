@@ -231,11 +231,11 @@ void	button_move_layer_event(t_guimp *guimp)
 
 void	color_swatch_event(t_guimp *guimp)
 {
-	char	temp[20];
-	t_ui_slider	*red_slider;
-	t_ui_slider	*green_slider;
-	t_ui_slider	*blue_slider;
-	t_ui_slider	*alpha_slider;
+	char			*temp;
+	t_ui_slider		*red_slider;
+	t_ui_slider		*green_slider;
+	t_ui_slider		*blue_slider;
+	t_ui_slider		*alpha_slider;
 	t_ui_element	input_label;
 
 	red_slider = guimp->red_slider->element;
@@ -249,8 +249,9 @@ void	color_swatch_event(t_guimp *guimp)
 		ui_element_color_set(guimp->color_swatch, UI_STATE_DEFAULT, guimp->combined_color);
 		if (!guimp->color_swatch->is_click)
 		{
-			itoa(guimp->combined_color, temp, 16);
+			temp = ft_itoa_base(guimp->combined_color, 16);
 			ui_label_text_set(&input_label, temp);
+			ft_strdel(&temp);
 		}
 	}
 	else if (guimp->color_swatch->is_click) // from input label set to sliders.
