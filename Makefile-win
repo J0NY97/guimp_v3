@@ -4,6 +4,7 @@ SRCS = \
 	./events.c \
 	./layer.c \
 	./help.c \
+	./floodfill.c \
 
 OBJS = $(SRCS:.c=.o)
 

@@ -141,6 +141,8 @@ void	layer_draw(t_guimp *guimp)
 		else if (guimp->flood_button->state == UI_STATE_CLICK) // flood fill
 		{
 			// yoink flood fill algorithm from the first version of guimp, or tbh should probably do it from scratch again, i remember it was horrible af.
+			if (guimp->win_main->mouse_down == SDL_BUTTON_LEFT)
+				flood_fill(active_layer->surface, guimp->combined_color, actual_pos.x , actual_pos.y);
 		}
 		else if (guimp->sticker_button->state == UI_STATE_CLICK) // sticker
 		{

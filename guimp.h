@@ -178,6 +178,9 @@ typedef struct s_guimp
 	t_ui_element	*button_save_image_ok;
 }					t_guimp;
 
+// Draw
+void				flood_fill(SDL_Surface *surface, Uint32 newcolor, int x, int y);
+
 // Events
 void				color_swatch_event(t_guimp *guimp);
 void				button_add_layer_event(t_guimp *guimp);

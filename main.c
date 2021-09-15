@@ -338,12 +338,12 @@ int	main(void)
 	guimp.win_toolbox->user_handled_event = 1;
 	while (run)
 	{
+		if (guimp.win_toolbox->wants_to_close)
+			run = 0;
 		while (SDL_PollEvent(&e))
 		{
 			ui_window_event(guimp.win_main, e);
 			ui_window_event(guimp.win_toolbox, e);
-			if (guimp.win_toolbox->wants_to_close)
-				run = 0;
 			if (e.key.keysym.scancode == SDL_SCANCODE_SPACE) // reseting the final_image to the center of the screen if it has disappeard somewhere.
 			{
 				guimp.zoom = 1.0;
