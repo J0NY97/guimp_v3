@@ -126,6 +126,7 @@ RAW =	add_to_list.c\
 		ft_toupper.c\
 		ft_wordcount.c\
 		ft_timer_func.c\
+		ft_lstdelone_nonfree.c\
 		get_next_line.c
 
 NAME = libft.a

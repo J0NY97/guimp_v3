@@ -153,5 +153,6 @@ char				*ft_b_itoa(int nbr, char *buffer);
 void				ft_arraydel(char **arr);
 double				ft_timer_end(void);
 void				ft_timer_start(void);
+void				ft_lstdelone_nonfree(t_list **lst, t_list *del);
 
 #endif
