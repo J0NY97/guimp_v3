@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/13 12:57:34 by nneronin          #+#    #+#             */
-/*   Updated: 2021/09/15 14:07:59 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/09/17 13:30:48 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ static enum
 
 typedef struct s_ff_pos
 {
-	unsigned short	x1;
-	unsigned short	x2;
-	unsigned short	y;
-	unsigned short	dir;
+	short	x1;
+	short	x2;
+	short	y;
+	short	dir;
 }					t_ff_pos;
 
 typedef struct s_flood_fill
@@ -101,7 +101,7 @@ static void	down_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor)
 	i = env->pos.y - 1;
 	env->pos.x1 = ft_max(env->pos.x1, 0);
 	env->pos.x2 = ft_min(env->pos.x2, surface->w);
-	x = env->pos.x1 - 1;
+	x = env->pos.x1 + 1;
 	while (++x < env->pos.x2)
 	{
 		y = env->pos.y;
@@ -126,7 +126,7 @@ static void	left_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor)
 	i = env->pos.y + 1;
 	env->pos.x1 = ft_max(env->pos.x1, 0);
 	env->pos.x2 = ft_min(env->pos.x2, surface->h);
-	y = env->pos.x1 - 1;
+	y = env->pos.x1 + 1;
 	while (++y < env->pos.x2)
 	{
 		x = env->pos.y;
@@ -187,14 +187,15 @@ void	flood_fill(SDL_Surface *surface, Uint32 newcolor, int x, int y)
 	t_flood_fill	env;
 
 	env.oldcolor = ((Uint32 *)surface->pixels)[y * surface->w + x];
-	if (env.oldcolor == newcolor)
+	if (env.oldcolor == newcolor || x < 0)
 		return ;
 	env.stackPointer = 0;
+	((Uint32 *)surface->pixels)[y * surface->w + x] = newcolor;
 	env.pos.x1 = x;
-	while (x < surface->w && clr_compare(surface, env.oldcolor, x, y))
-		((Uint32 *)surface->pixels)[y * surface->w + x++] = newcolor;
-	env.pos.x2 = x;
-	while (clr_compare(surface, env.oldcolor, env.pos.x1 - 1, y) && --env.pos.x1)
+	while (++x < surface->w && clr_compare(surface, env.oldcolor, x, y))
+		((Uint32 *)surface->pixels)[y * surface->w + x] = newcolor;
+	env.pos.x2 = x - 1;
+	while (--env.pos.x1 > -1 && clr_compare(surface, env.oldcolor, env.pos.x1, y))
 		((Uint32 *)surface->pixels)[y * surface->w + env.pos.x1] = newcolor;
 	env.pos.x1++;
 	if (y > 0)
