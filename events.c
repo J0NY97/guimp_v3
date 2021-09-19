@@ -87,7 +87,7 @@ void	new_layer_combination(t_guimp *guimp)
 	guimp->layer_elems[guimp->layer_amount] = layer_menu;
 	// adding layer to the radio buttons;
 	layer_button = ui_list_get_element_by_id(layer_menu->children, "layer_select_button");
-	add_to_list(&((t_ui_radio *)guimp->radio_layer.element)->buttons, layer_button, UI_TYPE_ELEMENT);
+	add_to_list(&guimp->radio_layer.children, layer_button, UI_TYPE_ELEMENT);
 
 	// Making new actual layer
 	layer_new(&guimp->layers[guimp->layer_amount],
@@ -152,7 +152,7 @@ void	remove_nth_layer(t_guimp *guimp, int nth)
 	guimp->selected_layer = ft_clamp(guimp->selected_layer - 1, 0, guimp->layer_amount);
 	if (guimp->layer_amount <= 0)
 		return ;
-	button = ui_menu_get_element_by_id(guimp->layer_elems[guimp->selected_layer], "layer_select_button");
+	button = ui_list_get_element_by_id(guimp->layer_elems[guimp->selected_layer]->children, "layer_select_button");
 	if (button)
 		ui_radio_button_toggle_on(&guimp->radio_layer, button);
 }
@@ -193,7 +193,7 @@ void	button_edit_layer_event(t_guimp *guimp)
 			ft_strdel(&guimp->layers[guimp->selected_layer].name);
 			guimp->layers[guimp->selected_layer].name
 					= ft_strdup(((t_ui_label *)((t_ui_input *)guimp->input_edit_layer_name->element)->label.element)->text);
-			ui_label_text_set(&((t_ui_button *)ui_list_get_element_by_id(((t_ui_menu *)guimp->layer_elems[guimp->selected_layer]->element)->children, "layer_select_button")->element)->label, guimp->layers[guimp->selected_layer].name);
+			ui_label_text_set(&((t_ui_button *)ui_list_get_element_by_id(guimp->layer_elems[guimp->selected_layer]->children, "layer_select_button")->element)->label, guimp->layers[guimp->selected_layer].name);
 			ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_HIDE);
 		}
 	}

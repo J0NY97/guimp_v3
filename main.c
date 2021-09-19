@@ -30,7 +30,6 @@ void	user_code(t_guimp *guimp)
 */
 void	load_fonts(t_guimp *guimp)
 {
-	/*
 	t_ui_recipe_v2		*font_button_recipe;
 	t_dir_content	font_dir;
 	t_ui_element	*elem;
@@ -45,13 +44,14 @@ void	load_fonts(t_guimp *guimp)
 	{
 		if (ft_strendswith(font_dir.files[i], ".ttf"))
 			continue ;
-		elem = ui_element_create_from_recipe(guimp->win_toolbox, font_button_recipe, &guimp->layout);
+		elem = ft_memalloc(sizeof(t_ui_element));
+		ui_element_new(guimp->win_toolbox, elem);
+		ui_element_edit(elem, font_button_recipe);
 		add_to_drop_menu(guimp->font_dropdown, elem);
 		ui_label_text_set(&((t_ui_button *)elem->element)->label, font_dir.files[i]);
 		ft_printf("font button %s made.\n", font_dir.files[i]);
 	}
 	free_dir_content(&font_dir);
-	*/
 }
 
 /*
@@ -59,7 +59,6 @@ void	load_fonts(t_guimp *guimp)
 */
 void	load_stickers(t_guimp *guimp)
 {
-	/*
 	t_ui_recipe_v2		*font_button_recipe;
 	t_dir_content	sticker_dir;
 	t_ui_element	*elem;
@@ -74,13 +73,14 @@ void	load_stickers(t_guimp *guimp)
 			if (ft_strendswith(sticker_dir.files[i], ".png"))
 				if (ft_strendswith(sticker_dir.files[i], ".bmp"))
 					continue ;
-		elem = ui_element_create_from_recipe(guimp->win_toolbox, font_button_recipe, &guimp->layout);
+		elem = ft_memalloc(sizeof(t_ui_element));
+		ui_element_new(guimp->win_toolbox, elem);
+		ui_element_edit(elem, font_button_recipe);
 		add_to_drop_menu(guimp->sticker_dropdown, elem);
 		ui_label_text_set(&((t_ui_button *)elem->element)->label, sticker_dir.files[i]);
 		ft_printf("sticker button %s made.\n", sticker_dir.files[i]);
 	}
 	free_dir_content(&sticker_dir);
-	*/
 }
 
 void	guimp_init(t_guimp *guimp)
@@ -195,7 +195,7 @@ int	main(void)
 	 * Testing
 	*/
 	ui_radio_new(guimp.win_toolbox, &guimp.radio_layer);
-	guimp.radio_buttons = ((t_ui_radio *)guimp.radio_layer.element)->buttons;
+	guimp.radio_buttons = guimp.radio_layer.children;
 
 	guimp.draw_button = ui_list_get_element_by_id(guimp.layout.elements, "draw_button");
 	guimp.text_button = ui_list_get_element_by_id(guimp.layout.elements, "text_button");
@@ -216,7 +216,7 @@ int	main(void)
 	add_to_list(&guimp.mode_button_list, guimp.pipette_button, UI_TYPE_ELEMENT);
 
 	ui_radio_new(guimp.win_toolbox, &guimp.radio_mode_buttons);
-	((t_ui_radio *)guimp.radio_mode_buttons.element)->buttons = guimp.mode_button_list;
+	guimp.radio_mode_buttons.children = guimp.mode_button_list;
 
 	guimp.circle_button = ui_list_get_element_by_id(guimp.layout.elements, "circle_button");
 	guimp.square_button = ui_list_get_element_by_id(guimp.layout.elements, "square_button");
@@ -227,7 +227,7 @@ int	main(void)
 	add_to_list(&guimp.shape_button_list, guimp.line_button, UI_TYPE_ELEMENT);
 
 	ui_radio_new(guimp.win_toolbox, &guimp.radio_shape_buttons);
-	((t_ui_radio *)guimp.radio_shape_buttons.element)->buttons = guimp.shape_button_list;
+	guimp.radio_shape_buttons.children = guimp.shape_button_list;
 
 	ft_printf("Testing done.\n");
 	/*
@@ -266,22 +266,16 @@ int	main(void)
 			}
 			else
 			{
-			// Event
-			ui_layout_event_v2(&guimp.layout, e);
+				// Event
+				ui_layout_event_v2(&guimp.layout, e);
 
-			// Layer
-			layer_elements_event(&guimp, e);
-			layer_event(&guimp, e);
+				// Layer
+				layer_elements_event(&guimp, e);
+				layer_event(&guimp, e);
 
-			ui_radio_event(&guimp.radio_layer, e);
-			ui_radio_event(&guimp.radio_mode_buttons, e);
-			ui_radio_event(&guimp.radio_shape_buttons, e);
-			/*
-			 * Testing
-			*/
-			/*
-			 * Testing end
-			*/
+				ui_radio_event(&guimp.radio_layer, e);
+				ui_radio_event(&guimp.radio_mode_buttons, e);
+				ui_radio_event(&guimp.radio_shape_buttons, e);
 			}
 		}
 
@@ -294,13 +288,6 @@ int	main(void)
 		layer_elements_render(&guimp);
 		layer_draw(&guimp);
 		layer_render(&guimp);
-
-		/*
-		 * Testing
-		*/
-		/*
-		 * Testing END
-		*/
 
 		// Render
 		ui_layout_render_v2(&guimp.layout);

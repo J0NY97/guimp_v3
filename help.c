@@ -37,14 +37,14 @@ void	add_to_drop_menu(t_ui_element *dropdown_elem, t_ui_element *child)
 	drop = dropdown_elem->element;
 	menu = drop->menu.element;
 	total_y = 0;
-	curr = menu->children; 
+	curr = drop->menu.children; 
 	while (curr)
 	{
 		temp = curr->content;
 		total_y += temp->pos.h;
 		curr = curr->next;
 	}
-	ui_menu_add(&drop->menu, child);
+	ui_element_parent_set(child, &drop->menu, UI_TYPE_ELEMENT);
 	ui_element_pos_set(child, vec4(0, total_y, ((t_ui_dropdown *)dropdown_elem->element)->menu.pos.w, child->pos.h));
 	ui_element_pos_set(&drop->menu, vec4(drop->menu.pos.x, drop->menu.pos.y, drop->menu.pos.w, total_y + child->pos.h));
 }
