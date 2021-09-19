@@ -5,25 +5,34 @@ t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name, int nth_layer)
 	t_ui_element	*menu; // menu
 	t_ui_element	*show; // checkbox
 	t_ui_element	*select; // radio button
-	t_ui_recipe		*recipe_menu;
-	t_ui_recipe		*recipe_show;
-	t_ui_recipe		*recipe_select;
+	t_ui_recipe_v2	*recipe_menu;
+	t_ui_recipe_v2	*recipe_show;
+	t_ui_recipe_v2	*recipe_select;
 	char			temp[20];
 
-	recipe_menu = ui_layout_get_recipe_by_id(&guimp->layout, "layer");
-	recipe_show = ui_layout_get_recipe_by_id(&guimp->layout, "layer_show_checkbox");
-	recipe_select = ui_layout_get_recipe_by_id(&guimp->layout, "layer_select_button");
+	recipe_menu = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "layer");
+	recipe_show = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "layer_show_checkbox");
+	recipe_select = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "layer_select_button");
 
-	menu = ui_element_create_from_recipe(guimp->win_toolbox, recipe_menu, &guimp->layout);
-	show = ui_element_create_from_recipe(guimp->win_toolbox, recipe_show, &guimp->layout);
-	select = ui_element_create_from_recipe(guimp->win_toolbox, recipe_select, &guimp->layout);
+	menu = ft_memalloc(sizeof(t_ui_element));
+	ui_menu_new(guimp->win_toolbox, menu);
+	ui_element_edit(menu, recipe_menu);
+
+	show = ft_memalloc(sizeof(t_ui_element));
+	ui_checkbox_new(guimp->win_toolbox, show);
+	ui_element_edit(show, recipe_show);
+	ui_element_id_set(show, "layer_show_checkbox");
+	ui_element_parent_set(show, menu, UI_TYPE_ELEMENT);
+
+	select = ft_memalloc(sizeof(t_ui_element));
+	ui_button_new(guimp->win_toolbox, select);
+	ui_element_edit(select, recipe_select);
+	ui_element_id_set(select, "layer_select_button");
+	ui_element_parent_set(select, menu, UI_TYPE_ELEMENT);
 
 	ui_element_parent_set(menu, guimp->layer_parent, UI_TYPE_ELEMENT);
 	ui_element_pos_set2(menu, vec2(menu->pos.x, (menu->pos.h * nth_layer) + (nth_layer * 10) + menu->pos.y));
 	ui_element_id_set(menu, ft_strjoin("layer", ft_b_itoa(nth_layer, temp)));
-
-	ui_menu_add(menu, show);
-	ui_menu_add(menu, select);
 
 	ui_label_text_set(&((t_ui_button *)select->element)->label, layer_name);
 
@@ -77,14 +86,14 @@ void	new_layer_combination(t_guimp *guimp)
 	layer_menu = new_layer_element(guimp, guimp->new_layer_name_input_label->text, guimp->layer_amount);
 	guimp->layer_elems[guimp->layer_amount] = layer_menu;
 	// adding layer to the radio buttons;
-	layer_button = ui_list_get_element_by_id(((t_ui_menu *)layer_menu->element)->children, "layer_select_button");
+	layer_button = ui_list_get_element_by_id(layer_menu->children, "layer_select_button");
 	add_to_list(&((t_ui_radio *)guimp->radio_layer.element)->buttons, layer_button, UI_TYPE_ELEMENT);
 
 	// Making new actual layer
 	layer_new(&guimp->layers[guimp->layer_amount],
 		guimp->new_layer_name_input_label->text,
 		vec4i(0, 0, atoi(guimp->new_layer_width_input_label->text), atoi(guimp->new_layer_height_input_label->text)),
-		&ui_list_get_element_by_id(((t_ui_menu *)layer_menu->element)->children, "layer_show_checkbox")->is_click);
+		&ui_list_get_element_by_id(layer_menu->children, "layer_show_checkbox")->is_click);
 	
 	// Make the new layer the selected layer
 	guimp->selected_layer = guimp->layer_amount;

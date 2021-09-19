@@ -53,7 +53,7 @@ void	layer_event(t_guimp *guimp, SDL_Event e)
 	ii = -1;
 	while (++ii < guimp->layer_amount)
 	{
-		button = ui_menu_get_element_by_id(guimp->layer_elems[ii], "layer_select_button");
+		button = ui_list_get_element_by_id(guimp->layer_elems[ii]->children, "layer_select_button");
 		if (ui_button(button))
 		{
 			guimp->selected_layer = ii;
@@ -112,7 +112,7 @@ void	layer_draw(t_guimp *guimp)
 			t_ui_button	*button;
 			char		*full_font;
 
-			radio = guimp->font_radio.element;
+			radio = guimp->font_radio->element;
 			if (!radio->active)
 				return ;
 			button = radio->active->element;
@@ -152,7 +152,7 @@ void	layer_draw(t_guimp *guimp)
 			t_ui_button	*button;
 			char		*full_path;
 
-			radio = guimp->sticker_radio.element;
+			radio = guimp->sticker_radio->element;
 			if (!radio->active)
 				return ;
 			button = radio->active->element;
