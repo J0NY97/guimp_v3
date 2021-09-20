@@ -138,7 +138,7 @@ void	toolbox_window_init(t_guimp *guimp)
 
 void	new_layer_window_init(t_guimp *guimp)
 {
-	guimp->win_layer_new = ui_list_get_window_by_id(guimp->layout.windows, "layer_edit_window");
+	guimp->win_layer_new = ui_list_get_window_by_id(guimp->layout.windows, "new_layer_window");
 	if (!guimp->win_layer_new)
 	{
 		ft_printf("[%s] Couldnt find window from layout.\n", __FUNCTION__);
@@ -191,12 +191,10 @@ int	main(void)
 
 	run = 1;
 
-	/*
-	 * Testing
-	*/
 	ui_radio_new(guimp.win_toolbox, &guimp.radio_layer);
 	guimp.radio_buttons = guimp.radio_layer.children;
 
+	// Brush Buttons
 	guimp.draw_button = ui_list_get_element_by_id(guimp.layout.elements, "draw_button");
 	guimp.text_button = ui_list_get_element_by_id(guimp.layout.elements, "text_button");
 	guimp.erase_button = ui_list_get_element_by_id(guimp.layout.elements, "erase_button");
@@ -205,37 +203,16 @@ int	main(void)
 	guimp.move_button = ui_list_get_element_by_id(guimp.layout.elements, "move_button");
 	guimp.shape_button = ui_list_get_element_by_id(guimp.layout.elements, "shape_button");
 	guimp.pipette_button = ui_list_get_element_by_id(guimp.layout.elements, "pipette_button");
-	guimp.mode_button_list = NULL;
-	add_to_list(&guimp.mode_button_list, guimp.draw_button, UI_TYPE_ELEMENT);
-	add_to_list(&guimp.mode_button_list, guimp.text_button, UI_TYPE_ELEMENT);
-	add_to_list(&guimp.mode_button_list, guimp.erase_button, UI_TYPE_ELEMENT);
-	add_to_list(&guimp.mode_button_list, guimp.flood_button, UI_TYPE_ELEMENT);
-	add_to_list(&guimp.mode_button_list, guimp.sticker_button, UI_TYPE_ELEMENT);
-	add_to_list(&guimp.mode_button_list, guimp.move_button, UI_TYPE_ELEMENT);
-	add_to_list(&guimp.mode_button_list, guimp.shape_button, UI_TYPE_ELEMENT);
-	add_to_list(&guimp.mode_button_list, guimp.pipette_button, UI_TYPE_ELEMENT);
 
-	ui_radio_new(guimp.win_toolbox, &guimp.radio_mode_buttons);
-	guimp.radio_mode_buttons.children = guimp.mode_button_list;
-
+	// Shape Buttons
 	guimp.circle_button = ui_list_get_element_by_id(guimp.layout.elements, "circle_button");
 	guimp.square_button = ui_list_get_element_by_id(guimp.layout.elements, "square_button");
 	guimp.line_button = ui_list_get_element_by_id(guimp.layout.elements, "line_button");
-	guimp.shape_button_list = NULL;
-	add_to_list(&guimp.shape_button_list, guimp.circle_button, UI_TYPE_ELEMENT);
-	add_to_list(&guimp.shape_button_list, guimp.square_button, UI_TYPE_ELEMENT);
-	add_to_list(&guimp.shape_button_list, guimp.line_button, UI_TYPE_ELEMENT);
 
-	ui_radio_new(guimp.win_toolbox, &guimp.radio_shape_buttons);
-	guimp.radio_shape_buttons.children = guimp.shape_button_list;
-
-	ft_printf("Testing done.\n");
-	/*
-	 * Testing END
-	*/
 	new_layer_combination(&guimp); // lets make default 1 layer;
 	guimp.win_main->user_handled_event = 1;
 	guimp.win_toolbox->user_handled_event = 1;
+
 	while (run)
 	{
 		if (guimp.win_toolbox->wants_to_close)
@@ -274,8 +251,6 @@ int	main(void)
 				layer_event(&guimp, e);
 
 				ui_radio_event(&guimp.radio_layer, e);
-				ui_radio_event(&guimp.radio_mode_buttons, e);
-				ui_radio_event(&guimp.radio_shape_buttons, e);
 			}
 		}
 

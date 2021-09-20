@@ -65,9 +65,12 @@ Window toolbox_window
 	};
 	Menu brush_shape_menu
 	{
-		Button circle_button {};	
-		Button square_button {};	
-		Button line_button {};	
+		Radio shape_radio
+		{
+			Button circle_button {};	
+			Button square_button {};	
+			Button line_button {};	
+		};
 	};
 	Menu other_tool_menu
 	{
@@ -95,7 +98,7 @@ Window main_window
 
 };
 
-Window layer_edit_window
+Window new_layer_window
 {
 	Label label_name {};
 	Input input_name {};

@@ -16,22 +16,24 @@ t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name, int nth_layer)
 
 	menu = ft_memalloc(sizeof(t_ui_element));
 	ui_menu_new(guimp->win_toolbox, menu);
+	ui_element_parent_set(menu, guimp->layer_parent, UI_TYPE_ELEMENT);
 	ui_element_edit(menu, recipe_menu);
+	ui_element_pos_set(menu, vec4(recipe_menu->pos.x, (recipe_menu->pos.h * nth_layer) + (nth_layer * 10) + recipe_menu->pos.y, recipe_menu->pos.w, recipe_menu->pos.h));
 
 	show = ft_memalloc(sizeof(t_ui_element));
 	ui_checkbox_new(guimp->win_toolbox, show);
-	ui_element_edit(show, recipe_show);
-	ui_element_id_set(show, "layer_show_checkbox");
 	ui_element_parent_set(show, menu, UI_TYPE_ELEMENT);
+	ui_element_edit(show, recipe_show);
+	ui_element_pos_set(show, vec4(recipe_show->pos.x, recipe_show->pos.y, recipe_menu->pos.w, recipe_menu->pos.h));
+	ui_element_id_set(show, "layer_show_checkbox");
 
 	select = ft_memalloc(sizeof(t_ui_element));
 	ui_button_new(guimp->win_toolbox, select);
-	ui_element_edit(select, recipe_select);
-	ui_element_id_set(select, "layer_select_button");
 	ui_element_parent_set(select, menu, UI_TYPE_ELEMENT);
+	ui_element_edit(select, recipe_select);
+	ui_element_pos_set(show, vec4(recipe_select->pos.x, recipe_select->pos.y, recipe_select->pos.w, recipe_select->pos.h));
+	ui_element_id_set(select, "layer_select_button");
 
-	ui_element_parent_set(menu, guimp->layer_parent, UI_TYPE_ELEMENT);
-	ui_element_pos_set2(menu, vec2(menu->pos.x, (menu->pos.h * nth_layer) + (nth_layer * 10) + menu->pos.y));
 	ui_element_id_set(menu, ft_strjoin("layer", ft_b_itoa(nth_layer, temp)));
 
 	ui_label_text_set(&((t_ui_button *)select->element)->label, layer_name);

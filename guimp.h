@@ -120,8 +120,6 @@ typedef struct s_guimp
 	t_ui_element	*move_button;
 	t_ui_element	*shape_button;
 	t_ui_element	*pipette_button;
-	t_list			*mode_button_list; // list of the buttons;
-	t_ui_element	radio_mode_buttons; // radio of list of the drawing mode buttons;
 	// shape tools
 	t_vec2i			first_pos;
 	t_vec2i			first_pos_converted;
@@ -129,8 +127,6 @@ typedef struct s_guimp
 	t_ui_element	*circle_button;
 	t_ui_element	*square_button;
 	t_ui_element	*line_button;
-	t_list			*shape_button_list; // list of the buttons;
-	t_ui_element	radio_shape_buttons; // radio of list of the shape buttons;
 	// text input
 	t_ui_element	*text_input;
 	char			*text_input_str;

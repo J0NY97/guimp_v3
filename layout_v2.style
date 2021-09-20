@@ -189,6 +189,7 @@ a_slider : slider_elem
 color_swatch
 {
 	xywh : 40, 130, 130, 20;
+	text_align : center;
 };
 
 size_text : slider_text
@@ -339,7 +340,8 @@ button_move_layer_down : brush_button
 //////////////////////
 layer
 {
-
+	xywh : 10, 60, 180, 20;
+	bg_color : 0xffff0000;
 };
 
 layer_show_checkbox
@@ -362,4 +364,64 @@ layer_select_button
 main_window
 {
 	xywh : 220, 25, 1700, 1030;
+	bg_color : 0xffb0b0b0;
+};
+
+//////////////////////
+// Layer Edit Window
+//////////////////////
+new_layer_window
+{
+	xywh : 320, 270, 200, 150;
+	title : New Layer;
+	bg_color : 0xff5a615a;
+	flag : hide;
+};
+label_prefab
+{
+	xywh : 10, 10, 50, 20;
+};
+value_prefab
+{
+	xywh : 100, 10, 70, 20;
+};
+
+label_name : label_prefab
+{
+	title : Name :;
+};
+
+input_name : value_prefab
+{
+	title : Layer;
+};
+
+label_width : label_prefab
+{
+	y : 35;
+	title : Width :;
+};
+
+input_width : value_prefab
+{
+	y : 35;
+	title : 1920;
+};
+
+label_height : label_prefab
+{
+	y : 60;	
+	title : Height :;
+};
+
+input_height : value_prefab
+{
+	y : 60;
+	title : 1080;
+};
+
+button_ok
+{
+	xywh : 140, 110, 50, 20;
+	title : OK;
 };
