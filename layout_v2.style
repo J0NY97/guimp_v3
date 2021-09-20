@@ -87,17 +87,21 @@ brush_modifier_menu
 	xywh : 10, 120, 200, 220;
 };
 
+slider_button
+{
+	bg_color : 0xff003707;
+	text_color : 0xff72e26c;
+	font : ShareTechMono-Regular.ttf;
+	text_align : center;
+};
+
 slider_elem
 {
 	bg_color : 0xff003707;
 	font_color : 0xff72e26c;
 	font_path : ShareTechMono-Regular.ttf;
 	text_align : center;
-};
-
-slider_button
-{
-	bg_color : 0xffff00ff;
+	button : slider_button;
 };
 
 slider_label
@@ -134,7 +138,6 @@ r_slider : slider_elem
 	xywh : 40, 10, 130, 20;	
 	value : 255, 0, 255;
 	bg_image : ui_images/red_slider.png;
-	button : slider_button;
 };
 
 g_text : slider_text
@@ -184,6 +187,7 @@ a_label_max : slider_label_max
 a_slider : slider_elem
 {
 	xywh : 40, 100, 130, 20;
+	bg_image : ui_images/alpha_slider.png;
 };
 
 color_swatch
@@ -207,6 +211,7 @@ size_slider : slider_elem
 {
 	xywh : 40, 160, 130, 20;
 	value : 5, 0, 100;
+	bg_image : ui_images/size_slider.png;
 };
 
 sticker_drop
