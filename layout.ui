@@ -457,7 +457,7 @@ Button font_button
 Label label_save_image_name
 {
 	pos : 10, 10, 50, 20;
-	title : "Name :" 
+	title : "Name :";
 }
 Input input_save_image_name
 {

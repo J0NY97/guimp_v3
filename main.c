@@ -228,7 +228,9 @@ int	main(void)
 				guimp.final_image.pos.y = guimp.win_main->pos.h / 2 - guimp.final_image.pos.h / 2;
 			}
 			if (e.key.keysym.scancode == SDL_SCANCODE_P)
-				ui_element_print(((t_ui_radio *)guimp.radio_layer.element)->active);
+			{
+				ui_element_print(ui_list_get_element_by_id(guimp.layout.elements, "label_edit_layer_name"));
+			}
 			// dropdown elems will be evented here, we dont want anything else to get evented if its open;
 			// i hope i come up with other way of doing this.
 			if (((t_ui_dropdown *)guimp.font_dropdown->element)->menu.show)

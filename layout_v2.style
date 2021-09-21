@@ -187,6 +187,7 @@ a_label_max : slider_label_max
 a_slider : slider_elem
 {
 	xywh : 40, 100, 130, 20;
+	value : 255, 0, 255;
 	bg_image : ui_images/alpha_slider.png;
 };
 
@@ -353,6 +354,8 @@ layer_show_checkbox
 {
 	xywh : 0, 0, 20, 20;
 	bg_image_default : libs/libui/images/checkbox.png;
+	bg_image_hover : libs/libui/images/checkbox_hover.png;
+	bg_image_click : libs/libui/images/checkbox_click.png;
 };
 
 layer_select_button
@@ -373,7 +376,7 @@ main_window
 };
 
 //////////////////////
-// Layer Edit Window
+// New Layer Window
 //////////////////////
 new_layer_window
 {
@@ -389,6 +392,7 @@ label_prefab
 value_prefab
 {
 	xywh : 100, 10, 70, 20;
+	text_align : left center;
 };
 
 label_name : label_prefab
@@ -430,3 +434,129 @@ button_ok
 	xywh : 140, 110, 50, 20;
 	title : OK;
 };
+
+//////////////////////
+// New Layer Window
+//////////////////////
+window_edit_layer
+{
+	xywh : 320, 270, 200, 150;
+	bg_color : 0xffb0b0b0;
+	flag : hide;
+};
+
+label_edit_elem
+{
+	xywh : 10, 10, 50, 20;
+};
+input_edit_elem
+{
+	xywh : 70, 10, 100, 20;
+	text_align : left center;
+};
+
+label_edit_layer_name : label_edit_elem
+{
+	title : Name :;
+	xywh : 10, 10, 50, 20;
+};
+input_edit_layer_name : input_edit_elem
+{
+};
+
+label_edit_layer_width : label_edit_elem
+{
+	y : 40;
+	title : Width :;
+};
+input_edit_layer_width : input_edit_elem
+{
+	y : 40;
+};
+
+label_edit_layer_height : label_edit_elem
+{
+	y : 70;
+	title : Height :;
+};
+input_edit_layer_height : input_edit_elem
+{
+	y : 70;
+};
+
+button_edit_layer_ok
+{
+	xywh : 140, 110, 50, 20;
+	title : OK;
+	text_align : center;
+};
+
+//////////////////////
+// Image Edit Window
+//////////////////////
+image_edit_window
+{
+	xywh : 320, 270, 200, 150;
+	title : New Image;
+	bg_color : 0xff5a615a;
+	flag : hide;
+};
+
+button_ok_image
+{
+	xywh : 140, 120, 50, 20;
+	title : OK;
+};
+
+label_width_image : label_prefab
+{
+	y : 35;
+	title : Width :;
+};
+label_height_image : label_prefab
+{
+	y : 60;
+	title : Height :;
+};
+
+input_width_image : value_prefab
+{
+	y : 35;
+	title : 1920;
+};
+input_height_image : value_prefab
+{
+	y : 60;
+	title : 1080;
+};
+
+//////////////////////
+// Image Save Window
+//////////////////////
+window_save_image
+{
+	xywh : 320, 270, 200, 100;
+	title : Save Image;
+	bg_color : 0xffb0b0b0;
+	flag : hide;
+};
+
+button_save_image_ok
+{
+	xywh : 50, 50, 50, 20;
+	title : OK;
+};
+
+input_save_image_name
+{
+	xywh : 70, 10, 100, 20;
+	title : image.png;
+	text_align : center left;
+};
+
+label_save_image_name
+{
+	xywh : 10, 10, 50, 20;
+	title : Name :;
+};
+

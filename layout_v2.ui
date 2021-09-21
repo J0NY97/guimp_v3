@@ -112,12 +112,17 @@ Window new_layer_window
 Window image_edit_window
 {
 	Button button_ok_image {};
+	Label label_width_image {};
+	Label label_height_image {};
 	Input input_width_image {};
 	Input input_height_image {};
 };
 
 Window window_edit_layer
 {
+	Label label_edit_layer_name {};
+	Label label_edit_layer_width {};
+	Label label_edit_layer_height {};
 	Input input_edit_layer_name {};
 	Input input_edit_layer_width {};
 	Input input_edit_layer_height {};
