@@ -74,8 +74,6 @@ void	new_layer_combination(t_guimp *guimp)
 {
 	t_ui_element	*layer_menu;
 	t_ui_element	*layer_button;
-	char			*new_id;
-	char			temp[20];
 
 	if (guimp->layer_amount >= MAX_LAYER_AMOUNT)
 	{

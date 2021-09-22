@@ -112,7 +112,7 @@ void	layer_draw(t_guimp *guimp)
 			t_ui_button	*button;
 			char		*full_font;
 
-			radio = guimp->font_radio->element;
+			radio = guimp->font_dropdown->element;
 			if (!radio->active)
 				return ;
 			button = radio->active->element;
@@ -152,7 +152,7 @@ void	layer_draw(t_guimp *guimp)
 			t_ui_button	*button;
 			char		*full_path;
 
-			radio = guimp->sticker_radio->element;
+			radio = guimp->sticker_dropdown->element;
 			if (!radio->active)
 				return ;
 			button = radio->active->element;

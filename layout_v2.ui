@@ -56,11 +56,19 @@ Window toolbox_window
 		Input color_swatch {};
 		Dropdown sticker_drop
 		{
-			Radio sticker_radio {};
+			Menu sticker_drop_menu
+			{
+				Button hamster_drop_button {};
+				Button potato_drop_button {};
+			};
 		};
 		Dropdown font_drop
 		{
-			Radio font_radio {};
+			Menu font_drop_menu
+			{
+				Button droidsans_drop_button {};
+				Button sharetech_drop_button {};
+			};
 		};
 	};
 	Menu brush_shape_menu

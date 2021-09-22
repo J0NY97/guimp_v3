@@ -133,8 +133,6 @@ typedef struct s_guimp
 	// drops
 	t_ui_element	*font_dropdown;
 	t_ui_element	*sticker_dropdown;
-	t_ui_element	*font_radio;
-	t_ui_element	*sticker_radio;
 	// buttons
 	t_ui_element	*save_button;
 	t_ui_element	*edit_button;

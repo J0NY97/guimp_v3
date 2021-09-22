@@ -33,9 +33,7 @@ void	load_fonts(t_guimp *guimp)
 	t_ui_recipe_v2		*font_button_recipe;
 	t_dir_content	font_dir;
 	t_ui_element	*elem;
-	char			*temp;
 	int				i;
-	char			tt[20];
 
 	get_dir_content(&font_dir, "fonts/");
 	font_button_recipe = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "font_button");
@@ -125,10 +123,8 @@ void	toolbox_window_init(t_guimp *guimp)
 	guimp->text_input_str = ui_input_label_get(guimp->text_input)->text;
 	// loading fonts and stickers to the dropdown
 	guimp->font_dropdown = ui_list_get_element_by_id(guimp->layout.elements, "font_drop");
-	guimp->font_radio = ui_list_get_element_by_id(guimp->layout.elements, "font_radio");
 //	load_fonts(guimp);
 	guimp->sticker_dropdown = ui_list_get_element_by_id(guimp->layout.elements, "sticker_drop");
-	guimp->sticker_radio = ui_list_get_element_by_id(guimp->layout.elements, "sticker_radio");
 //	load_stickers(guimp);
 	// other buttons
 	guimp->save_button = ui_list_get_element_by_id(guimp->layout.elements, "save_button");
@@ -236,12 +232,10 @@ int	main(void)
 			if (((t_ui_dropdown *)guimp.font_dropdown->element)->menu.show)
 			{
 				ui_dropdown_event(guimp.font_dropdown, e);
-				ui_radio_event(guimp.font_radio, e);
 			}
 			else if (((t_ui_dropdown *)guimp.sticker_dropdown->element)->menu.show)
 			{
 				ui_dropdown_event(guimp.sticker_dropdown, e);
-				ui_radio_event(guimp.sticker_radio, e);
 			}
 			else
 			{
