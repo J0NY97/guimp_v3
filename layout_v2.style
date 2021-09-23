@@ -260,6 +260,14 @@ font_drop
 	bg_image_hover : libs/libui/images/button_hover.png;
 	bg_image_click : libs/libui/images/button_click.png;
 };
+droidsans_drop_button
+{
+	title : DroidSans;
+};
+sharetech_drop_button
+{
+	title : ShareTech-Regular;
+};
 
 //////////////////////
 // Brush Shape Menu

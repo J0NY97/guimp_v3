@@ -24,63 +24,6 @@ void	user_code(t_guimp *guimp)
 	(void)guimp;
 }
 
-/*
- * Make ui_element of all the fonts found in the fonts dir.
- * Adds the elements to the fonts dropdown.
-*/
-void	load_fonts(t_guimp *guimp)
-{
-	t_ui_recipe_v2		*font_button_recipe;
-	t_dir_content	font_dir;
-	t_ui_element	*elem;
-	int				i;
-
-	get_dir_content(&font_dir, "fonts/");
-	font_button_recipe = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "font_button");
-	i = -1;
-	while (++i < font_dir.file_amount)
-	{
-		if (ft_strendswith(font_dir.files[i], ".ttf"))
-			continue ;
-		elem = ft_memalloc(sizeof(t_ui_element));
-		ui_element_new(guimp->win_toolbox, elem);
-		ui_element_edit(elem, font_button_recipe);
-		add_to_drop_menu(guimp->font_dropdown, elem);
-		ui_label_text_set(&((t_ui_button *)elem->element)->label, font_dir.files[i]);
-		ft_printf("font button %s made.\n", font_dir.files[i]);
-	}
-	free_dir_content(&font_dir);
-}
-
-/*
- * the same as the fonts, but takes stickers from the stickers dir.
-*/
-void	load_stickers(t_guimp *guimp)
-{
-	t_ui_recipe_v2		*font_button_recipe;
-	t_dir_content	sticker_dir;
-	t_ui_element	*elem;
-	int				i;
-
-	get_dir_content(&sticker_dir, "stickers/");
-	font_button_recipe = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "font_button");
-	i = -1;
-	while (++i < sticker_dir.file_amount)
-	{
-		if (ft_strendswith(sticker_dir.files[i], ".jpg"))
-			if (ft_strendswith(sticker_dir.files[i], ".png"))
-				if (ft_strendswith(sticker_dir.files[i], ".bmp"))
-					continue ;
-		elem = ft_memalloc(sizeof(t_ui_element));
-		ui_element_new(guimp->win_toolbox, elem);
-		ui_element_edit(elem, font_button_recipe);
-		add_to_drop_menu(guimp->sticker_dropdown, elem);
-		ui_label_text_set(&((t_ui_button *)elem->element)->label, sticker_dir.files[i]);
-		ft_printf("sticker button %s made.\n", sticker_dir.files[i]);
-	}
-	free_dir_content(&sticker_dir);
-}
-
 void	guimp_init(t_guimp *guimp)
 {
 	memset(guimp, 0, sizeof(t_guimp));
@@ -123,9 +66,7 @@ void	toolbox_window_init(t_guimp *guimp)
 	guimp->text_input_str = ui_input_label_get(guimp->text_input)->text;
 	// loading fonts and stickers to the dropdown
 	guimp->font_dropdown = ui_list_get_element_by_id(guimp->layout.elements, "font_drop");
-//	load_fonts(guimp);
 	guimp->sticker_dropdown = ui_list_get_element_by_id(guimp->layout.elements, "sticker_drop");
-//	load_stickers(guimp);
 	// other buttons
 	guimp->save_button = ui_list_get_element_by_id(guimp->layout.elements, "save_button");
 	guimp->edit_button = ui_list_get_element_by_id(guimp->layout.elements, "edit_image_button");
@@ -229,11 +170,11 @@ int	main(void)
 			}
 			// dropdown elems will be evented here, we dont want anything else to get evented if its open;
 			// i hope i come up with other way of doing this.
-			if (((t_ui_dropdown *)guimp.font_dropdown->element)->menu.show)
+			if (ui_dropdown_get(guimp.font_dropdown)->menu.show)
 			{
 				ui_dropdown_event(guimp.font_dropdown, e);
 			}
-			else if (((t_ui_dropdown *)guimp.sticker_dropdown->element)->menu.show)
+			else if (ui_dropdown_get(guimp.sticker_dropdown)->menu.show)
 			{
 				ui_dropdown_event(guimp.sticker_dropdown, e);
 			}

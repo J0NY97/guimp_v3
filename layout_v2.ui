@@ -74,6 +74,7 @@ Window toolbox_window
 			{
 				Button hamster_drop_button {};
 				Button potato_drop_button {};
+				Button doesntexist_drop_button {};
 			};
 		};
 		Dropdown font_drop

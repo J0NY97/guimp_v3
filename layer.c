@@ -106,23 +106,24 @@ void	layer_draw(t_guimp *guimp)
 		}
 		else if (guimp->text_button->state == UI_STATE_CLICK) // text
 		{
-			SDL_Surface	*surface;
-			t_ui_label	*label;
-			t_ui_radio	*radio;
-			t_ui_button	*button;
-			char		*full_font;
+			SDL_Surface		*surface;
+			t_ui_label		*label;
+			t_ui_dropdown	*drop;
+			char			*full_font;
 
-			radio = guimp->font_dropdown->element;
-			if (!radio->active)
+			drop = ui_dropdown_get(guimp->font_dropdown);
+			if (!drop->active)
 				return ;
-			button = radio->active->element;
-			label = button->label.element;
+			label = ui_button_get_label(drop->active);
 			guimp->text_input_str = ui_input_label_get(guimp->text_input)->text;
-			full_font = ft_strjoin("fonts/", label->text);
+			full_font = ft_strjoiner("fonts/", label->text, ".ttf", NULL);
 			surface = ui_surface_text_new(guimp->text_input_str, full_font, guimp->size, guimp->combined_color);
 			ft_strdel(&full_font);
 			if (!surface)
+			{
+				ft_printf("[%s] Font doesnt exist.\n", __FUNCTION__);
 				return ;
+			}
 			SDL_BlitScaled(surface, NULL, guimp->hidden_surface, &(SDL_Rect){guimp->win_main->mouse_pos.x, guimp->win_main->mouse_pos.y, surface->w * guimp->zoom, surface->h * guimp->zoom});
 			if (guimp->win_main->mouse_down == SDL_BUTTON_LEFT)
 				SDL_BlitSurface(surface, NULL, active_layer->surface, &(SDL_Rect){actual_pos.x, actual_pos.y, surface->w, surface->h});
@@ -146,22 +147,41 @@ void	layer_draw(t_guimp *guimp)
 		}
 		else if (guimp->sticker_button->state == UI_STATE_CLICK) // sticker
 		{
-			SDL_Surface	*surface;
-			t_ui_label	*label;
-			t_ui_radio	*radio;
-			t_ui_button	*button;
-			char		*full_path;
+			SDL_Surface		*surface;
+			t_ui_label		*label;
+			t_ui_dropdown	*drop;
+			char			*full_path;
+			char			*including_type;
 
-			radio = guimp->sticker_dropdown->element;
-			if (!radio->active)
+			drop = ui_dropdown_get(guimp->sticker_dropdown);
+			if (!drop->active)
 				return ;
-			button = radio->active->element;
-			label = button->label.element;
+			label = ui_button_get_label(drop->active);
 			full_path = ft_strjoin("stickers/", label->text);
-			surface = ui_surface_image_new(full_path);
+			// Checking png
+			including_type = ft_strjoin(full_path, ".png");
+			surface = ui_surface_image_new(including_type);
+			// Checking jpg
+			if (!surface)
+			{
+				ft_strdel(&including_type);
+				including_type = ft_strjoin(full_path, ".jpg");
+				surface = ui_surface_image_new(including_type);
+			}
+			// Checking bmp
+			if (!surface)
+			{
+				ft_strdel(&including_type);
+				including_type = ft_strjoin(full_path, ".bmp");
+				surface = ui_surface_image_new(including_type);
+			}
+			ft_strdel(&including_type);
 			ft_strdel(&full_path);
 			if (!surface)
+			{
+				ft_printf("[%s] Sticker image doesnt exist.\n", __FUNCTION__);
 				return ;
+			}
 			SDL_BlitScaled(surface, NULL, guimp->hidden_surface, &(SDL_Rect){guimp->win_main->mouse_pos.x, guimp->win_main->mouse_pos.y, surface->w * guimp->zoom, surface->h * guimp->zoom});
 			if (guimp->win_main->mouse_down == SDL_BUTTON_LEFT)
 				SDL_BlitSurface(surface, NULL, active_layer->surface, &(SDL_Rect){actual_pos.x, actual_pos.y, surface->w, surface->h});
