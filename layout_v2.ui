@@ -16,6 +16,15 @@ Window toolbox_window
 			Button pipette_button {};
 		};
 	};
+	Menu brush_shape_menu
+	{
+		Radio shape_radio
+		{
+			Button circle_button {};	
+			Button square_button {};	
+			Button line_button {};	
+		};
+	};
 	Menu brush_modifier_menu
 	{
 		Slider r_slider
@@ -23,13 +32,15 @@ Window toolbox_window
 			Label r_text {};	
 			Label r_label_min{};	
 			Label r_label_max {};	
+			Button r_slider_button {};
 		};
 
 		Slider g_slider
 		{
-			Label g_text {};	
-			Label g_label_min{};	
-			Label g_label_max {};	
+			Label g_text {};
+			Label g_label_min{};
+			Label g_label_max {};
+			Button g_slider_button {};
 		};
 
 		Slider b_slider
@@ -37,6 +48,7 @@ Window toolbox_window
 			Label b_text {};	
 			Label b_label_min{};	
 			Label b_label_max {};	
+			Button b_slider_button {};
 		};
 
 		Slider a_slider
@@ -44,6 +56,7 @@ Window toolbox_window
 			Label a_text {};	
 			Label a_label_min{};	
 			Label a_label_max {};	
+			Button a_slider_button {};
 		};
 
 		Slider size_slider
@@ -51,6 +64,7 @@ Window toolbox_window
 			Label size_text {};	
 			Label size_label_min{};	
 			Label size_label_max {};	
+			Button size_slider_button {};
 		};
 
 		Input color_swatch {};
@@ -69,15 +83,6 @@ Window toolbox_window
 				Button droidsans_drop_button {};
 				Button sharetech_drop_button {};
 			};
-		};
-	};
-	Menu brush_shape_menu
-	{
-		Radio shape_radio
-		{
-			Button circle_button {};	
-			Button square_button {};	
-			Button line_button {};	
 		};
 	};
 	Menu other_tool_menu
