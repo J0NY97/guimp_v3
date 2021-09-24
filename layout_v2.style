@@ -284,7 +284,7 @@ droidsans_drop_button : drop_button_prefab
 };
 sharetech_drop_button : drop_button_prefab
 {
-	title : ShareTech-Regular;
+	title : ShareTechMono-Regular;
 };
 
 //////////////////////
