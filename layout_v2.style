@@ -229,6 +229,20 @@ size_slider : slider_elem
 	bg_image : ui_images/size_slider.png;
 };
 
+drop_button_prefab
+{
+// Button
+	w : 85;
+	text_align : left center;
+	bg_image_default : libs/libui/images/button.png;
+	bg_image_hover : libs/libui/images/button_hover.png;
+	bg_image_click : libs/libui/images/button_click.png;
+
+// Label
+	text_color : 0xff72e26c;
+	font : ShareTechMono-Regular.ttf;
+};
+
 sticker_drop
 {
 	xywh : 10, 190, 85, 20;
@@ -240,11 +254,11 @@ sticker_drop
 	bg_image_hover : libs/libui/images/drop_hover.png;
 	bg_image_click : libs/libui/images/drop_click.png;
 };
-hamster_drop_button
+hamster_drop_button : drop_button_prefab
 {
 	title : hamster;
 };
-potato_drop_button
+potato_drop_button : drop_button_prefab
 {
 	title : potato;
 };
@@ -260,11 +274,15 @@ font_drop
 	bg_image_hover : libs/libui/images/drop_hover.png;
 	bg_image_click : libs/libui/images/drop_click.png;
 };
-droidsans_drop_button
+font_drop_menu
+{
+	w : 85;
+};
+droidsans_drop_button : drop_button_prefab
 {
 	title : DroidSans;
 };
-sharetech_drop_button
+sharetech_drop_button : drop_button_prefab
 {
 	title : ShareTech-Regular;
 };
@@ -424,7 +442,7 @@ new_layer_window
 	xywh : 320, 270, 200, 150;
 	title : New Layer;
 	bg_color : 0xff5a615a;
-	flag : hide;
+	flag : hide xhides;
 };
 label_prefab
 {
@@ -483,7 +501,7 @@ window_edit_layer
 {
 	xywh : 320, 270, 200, 150;
 	bg_color : 0xffb0b0b0;
-	flag : hide;
+	flag : hide xhides;
 };
 
 label_edit_elem
@@ -540,7 +558,7 @@ image_edit_window
 	xywh : 320, 270, 200, 150;
 	title : New Image;
 	bg_color : 0xff5a615a;
-	flag : hide;
+	flag : hide xhides;
 };
 
 button_ok_image
@@ -579,7 +597,7 @@ window_save_image
 	xywh : 320, 270, 200, 100;
 	title : Save Image;
 	bg_color : 0xffb0b0b0;
-	flag : hide;
+	flag : hide xhides;
 };
 
 button_save_image_ok
