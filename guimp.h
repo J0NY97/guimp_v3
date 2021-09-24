@@ -84,7 +84,7 @@ typedef struct s_guimp
 	SDL_Surface		*hidden_surface;
 	SDL_Texture		*hidden_texture;
 	int				layer_amount;
-	int				combined_color;
+	Uint32			combined_color;
 	float			zoom;
 	int				size;
 

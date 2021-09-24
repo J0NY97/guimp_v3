@@ -236,9 +236,9 @@ sticker_drop
 	font : ShareTechMono-Regular.ttf;
 	text_align : center;
 	title : Stickers;
-	bg_image_default : libs/libui/images/button.png;
-	bg_image_hover : libs/libui/images/button_hover.png;
-	bg_image_click : libs/libui/images/button_click.png;
+	bg_image_default : libs/libui/images/drop.png;
+	bg_image_hover : libs/libui/images/drop_hover.png;
+	bg_image_click : libs/libui/images/drop_click.png;
 };
 hamster_drop_button
 {
@@ -256,9 +256,9 @@ font_drop
 	font : ShareTechMono-Regular.ttf;
 	text_align : center;
 	title : Fonts;
-	bg_image_default : libs/libui/images/button.png;
-	bg_image_hover : libs/libui/images/button_hover.png;
-	bg_image_click : libs/libui/images/button_click.png;
+	bg_image_default : libs/libui/images/drop.png;
+	bg_image_hover : libs/libui/images/drop_hover.png;
+	bg_image_click : libs/libui/images/drop_click.png;
 };
 droidsans_drop_button
 {
