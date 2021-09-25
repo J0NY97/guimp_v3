@@ -405,21 +405,27 @@ button_move_layer_down : brush_button
 //////////////////////
 layer
 {
-	xywh : 10, 60, 180, 20;
+	xywh : 0, 60, 200, 30;
 	bg_color : 0xffff0000;
 };
 
 layer_show_checkbox
 {
-	xywh : 0, 0, 20, 20;
+	xywh : 5, 5, 20, 20;
 	bg_image_default : libs/libui/images/checkbox.png;
 	bg_image_hover : libs/libui/images/checkbox_hover.png;
 	bg_image_click : libs/libui/images/checkbox_click.png;
 };
 
+layer_image_menu
+{
+	xywh : 30, 5, 75, 20;
+	bg_color_default : 0xfff4d35e;
+};
+
 layer_select_button
 {
-	xywh : 30, 0, 150, 20;
+	xywh : 110, 5, 75, 20;
 	bg_color_default : 0xfff4d35e;
 	title : Layer;
 };
