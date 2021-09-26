@@ -417,7 +417,7 @@ layer_show_checkbox
 	bg_image_click : libs/libui/images/checkbox_click.png;
 };
 
-layer_image_menu
+layer_image_elem
 {
 	xywh : 30, 5, 75, 20;
 	bg_color_default : 0xfff4d35e;

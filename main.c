@@ -185,7 +185,7 @@ int	main(void)
 
 				// Layer
 				layer_elements_event(&guimp, e);
-				layer_event(&guimp, e);
+				layer_event(&guimp);
 
 				ui_radio_event(&guimp.radio_layer, e);
 			}

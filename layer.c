@@ -44,7 +44,7 @@ void	resize_layer(t_layer *layer, t_vec2i wh)
 /*
  * Selecting the layer and stuff.
 */
-void	layer_event(t_guimp *guimp, SDL_Event e)
+void	layer_event(t_guimp *guimp)
 {
 	// Element event
 	int				ii;

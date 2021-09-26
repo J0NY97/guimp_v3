@@ -29,13 +29,11 @@ void	set_sliders_to_color(t_guimp *guimp, Uint32 color)
 void	add_to_drop_menu(t_ui_element *dropdown_elem, t_ui_element *child)
 {
 	t_ui_dropdown	*drop;
-	t_ui_menu		*menu;
 	t_list			*curr;
 	t_ui_element	*temp;
 	float			total_y;
 
 	drop = dropdown_elem->element;
-	menu = drop->menu.element;
 	total_y = 0;
 	curr = drop->menu.children; 
 	while (curr)

@@ -11,10 +11,11 @@ t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name, int nth_layer)
 	t_ui_recipe_v2	*recipe_image;
 	t_ui_recipe_v2	*recipe_select;
 	char			temp[20];
+	char			*pmet;
 
 	recipe_menu = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "layer");
 	recipe_show = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "layer_show_checkbox");
-	recipe_image = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "layer_image_menu");
+	recipe_image = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "layer_image_elem");
 	recipe_select = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "layer_select_button");
 
 	menu = ft_memalloc(sizeof(t_ui_element));
@@ -23,13 +24,16 @@ t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name, int nth_layer)
 	ui_element_parent_set(menu, guimp->layer_parent, UI_TYPE_ELEMENT);
 	ui_element_edit(menu, recipe_menu);
 	ui_element_pos_set(menu, vec4(recipe_menu->pos.x, (recipe_menu->pos.h * nth_layer) + (nth_layer * 10) + recipe_menu->pos.y, recipe_menu->pos.w, recipe_menu->pos.h));
-	ui_element_id_set(menu, ft_strjoin("layer", ft_b_itoa(nth_layer, temp)));
+	pmet = ft_strjoin("layer", ft_b_itoa(nth_layer, temp));
+	ui_element_id_set(menu, pmet);
+	ft_strdel(&pmet);
 
 	image = ft_memalloc(sizeof(t_ui_element));
-	ui_menu_new(guimp->win_toolbox, image);
+	ui_element_new(guimp->win_toolbox, image);
 	ui_element_parent_set(image, menu, UI_TYPE_ELEMENT);
 	ui_element_edit(image, recipe_image);
-	ui_element_id_set(image, "layer_image_menu");
+	ui_element_id_set(image, "layer_image_elem");
+	image->element_type = UI_TYPE_ELEMENT;
 
 	show = ft_memalloc(sizeof(t_ui_element));
 	ui_checkbox_new(guimp->win_toolbox, show);
@@ -82,7 +86,7 @@ void	layer_elements_render(t_guimp *guimp)
 	{
 		ui_surface_fill(temp, 0xffb0b0b0);
 		SDL_BlitScaled(guimp->layers[ii].surface, &(SDL_Rect){-guimp->layers[ii].pos.x, -guimp->layers[ii].pos.y, temp->w, temp->h}, temp, NULL);
-		ui_element_image_set(ui_list_get_element_by_id(guimp->layer_elems[ii]->children, "layer_image_menu"), UI_STATE_DEFAULT, temp);
+		ui_element_image_set(ui_list_get_element_by_id(guimp->layer_elems[ii]->children, "layer_image_elem"), UI_STATE_DEFAULT, temp);
 		ui_menu_render(guimp->layer_elems[ii]);
 	}
 	SDL_FreeSurface(temp);
