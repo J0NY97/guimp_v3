@@ -170,11 +170,11 @@ int	main(void)
 			}
 			// dropdown elems will be evented here, we dont want anything else to get evented if its open;
 			// i hope i come up with other way of doing this.
-			if (ui_dropdown_get(guimp.font_dropdown)->menu.show)
+			if (ui_dropdown_get_dropdown(guimp.font_dropdown)->menu.show)
 			{
 				ui_dropdown_event(guimp.font_dropdown, e);
 			}
-			else if (ui_dropdown_get(guimp.sticker_dropdown)->menu.show)
+			else if (ui_dropdown_get_dropdown(guimp.sticker_dropdown)->menu.show)
 			{
 				ui_dropdown_event(guimp.sticker_dropdown, e);
 			}

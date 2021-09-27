@@ -111,7 +111,7 @@ void	layer_draw(t_guimp *guimp)
 			t_ui_dropdown	*drop;
 			char			*full_font;
 
-			drop = ui_dropdown_get(guimp->font_dropdown);
+			drop = ui_dropdown_get_dropdown(guimp->font_dropdown);
 			if (!drop->active)
 				return ;
 			label = ui_button_get_label(drop->active);
@@ -153,7 +153,7 @@ void	layer_draw(t_guimp *guimp)
 			char			*full_path;
 			char			*including_type;
 
-			drop = ui_dropdown_get(guimp->sticker_dropdown);
+			drop = ui_dropdown_get_dropdown(guimp->sticker_dropdown);
 			if (!drop->active)
 				return ;
 			label = ui_button_get_label(drop->active);
