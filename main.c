@@ -119,6 +119,33 @@ int	main(void)
 
 	ui_sdl_init();
 
+	/*
+	 * TESTING
+	int	iter = 1000;
+	int	i;
+	t_vec2i wh = vec2i(1000, 1000);
+	t_vec2i v1 = vec2i(0, 0);
+	t_vec2i v2 = vec2i(wh.x - 1, wh.y - 1);
+	SDL_Surface *surf = ui_surface_new(wh.x, wh.y);
+
+	i = -1;
+	ft_timer_start();
+	while (++i < iter)
+		ui_surface_line_draw_thicc(surf, v1, v2, 1, 0);
+	ft_printf("Anti-Alien (AA): %f\n", ft_timer_end());
+
+	i = -1;
+	ft_timer_start();
+	while (++i < iter)
+		ui_surface_line_draw(surf, v1, v2, 0);
+	ft_printf("Current Best (CBA): %f\n", ft_timer_end());
+
+	exit(0);
+	*/
+	/*
+	 * TESTING END
+	*/
+
 	guimp_init(&guimp);
 	toolbox_window_init(&guimp);
 	new_layer_window_init(&guimp);

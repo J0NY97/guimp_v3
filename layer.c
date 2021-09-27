@@ -141,7 +141,6 @@ void	layer_draw(t_guimp *guimp)
 		}
 		else if (guimp->flood_button->state == UI_STATE_CLICK) // flood fill
 		{
-			// yoink flood fill algorithm from the first version of guimp, or tbh should probably do it from scratch again, i remember it was horrible af.
 			if (guimp->win_main->mouse_down == SDL_BUTTON_LEFT)
 				flood_fill(active_layer->surface, guimp->combined_color, actual_pos.x , actual_pos.y);
 		}
@@ -205,10 +204,27 @@ void	layer_draw(t_guimp *guimp)
 			if (guimp->line_button->state == UI_STATE_CLICK) // line tool
 			{
 				if (guimp->first_set)
-					ui_surface_line_draw(guimp->hidden_surface,
-						guimp->first_pos,
-						guimp->win_main->mouse_pos,
-						guimp->combined_color);
+				{
+					if (guimp->size > 1)
+					{
+						ui_surface_circle_draw_filled(guimp->hidden_surface,
+							guimp->first_pos, guimp->size, guimp->combined_color);
+						ui_surface_line_draw_thicc(guimp->hidden_surface,
+							guimp->first_pos,
+							guimp->win_main->mouse_pos,
+							guimp->size,
+							guimp->combined_color);
+						ui_surface_circle_draw_filled(guimp->hidden_surface,
+							guimp->win_main->mouse_pos, guimp->size, guimp->combined_color);
+					}
+					else
+					{
+						ui_surface_line_draw(guimp->hidden_surface,
+							guimp->first_pos,
+							guimp->win_main->mouse_pos,
+							guimp->combined_color);
+					}
+				}
 				if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
 					return ;
 				if (!guimp->first_set)
@@ -219,8 +235,20 @@ void	layer_draw(t_guimp *guimp)
 				}
 				else
 				{
-					ui_surface_line_draw(active_layer->surface,
-						guimp->first_pos_converted, actual_pos, guimp->combined_color);
+					if (guimp->size > 1)
+					{
+						ui_surface_circle_draw_filled(active_layer->surface,
+							guimp->first_pos_converted, guimp->size, guimp->combined_color);
+						ui_surface_line_draw_thicc(active_layer->surface,
+							guimp->first_pos_converted, actual_pos, guimp->size, guimp->combined_color);
+						ui_surface_circle_draw_filled(active_layer->surface,
+							actual_pos, guimp->size, guimp->combined_color);
+					}
+					else
+					{
+						ui_surface_line_draw(active_layer->surface,
+							guimp->first_pos_converted, actual_pos, guimp->combined_color);
+					}
 					guimp->first_set = 0;
 				}
 			}
@@ -344,9 +372,6 @@ void	layer_render(t_guimp *guimp)
 	SDL_RenderClear(guimp->win_main->renderer);
 
 	// Hidden surface
-	SDL_SetTextureAlphaMod(guimp->hidden_texture, 255);
-	SDL_SetTextureBlendMode(guimp->hidden_texture, SDL_BLENDMODE_BLEND);
-
 	SDL_SetRenderTarget(guimp->win_main->renderer, guimp->win_main->texture);
 	SDL_RenderCopy(guimp->win_main->renderer, guimp->hidden_texture, NULL, NULL);
 

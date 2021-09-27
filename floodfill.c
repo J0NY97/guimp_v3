@@ -191,7 +191,7 @@ static void	right_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor)
 		push4(env, (t_ff_pos){env->pos.y, i, y, DOWN});
 }
 
-void	flood_fill2(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor)
+static void	flood_fill2(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor)
 {
 	while (pop4(env))
 	{
