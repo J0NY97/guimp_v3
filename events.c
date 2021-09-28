@@ -87,7 +87,7 @@ void	layer_elements_render(t_guimp *guimp)
 		ui_surface_fill(temp, 0xffb0b0b0);
 		SDL_BlitScaled(guimp->layers[ii].surface, &(SDL_Rect){-guimp->layers[ii].pos.x, -guimp->layers[ii].pos.y, temp->w, temp->h}, temp, NULL);
 		ui_element_image_set(ui_list_get_element_by_id(guimp->layer_elems[ii]->children, "layer_image_elem"), UI_STATE_DEFAULT, temp);
-		ui_menu_render(guimp->layer_elems[ii]);
+		//ui_menu_render(guimp->layer_elems[ii]); // dont do this since the layer parent handles all the rendering.
 	}
 	SDL_FreeSurface(temp);
 }
@@ -156,6 +156,7 @@ void	remove_nth_layer(t_guimp *guimp, int nth)
 	/*
 	ui_menu_free(guimp->layer_elems[guimp->selected_layer]);
 	*/
+	ui_element_remove_child_from_parent(guimp->layer_elems[nth]);
 	guimp->layer_elems[nth] = NULL; // this should be removed when freeing it correctly;
 	i = nth;
 	for (; i < guimp->layer_amount - 1; ++i)
@@ -165,7 +166,7 @@ void	remove_nth_layer(t_guimp *guimp, int nth)
 			guimp->layers[i] = guimp->layers[i + 1];
 			guimp->layer_elems[i] = guimp->layer_elems[i + 1];
 			guimp->layer_elems[i + 1] = NULL;
-			ui_element_pos_set2(guimp->layer_elems[i], vec2(guimp->layer_elems[i]->pos.x, (guimp->layer_elems[i]->pos.h * i) + (10 * i) + 60));
+			ui_element_pos_set2(guimp->layer_elems[i], vec2(guimp->layer_elems[i]->pos.x, (guimp->layer_elems[i]->pos.h * i) + (10 * i) + 40)); // NOTE: this '40' comes from the offset on the menu;
 		}
 	}
 	guimp->layer_amount--;
@@ -189,7 +190,7 @@ void	button_edit_layer_event(t_guimp *guimp)
 
 	if (guimp->selected_layer < 0 || guimp->selected_layer >= MAX_LAYER_AMOUNT)
 		return ;
-	if (ui_button(guimp->button_edit_layer))
+	if (ui_button(guimp->button_edit_layer) && guimp->layer_amount > 0)
 	{
 		ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_SHOW);
 		SDL_RaiseWindow(guimp->win_layer_edit->win);

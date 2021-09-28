@@ -16,15 +16,6 @@ Window toolbox_window
 			Button pipette_button {};
 		};
 	};
-	Menu brush_shape_menu
-	{
-		Radio shape_radio
-		{
-			Button circle_button {};	
-			Button square_button {};	
-			Button line_button {};	
-		};
-	};
 	Menu brush_modifier_menu
 	{
 		Slider r_slider
@@ -66,17 +57,14 @@ Window toolbox_window
 			Label size_label_max {};	
 			Button size_slider_button {};
 		};
-
 		Input color_swatch {};
-		Dropdown sticker_drop
+		Radio shape_radio
 		{
-			Menu sticker_drop_menu
-			{
-				Button hamster_drop_button {};
-				Button potato_drop_button {};
-				Button doesntexist_drop_button {};
-			};
+			Button circle_button {};	
+			Button square_button {};	
+			Button line_button {};	
 		};
+		Input text_input {};	
 		Dropdown font_drop
 		{
 			Menu font_drop_menu
@@ -85,10 +73,14 @@ Window toolbox_window
 				Button sharetech_drop_button {};
 			};
 		};
-	};
-	Menu other_tool_menu
-	{
-		Input text_input {};	
+		Dropdown sticker_drop
+		{
+			Menu sticker_drop_menu
+			{
+				Button hamster_drop_button {};
+				Button potato_drop_button {};
+			};
+		};
 	};
 	Menu yet_another_menu
 	{

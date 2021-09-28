@@ -47,6 +47,7 @@ void	toolbox_window_init(t_guimp *guimp)
 	guimp->win_toolbox = ui_list_get_window_by_id(guimp->layout.windows, "toolbox_window");
 	guimp->layer_recipe = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "layer");
 	guimp->layer_parent = ui_list_get_element_by_id(guimp->layout.elements, "layer_menu");
+	ui_menu_get_menu(guimp->layer_parent)->event_and_render_children = 1;
 	// Layer buttons
 	guimp->button_add_layer = ui_list_get_element_by_id(guimp->layout.elements, "button_add_layer");
 	guimp->button_remove_layer = ui_list_get_element_by_id(guimp->layout.elements, "button_remove_layer");
