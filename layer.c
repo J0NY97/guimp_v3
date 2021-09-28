@@ -100,9 +100,22 @@ void	layer_draw(t_guimp *guimp)
 			ui_surface_circle_draw(guimp->hidden_surface,
 				guimp->win_main->mouse_pos, guimp->size * guimp->zoom, guimp->combined_color);
 			if (guimp->win_main->mouse_down != SDL_BUTTON_LEFT)
+			{
+				guimp->first_set = 0;
 				return ;
-			ui_surface_circle_draw_filled(active_layer->surface,
-				actual_pos, guimp->size, guimp->combined_color);
+			}
+			if (guimp->first_set)
+			{
+				ui_surface_circle_draw_filled(active_layer->surface,
+					guimp->first_pos_converted, guimp->size, guimp->combined_color);
+				ui_surface_line_draw_thicc(active_layer->surface,
+					guimp->first_pos_converted, actual_pos, guimp->size, guimp->combined_color);
+				ui_surface_circle_draw_filled(active_layer->surface,
+					actual_pos, guimp->size, guimp->combined_color);
+				guimp->first_set = 0;
+			}
+			guimp->first_pos_converted = actual_pos;
+			guimp->first_set = 1;
 		}
 		else if (guimp->text_button->state == UI_STATE_CLICK) // text
 		{
@@ -255,10 +268,17 @@ void	layer_draw(t_guimp *guimp)
 			else if (guimp->square_button->state == UI_STATE_CLICK) // rect tool
 			{
 				if (guimp->first_set)
-					ui_surface_rect_draw(guimp->hidden_surface,
-						guimp->first_pos,
-						guimp->win_main->mouse_pos,
-						guimp->combined_color);
+				{
+					if (guimp->size > 1)
+						ui_surface_rect_draw_thicc(guimp->hidden_surface,
+							guimp->first_pos, guimp->win_main->mouse_pos,
+							guimp->size, guimp->combined_color);
+					else
+						ui_surface_rect_draw(guimp->hidden_surface,
+							guimp->first_pos,
+							guimp->win_main->mouse_pos,
+							guimp->combined_color);
+				}
 				if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
 					return ;
 				if (!guimp->first_set)
@@ -269,18 +289,29 @@ void	layer_draw(t_guimp *guimp)
 				}
 				else
 				{
-					ui_surface_rect_draw(active_layer->surface,
-						guimp->first_pos_converted, actual_pos, guimp->combined_color);
+					if (guimp->size > 1)
+						ui_surface_rect_draw_thicc(active_layer->surface,
+							guimp->first_pos_converted, actual_pos, guimp->size, guimp->combined_color);
+					else
+						ui_surface_rect_draw(active_layer->surface,
+							guimp->first_pos_converted, actual_pos, guimp->combined_color);
 					guimp->first_set = 0;
 				}
 			}
 			else if (guimp->circle_button->state == UI_STATE_CLICK) // circle tool
 			{
 				if (guimp->first_set)
-					ui_surface_circle_draw(guimp->hidden_surface,
-						guimp->first_pos,
-						dist(guimp->first_pos, guimp->win_main->mouse_pos),
-						guimp->combined_color);
+				{
+					if (guimp->size > 1)
+						ui_surface_circle_draw_thicc(guimp->hidden_surface,
+							guimp->first_pos, dist(guimp->first_pos, guimp->win_main->mouse_pos),
+							guimp->size, guimp->combined_color);
+					else
+						ui_surface_circle_draw(guimp->hidden_surface,
+							guimp->first_pos,
+							dist(guimp->first_pos, guimp->win_main->mouse_pos),
+							guimp->combined_color);
+				}
 				if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
 					return ;
 				if (!guimp->first_set)
@@ -291,8 +322,12 @@ void	layer_draw(t_guimp *guimp)
 				}
 				else
 				{
-					ui_surface_circle_draw(active_layer->surface,
-						guimp->first_pos_converted, dist(guimp->first_pos_converted, actual_pos), guimp->combined_color);
+					if (guimp->size > 1)
+						ui_surface_circle_draw_thicc(active_layer->surface,
+							guimp->first_pos_converted, dist(guimp->first_pos_converted, actual_pos), guimp->size, guimp->combined_color);
+					else
+						ui_surface_circle_draw(active_layer->surface,
+							guimp->first_pos_converted, dist(guimp->first_pos_converted, actual_pos), guimp->combined_color);
 					guimp->first_set = 0;
 				}
 			}
