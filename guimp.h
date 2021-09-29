@@ -189,7 +189,6 @@ void				clear_button_event(t_guimp *guimp);
 // Layer
 void				new_layer_combination(t_guimp *guimp);
 void				layer_elements_render(t_guimp *guimp);
-void				layer_elements_event(t_guimp *guimp, SDL_Event e);
 void				layer_new(t_layer *layer, char *name, t_vec4i pos, bool *show);
 void				layer_free(t_layer *layer);
 void				resize_layer(t_layer *layer, t_vec2i wh);

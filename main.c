@@ -212,7 +212,6 @@ int	main(void)
 				ui_layout_event_v2(&guimp.layout, e);
 
 				// Layer
-				layer_elements_event(&guimp, e);
 				layer_event(&guimp);
 
 				ui_radio_event(&guimp.radio_layer, e);

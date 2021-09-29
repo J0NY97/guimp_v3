@@ -28,12 +28,13 @@ t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name, int nth_layer)
 	ui_element_id_set(menu, pmet);
 	ft_strdel(&pmet);
 
+	// Only making this so it would be easier to change the values of the size of the shown image.
 	image = ft_memalloc(sizeof(t_ui_element));
 	ui_element_new(guimp->win_toolbox, image);
 	ui_element_parent_set(image, menu, UI_TYPE_ELEMENT);
 	ui_element_edit(image, recipe_image);
 	ui_element_id_set(image, "layer_image_elem");
-	image->element_type = UI_TYPE_ELEMENT;
+	image->show = 0;
 
 	show = ft_memalloc(sizeof(t_ui_element));
 	ui_checkbox_new(guimp->win_toolbox, show);
@@ -58,38 +59,46 @@ t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name, int nth_layer)
 	return (menu);
 }
 
-/*
- * These are the layer elements on the toolbox;
-*/
-void	layer_elements_event(t_guimp *guimp, SDL_Event e)
+float	get_ratio(t_vec2i orig_wh, t_vec2i new_wh)
 {
-	int	ii;
+	float	ratio_x;
+	float	ratio_y;
 
-	ii = -1;
-	while (++ii < guimp->layer_amount)
-	{
-		ui_menu_event(guimp->layer_elems[ii], e);
-	}
+	ratio_x = new_wh.x / (float)orig_wh.x;
+	ratio_y = new_wh.y / (float)orig_wh.y;
+	if (ratio_x < ratio_y)
+		return (ratio_x);
+	return (ratio_y);
 }
-
 /*
  * TODO: this is extremely unoptimised, and removes a lot of fps... FIX!!!!!!!!!!!!!
 */
 void	layer_elements_render(t_guimp *guimp)
 {
-	int				ii;
-	SDL_Surface		*temp;
+	int			jj;
+	SDL_Texture	*temp;
+	SDL_Surface	*tt;
+	t_vec4	pos;
 
-	temp = ui_surface_new(guimp->final_image.pos.w, guimp->final_image.pos.h);
-	ii = -1;
-	while (++ii < guimp->layer_amount)
+	pos = vec4(30, 5, 72, 20);
+	if (0)
+		pos = ui_list_get_element_by_id(guimp->layer_elems[0]->children, "layer_image_elem")->pos;
+	float	ratio = get_ratio(vec2i(guimp->final_image.pos.w, guimp->final_image.pos.h), vec2i(pos.w, pos.h));
+	int		final_w = guimp->final_image.pos.w * ratio;
+	int		final_h = guimp->final_image.pos.h * ratio;
+	jj = -1;
+	while (++jj < guimp->layer_amount)
 	{
-		ui_surface_fill(temp, 0xffb0b0b0);
-		SDL_BlitScaled(guimp->layers[ii].surface, &(SDL_Rect){-guimp->layers[ii].pos.x, -guimp->layers[ii].pos.y, temp->w, temp->h}, temp, NULL);
-		ui_element_image_set(ui_list_get_element_by_id(guimp->layer_elems[ii]->children, "layer_image_elem"), UI_STATE_DEFAULT, temp);
-		//ui_menu_render(guimp->layer_elems[ii]); // dont do this since the layer parent handles all the rendering.
+		if (!guimp->layer_elems[jj]->texture)
+			continue ;
+		tt = ui_surface_new(guimp->layer_elems[jj]->pos.w, guimp->layer_elems[jj]->pos.h);
+		SDL_FillRect(tt, NULL, 0xffff0000);
+		SDL_BlitScaled(guimp->layers[jj].surface, &(SDL_Rect){-guimp->layers[jj].pos.x, -guimp->layers[jj].pos.y, guimp->final_image.pos.w, guimp->final_image.pos.h}, tt, &(SDL_Rect){pos.x + (pos.w / 2) - (final_w / 2), pos.y + (pos.h / 2) - (final_h / 2), final_w, final_h});
+		SDL_UpdateTexture(guimp->layer_elems[jj]->texture, NULL, tt->pixels, tt->pitch);
+		SDL_FreeSurface(tt);
 	}
-	SDL_FreeSurface(temp);
+	SDL_RenderPresent(guimp->win_toolbox->renderer);
+	SDL_SetRenderTarget(guimp->win_toolbox->renderer, NULL);
 }
 
 void	new_layer_combination(t_guimp *guimp)
