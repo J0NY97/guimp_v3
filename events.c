@@ -70,9 +70,7 @@ float	get_ratio(t_vec2i orig_wh, t_vec2i new_wh)
 		return (ratio_x);
 	return (ratio_y);
 }
-/*
- * TODO: this is extremely unoptimised, and removes a lot of fps... FIX!!!!!!!!!!!!!
-*/
+
 void	layer_elements_render(t_guimp *guimp)
 {
 	int			jj;
@@ -80,7 +78,7 @@ void	layer_elements_render(t_guimp *guimp)
 	t_vec4	pos;
 
 	pos = vec4(30, 5, 72, 20);
-	if (0)
+	if (guimp->layer_amount > 0)
 		pos = ui_list_get_element_by_id(guimp->layer_elems[0]->children, "layer_image_elem")->pos;
 	float	ratio = get_ratio(vec2i(guimp->final_image.pos.w, guimp->final_image.pos.h), vec2i(pos.w, pos.h));
 	int		final_w = guimp->final_image.pos.w * ratio;
@@ -304,6 +302,7 @@ void	color_swatch_event(t_guimp *guimp)
 		ui_slider_value_set(guimp->green_slider, input_rgba.g);
 		ui_slider_value_set(guimp->blue_slider, input_rgba.b);
 		ui_slider_value_set(guimp->alpha_slider, input_rgba.a);
+		ui_element_color_set(guimp->color_swatch, UI_STATE_DEFAULT, guimp->combined_color);
 	}
 	if (((t_ui_slider *)guimp->size_slider->element)->update)
 		guimp->size = ((t_ui_slider *)guimp->size_slider->element)->value;

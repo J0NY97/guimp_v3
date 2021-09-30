@@ -190,6 +190,7 @@ int	main(void)
 			if (e.drop.type == SDL_DROPFILE && e.drop.windowID == guimp.win_main->window_id)
 			{
 				SDL_Surface	*dropped_image;
+
 				ft_printf("File : %s dropped on windowID %d\n", e.drop.file, e.drop.windowID);
 				new_layer_combination(&guimp);
 				ui_label_text_set(ui_button_get_label_element(ui_list_get_element_by_id(guimp.layer_elems[guimp.layer_amount - 1]->children, "layer_select_button")), e.drop.file);

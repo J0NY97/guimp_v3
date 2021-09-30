@@ -63,14 +63,19 @@ void	layer_event(t_guimp *guimp)
 	}
 	// Other layer events
 	if (SDL_GetModState() & KMOD_LCTRL && guimp->win_main->scroll)
-		guimp->zoom += (float)guimp->win_main->scroll / 10;
+	{
+		int	prev_w = guimp->final_image.pos.w * guimp->zoom;
+		int	prev_h = guimp->final_image.pos.h * guimp->zoom;
+		guimp->zoom = ft_fclamp(guimp->zoom + (float)guimp->win_main->scroll / 10.0f, 0.1f, 100.0f);
+		int	next_w = guimp->final_image.pos.w * guimp->zoom;
+		int	next_h = guimp->final_image.pos.h * guimp->zoom;
+		guimp->final_image.pos.x += (prev_w - next_w) / 2;
+		guimp->final_image.pos.y += (prev_h - next_h) / 2;
+	}
 	else if (guimp->win_main->mouse_down == 2) // move whole image by holding middle mouse and mouse motioning
 	{
-		t_vec2i	mouse_pos;
-
-		mouse_pos.x = guimp->win_main->mouse_pos.x - guimp->win_main->mouse_pos_prev.x;
-		mouse_pos.y = guimp->win_main->mouse_pos.y - guimp->win_main->mouse_pos_prev.y;
-		guimp->final_image.pos = vec4i(mouse_pos.x + guimp->final_image.pos.x, mouse_pos.y + guimp->final_image.pos.y, guimp->final_image.pos.w, guimp->final_image.pos.h);
+		guimp->final_image.pos.x += guimp->win_main->mouse_pos.x - guimp->win_main->mouse_pos_prev.x;
+		guimp->final_image.pos.y += guimp->win_main->mouse_pos.y - guimp->win_main->mouse_pos_prev.y;
 	}
 }
 
@@ -202,15 +207,13 @@ void	layer_draw(t_guimp *guimp)
 		else if (guimp->move_button->state == UI_STATE_CLICK) // move
 		{
 			t_vec2i	mouse_pos;
-			/*
-			 * show hidden layer tool tip here <---------
-			*/
+
 			if (guimp->win_main->mouse_down != SDL_BUTTON_LEFT)
 				return ;
 			mouse_pos.x = guimp->win_main->mouse_pos.x - guimp->win_main->mouse_pos_prev.x;
 			mouse_pos.y = guimp->win_main->mouse_pos.y - guimp->win_main->mouse_pos_prev.y;
-			guimp->layers[guimp->selected_layer].pos.x = mouse_pos.x + guimp->layers[guimp->selected_layer].pos.x;
-			guimp->layers[guimp->selected_layer].pos.y = mouse_pos.y + guimp->layers[guimp->selected_layer].pos.y;
+			guimp->layers[guimp->selected_layer].pos.x += mouse_pos.x / guimp->zoom;
+			guimp->layers[guimp->selected_layer].pos.y += mouse_pos.y / guimp->zoom;
 		}
 		else if (guimp->shape_button->state == UI_STATE_CLICK)
 		{
