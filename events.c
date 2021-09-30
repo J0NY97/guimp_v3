@@ -313,12 +313,14 @@ void	save_button_event(t_guimp *guimp)
 {
 	if (ui_button(guimp->save_button))
 	{
-		ft_printf("i like to party.\n");
 		ui_window_flag_set(guimp->win_save_image, UI_WINDOW_SHOW);
 		SDL_RaiseWindow(guimp->win_save_image->win);
 	}
 	if (ui_button(guimp->button_save_image_ok))
+	{
 		save_surface(guimp->final_image.surface, ui_input_text_get(guimp->input_save_image_name));
+		ui_window_flag_set(guimp->win_save_image, UI_WINDOW_HIDE);
+	}
 }
 
 void	edit_button_event(t_guimp *guimp)
@@ -336,6 +338,7 @@ void	edit_button_event(t_guimp *guimp)
 		resize_layer(&guimp->final_image, vec2i(w, h));
 		SDL_DestroyTexture(guimp->final_image_texture);
 		guimp->final_image_texture = SDL_CreateTextureFromSurface(guimp->win_main->renderer, guimp->final_image.surface);
+		ui_window_flag_set(guimp->win_image_edit, UI_WINDOW_HIDE);
 	}
 }
 
