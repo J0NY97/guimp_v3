@@ -76,7 +76,6 @@ float	get_ratio(t_vec2i orig_wh, t_vec2i new_wh)
 void	layer_elements_render(t_guimp *guimp)
 {
 	int			jj;
-	SDL_Texture	*temp;
 	SDL_Surface	*tt;
 	t_vec4	pos;
 

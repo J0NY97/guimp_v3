@@ -186,6 +186,18 @@ int	main(void)
 		{
 			ui_window_event(guimp.win_main, e);
 			ui_window_event(guimp.win_toolbox, e);
+			// Drop Event
+			if (e.drop.type == SDL_DROPFILE && e.drop.windowID == guimp.win_main->window_id)
+			{
+				SDL_Surface	*dropped_image;
+				ft_printf("File : %s dropped on windowID %d\n", e.drop.file, e.drop.windowID);
+				new_layer_combination(&guimp);
+				ui_label_text_set(ui_button_get_label_element(ui_list_get_element_by_id(guimp.layer_elems[guimp.layer_amount - 1]->children, "layer_select_button")), e.drop.file);
+				dropped_image = ui_surface_image_new(e.drop.file);	
+				resize_layer(&guimp.layers[guimp.layer_amount - 1], vec2i(dropped_image->w, dropped_image->h));
+				SDL_BlitSurface(dropped_image, NULL, guimp.layers[guimp.layer_amount - 1].surface, NULL);
+				SDL_FreeSurface(dropped_image);
+			}
 			if (e.key.keysym.scancode == SDL_SCANCODE_SPACE) // reseting the final_image to the center of the screen if it has disappeard somewhere.
 			{
 				guimp.zoom = 1.0;
