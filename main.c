@@ -14,16 +14,6 @@ void	user_events(t_guimp *guimp)
 	clear_button_event(guimp);
 }
 
-void	user_render(t_guimp *guimp)
-{
-	(void)guimp;
-}
-
-void	user_code(t_guimp *guimp)
-{
-	(void)guimp;
-}
-
 void	guimp_init(t_guimp *guimp)
 {
 	memset(guimp, 0, sizeof(t_guimp));
@@ -31,7 +21,7 @@ void	guimp_init(t_guimp *guimp)
 	ui_layout_load_v2(&guimp->layout, "layout_v2.ui");
 	// Main Win
 	guimp->win_main = ui_list_get_window_by_id(guimp->layout.windows, "main_window");
-	layer_new(&guimp->final_image, "Image", vec4i(10, 10, 1280, 720), NULL);
+	layer_new(&guimp->final_image, "Image", vec4i(guimp->win_main->pos.w / 2 - (1280 / 2), guimp->win_main->pos.h / 2 - (720 / 2), 1280, 720), NULL);
 	SDL_FillRect(guimp->final_image.surface, NULL, 0xff000000); // fill image with black so the alpha:ed layers can show.
 	guimp->final_image_texture = NULL;
 	guimp->selected_layer = -1;
@@ -233,8 +223,6 @@ int	main(void)
 
 		// User
 		user_events(&guimp);
-		user_code(&guimp);
-		user_render(&guimp);
 		
 		// Layer
 		layer_elements_render(&guimp);

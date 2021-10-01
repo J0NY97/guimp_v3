@@ -1,7 +1,13 @@
+Window
+{
+	bg_color : 0xffb0b0b0;
+	flag : xhides;
+};
+
 toolbox_window
 {
 	xywh : 0, 25, 220, 1030;
-	bg_color : 0xff909090;
+	flag : xdoesnthides;
 };
 
 brush_buttons_menu
@@ -431,7 +437,8 @@ layer_select_button
 main_window
 {
 	xywh : 220, 25, 1700, 1030;
-	bg_color : 0xffb0b0b0;
+	title : GUIMP;
+	flag : xdoesnthides;
 };
 
 //////////////////////
@@ -441,8 +448,7 @@ new_layer_window
 {
 	xywh : 320, 270, 200, 150;
 	title : New Layer;
-	bg_color : 0xff5a615a;
-	flag : hide xhides;
+	flag : hide;
 };
 label_prefab
 {
@@ -473,7 +479,7 @@ label_width : label_prefab
 input_width : value_prefab
 {
 	y : 35;
-	title : 1920;
+	title : 1280;
 };
 
 label_height : label_prefab
@@ -485,7 +491,7 @@ label_height : label_prefab
 input_height : value_prefab
 {
 	y : 60;
-	title : 1080;
+	title : 720;
 };
 
 button_ok
@@ -495,13 +501,13 @@ button_ok
 };
 
 //////////////////////
-// New Layer Window
+// Edit Layer Window
 //////////////////////
 window_edit_layer
 {
 	xywh : 320, 270, 200, 150;
-	bg_color : 0xffb0b0b0;
-	flag : hide xhides;
+	title : Edit Layer;
+	flag : hide;
 };
 
 label_edit_elem
@@ -556,9 +562,8 @@ button_edit_layer_ok
 image_edit_window
 {
 	xywh : 320, 270, 200, 150;
-	title : New Image;
-	bg_color : 0xff5a615a;
-	flag : hide xhides;
+	title : Edit Image;
+	flag : hide;
 };
 
 button_ok_image
@@ -596,8 +601,7 @@ window_save_image
 {
 	xywh : 320, 270, 200, 100;
 	title : Save Image;
-	bg_color : 0xffb0b0b0;
-	flag : hide xhides;
+	flag : hide;
 };
 
 button_save_image_ok

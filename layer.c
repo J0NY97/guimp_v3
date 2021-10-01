@@ -241,7 +241,12 @@ void	layer_draw(t_guimp *guimp)
 							guimp->combined_color);
 					}
 				}
-				if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
+				if (guimp->win_main->mouse_down_last_frame == SDL_BUTTON_RIGHT) // unselect on right click;
+				{
+					guimp->first_set = 0;
+					return ;
+				}
+				else if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
 					return ;
 				if (!guimp->first_set)
 				{
