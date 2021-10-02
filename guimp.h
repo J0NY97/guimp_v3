@@ -175,6 +175,16 @@ typedef struct s_guimp
 // Draw
 void				flood_fill(SDL_Surface *surface, Uint32 newcolor, int x, int y);
 
+// Brushes
+void				draw_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_vec2i hidden_pos);
+void				text_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_vec2i hidden_pos);
+void				erase_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_vec2i hidden_pos);
+void				flood_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos);
+void				sticker_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_vec2i hidden_pos);
+void				move_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos);
+void				shape_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_vec2i hidden_pos);
+void				pipette_brush(t_guimp *guimp, t_vec2i actual_pos);
+
 // Events
 void				color_swatch_event(t_guimp *guimp);
 void				button_add_layer_event(t_guimp *guimp);

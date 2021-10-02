@@ -86,248 +86,61 @@ void	layer_event(t_guimp *guimp)
 */
 void	layer_draw(t_guimp *guimp)
 {
-	t_vec2i	relative_mouse_pos;
+	t_layer	*active_layer;
+	t_vec2i	real_image_pos;
+	t_vec2i	actual_pos;
+	t_vec2i	hidden_pos;
+	float	aspect_x;
+	float	aspect_y;
 
 	if (guimp->selected_layer < 0 || guimp->selected_layer >= guimp->layer_amount)
 		return ;
-	t_layer	*active_layer = &guimp->layers[guimp->selected_layer];
-	relative_mouse_pos.x = guimp->win_main->mouse_pos.x - (guimp->final_image.pos.x + active_layer->pos.x);
-	relative_mouse_pos.y = guimp->win_main->mouse_pos.y - (guimp->final_image.pos.y + active_layer->pos.y);
-	float aspect_x = ((float)active_layer->pos.w / ((float)active_layer->pos.w * guimp->zoom));
-	float aspect_y = ((float)active_layer->pos.h / ((float)active_layer->pos.h * guimp->zoom));
-	t_vec2i	actual_pos = vec2i(
-			relative_mouse_pos.x * aspect_x,
-			relative_mouse_pos.y * aspect_y);
-//	if (guimp->win_main->mouse_down == 1) // if left click on the win_main
-	{
-		if (guimp->draw_button->state == UI_STATE_CLICK) // basic draw
-		{
-			ui_surface_circle_draw(guimp->hidden_surface,
-				guimp->win_main->mouse_pos, guimp->size * guimp->zoom, guimp->combined_color);
-			if (guimp->win_main->mouse_down != SDL_BUTTON_LEFT)
-			{
-				guimp->first_set = 0;
-				return ;
-			}
-			if (guimp->first_set)
-			{
-				ui_surface_circle_draw_filled(active_layer->surface,
-					guimp->first_pos_converted, guimp->size, guimp->combined_color);
-				ui_surface_line_draw_thicc(active_layer->surface,
-					guimp->first_pos_converted, actual_pos, guimp->size, guimp->combined_color);
-				ui_surface_circle_draw_filled(active_layer->surface,
-					actual_pos, guimp->size, guimp->combined_color);
-				guimp->first_set = 0;
-			}
-			guimp->first_pos_converted = actual_pos;
-			guimp->first_set = 1;
-		}
-		else if (guimp->text_button->state == UI_STATE_CLICK) // text
-		{
-			SDL_Surface		*surface;
-			t_ui_label		*label;
-			t_ui_dropdown	*drop;
-			char			*full_font;
+	active_layer = &guimp->layers[guimp->selected_layer];
+	aspect_x = ((float)active_layer->pos.w / ((float)active_layer->pos.w * guimp->zoom));
+	aspect_y = ((float)active_layer->pos.h / ((float)active_layer->pos.h * guimp->zoom));
 
-			drop = ui_dropdown_get_dropdown(guimp->font_dropdown);
-			if (!drop->active)
-				return ;
-			label = ui_button_get_label(drop->active);
-			guimp->text_input_str = ui_input_label_get(guimp->text_input)->text;
-			full_font = ft_strjoiner("fonts/", label->text, ".ttf", NULL);
-			surface = ui_surface_text_new(guimp->text_input_str, full_font, guimp->size, guimp->combined_color);
-			ft_strdel(&full_font);
-			if (!surface)
-			{
-				ft_printf("[%s] Font doesnt exist.\n", __FUNCTION__);
-				return ;
-			}
-			SDL_BlitScaled(surface, NULL, guimp->hidden_surface, &(SDL_Rect){guimp->win_main->mouse_pos.x, guimp->win_main->mouse_pos.y, surface->w * guimp->zoom, surface->h * guimp->zoom});
-			if (guimp->win_main->mouse_down == SDL_BUTTON_LEFT)
-				SDL_BlitSurface(surface, NULL, active_layer->surface, &(SDL_Rect){actual_pos.x, actual_pos.y, surface->w, surface->h});
-			SDL_FreeSurface(surface);
-		}
-		else if (guimp->erase_button->state == UI_STATE_CLICK) // erase
-		{
-			ui_surface_circle_draw(guimp->hidden_surface,
-				guimp->win_main->mouse_pos, guimp->size * guimp->zoom,
-				0xffb0b0b0);
-			if (guimp->win_main->mouse_down != SDL_BUTTON_LEFT)
-				return ;
-			ui_surface_circle_draw_filled(active_layer->surface,
-				actual_pos, guimp->size, 0x00000000);
-		}
-		else if (guimp->flood_button->state == UI_STATE_CLICK) // flood fill
-		{
-			if (guimp->win_main->mouse_down == SDL_BUTTON_LEFT)
-				flood_fill(active_layer->surface, guimp->combined_color, actual_pos.x , actual_pos.y);
-		}
-		else if (guimp->sticker_button->state == UI_STATE_CLICK) // sticker
-		{
-			SDL_Surface		*surface;
-			t_ui_label		*label;
-			t_ui_dropdown	*drop;
-			char			*full_path;
-			char			*including_type;
+	hidden_pos = vec2i(guimp->win_main->mouse_pos.x * aspect_x, guimp->win_main->mouse_pos.y * aspect_y);
 
-			drop = ui_dropdown_get_dropdown(guimp->sticker_dropdown);
-			if (!drop->active)
-				return ;
-			label = ui_button_get_label(drop->active);
-			full_path = ft_strjoin("stickers/", label->text);
-			// Checking png
-			including_type = ft_strjoin(full_path, ".png");
-			surface = ui_surface_image_new(including_type);
-			// Checking jpg
-			if (!surface)
-			{
-				ft_strdel(&including_type);
-				including_type = ft_strjoin(full_path, ".jpg");
-				surface = ui_surface_image_new(including_type);
-			}
-			// Checking bmp
-			if (!surface)
-			{
-				ft_strdel(&including_type);
-				including_type = ft_strjoin(full_path, ".bmp");
-				surface = ui_surface_image_new(including_type);
-			}
-			ft_strdel(&including_type);
-			ft_strdel(&full_path);
-			if (!surface)
-			{
-				ft_printf("[%s] Sticker image doesnt exist.\n", __FUNCTION__);
-				return ;
-			}
-			SDL_BlitScaled(surface, NULL, guimp->hidden_surface, &(SDL_Rect){guimp->win_main->mouse_pos.x, guimp->win_main->mouse_pos.y, surface->w * guimp->zoom, surface->h * guimp->zoom});
-			if (guimp->win_main->mouse_down == SDL_BUTTON_LEFT)
-				SDL_BlitSurface(surface, NULL, active_layer->surface, &(SDL_Rect){actual_pos.x, actual_pos.y, surface->w, surface->h});
-			SDL_FreeSurface(surface);
-		}
-		else if (guimp->move_button->state == UI_STATE_CLICK) // move
-		{
-			t_vec2i	mouse_pos;
+	real_image_pos.x = guimp->win_main->mouse_pos.x - guimp->final_image.pos.x;
+	real_image_pos.y = guimp->win_main->mouse_pos.y - guimp->final_image.pos.y;
+	actual_pos.x = (real_image_pos.x - active_layer->pos.x) * aspect_x;
+	actual_pos.y = (real_image_pos.y - active_layer->pos.y) * aspect_y;
 
-			if (guimp->win_main->mouse_down != SDL_BUTTON_LEFT)
-				return ;
-			mouse_pos.x = guimp->win_main->mouse_pos.x - guimp->win_main->mouse_pos_prev.x;
-			mouse_pos.y = guimp->win_main->mouse_pos.y - guimp->win_main->mouse_pos_prev.y;
-			guimp->layers[guimp->selected_layer].pos.x += mouse_pos.x / guimp->zoom;
-			guimp->layers[guimp->selected_layer].pos.y += mouse_pos.y / guimp->zoom;
-		}
-		else if (guimp->shape_button->state == UI_STATE_CLICK)
-		{
-			if (guimp->line_button->state == UI_STATE_CLICK) // line tool
-			{
-				if (guimp->first_set)
-				{
-					if (guimp->size > 1)
-					{
-						ui_surface_circle_draw_filled(guimp->hidden_surface,
-							guimp->first_pos, guimp->size, guimp->combined_color);
-						ui_surface_line_draw_thicc(guimp->hidden_surface,
-							guimp->first_pos,
-							guimp->win_main->mouse_pos,
-							guimp->size,
-							guimp->combined_color);
-						ui_surface_circle_draw_filled(guimp->hidden_surface,
-							guimp->win_main->mouse_pos, guimp->size, guimp->combined_color);
-					}
-					else
-					{
-						ui_surface_line_draw(guimp->hidden_surface,
-							guimp->first_pos,
-							guimp->win_main->mouse_pos,
-							guimp->combined_color);
-					}
-				}
-				if (guimp->win_main->mouse_down_last_frame == SDL_BUTTON_RIGHT) // unselect on right click;
-				{
-					guimp->first_set = 0;
-					return ;
-				}
-				else if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
-					return ;
-				if (!guimp->first_set)
-				{
-					guimp->first_pos_converted = actual_pos;
-					guimp->first_pos = guimp->win_main->mouse_pos;
-					guimp->first_set = 1;
-				}
-				else
-				{
-					if (guimp->size > 1)
-					{
-						ui_surface_circle_draw_filled(active_layer->surface,
-							guimp->first_pos_converted, guimp->size, guimp->combined_color);
-						ui_surface_line_draw_thicc(active_layer->surface,
-							guimp->first_pos_converted, actual_pos, guimp->size, guimp->combined_color);
-						ui_surface_circle_draw_filled(active_layer->surface,
-							actual_pos, guimp->size, guimp->combined_color);
-					}
-					else
-					{
-						ui_surface_line_draw(active_layer->surface,
-							guimp->first_pos_converted, actual_pos, guimp->combined_color);
-					}
-					guimp->first_set = 0;
-				}
-			}
-			else if (guimp->square_button->state == UI_STATE_CLICK) // rect tool
-			{
-				if (guimp->first_set)
-					ui_surface_rect_draw(guimp->hidden_surface, guimp->first_pos,
-						guimp->win_main->mouse_pos, guimp->combined_color);
-				if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
-					return ;
-				if (!guimp->first_set)
-				{
-					guimp->first_pos_converted = actual_pos;
-					guimp->first_pos = guimp->win_main->mouse_pos;
-					guimp->first_set = 1;
-				}
-				else
-				{
-					ui_surface_rect_draw(active_layer->surface, guimp->first_pos_converted,
-						actual_pos, guimp->combined_color);
-					guimp->first_set = 0;
-				}
-			}
-			else if (guimp->circle_button->state == UI_STATE_CLICK) // circle tool
-			{
-				if (guimp->first_set)
-				{
-					ui_surface_circle_draw(guimp->hidden_surface, guimp->first_pos,
-						dist(guimp->first_pos, guimp->win_main->mouse_pos), guimp->combined_color);
-				}
-				if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
-					return ;
-				if (!guimp->first_set)
-				{
-					guimp->first_pos_converted = actual_pos;
-					guimp->first_pos = guimp->win_main->mouse_pos;
-					guimp->first_set = 1;
-				}
-				else
-				{
-					ui_surface_circle_draw(active_layer->surface, guimp->first_pos_converted,
-						dist(guimp->first_pos_converted, actual_pos), guimp->combined_color);
-					guimp->first_set = 0;
-				}
-			}
-		}
-		else if (guimp->pipette_button->state == UI_STATE_CLICK) // pipette
-		{
-			if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
-				return ;
-			float img_aspect_x = ((float)guimp->final_image.pos.w / ((float)guimp->final_image.pos.w * guimp->zoom));
-			float img_aspect_y = ((float)guimp->final_image.pos.h / ((float)guimp->final_image.pos.h * guimp->zoom));
-			t_vec2i	img_pos = vec2i(
-					guimp->win_main->mouse_pos.x - guimp->final_image.pos.x,
-					guimp->win_main->mouse_pos.y - guimp->final_image.pos.y);
-			set_sliders_to_color(guimp, ui_surface_pixel_get(guimp->final_image.surface, img_pos.x * img_aspect_x, img_pos.y * img_aspect_y));
-		}
-	}
+	// Draw Final Image Outline
+	t_vec2i	final_real_pos;
+	final_real_pos.x = guimp->final_image.pos.x * aspect_x;
+	final_real_pos.y = guimp->final_image.pos.y * aspect_y;
+	ui_surface_rect_draw(guimp->hidden_surface,
+		vec2i(final_real_pos.x, final_real_pos.y),
+		vec2i(final_real_pos.x + guimp->final_image.pos.w,
+			final_real_pos.y + guimp->final_image.pos.h),
+		0xffffbe00);
+
+	// Draw Active Layer Outline
+	t_vec2i	layer_rel_pos;
+	layer_rel_pos.x = final_real_pos.x + active_layer->pos.x;
+	layer_rel_pos.y = final_real_pos.y + active_layer->pos.y;
+	ui_surface_rect_draw(guimp->hidden_surface, layer_rel_pos,
+		vec2i(layer_rel_pos.x + active_layer->pos.w,
+			layer_rel_pos.y + active_layer->pos.h),
+		0xffff00ff);
+
+	if (guimp->draw_button->state == UI_STATE_CLICK)
+		draw_brush(guimp, active_layer, actual_pos, hidden_pos);
+	else if (guimp->text_button->state == UI_STATE_CLICK)
+		text_brush(guimp, active_layer, actual_pos, hidden_pos);
+	else if (guimp->erase_button->state == UI_STATE_CLICK)
+		erase_brush(guimp, active_layer, actual_pos, hidden_pos);
+	else if (guimp->flood_button->state == UI_STATE_CLICK)
+		flood_brush(guimp, active_layer, actual_pos);
+	else if (guimp->sticker_button->state == UI_STATE_CLICK)
+		sticker_brush(guimp, active_layer, actual_pos, hidden_pos);
+	else if (guimp->move_button->state == UI_STATE_CLICK)
+		move_brush(guimp, active_layer, actual_pos);
+	else if (guimp->shape_button->state == UI_STATE_CLICK)
+		shape_brush(guimp, active_layer, actual_pos, hidden_pos);
+	else if (guimp->pipette_button->state == UI_STATE_CLICK)
+		pipette_brush(guimp, vec2i(real_image_pos.x * aspect_x, real_image_pos.y * aspect_y));
 }
 
 /*
@@ -353,12 +166,15 @@ void	layer_render(t_guimp *guimp)
 				guimp->layers[ii].pos.w, guimp->layers[ii].pos.h});
 	}
 	// Make dotted outline around the final image dimensions;
+	/*
 	ui_surface_rect_draw(guimp->hidden_surface,
 		vec2i(guimp->final_image.pos.x, guimp->final_image.pos.y),
 		vec2i(guimp->final_image.pos.x + (guimp->final_image.pos.w * guimp->zoom),
 			guimp->final_image.pos.y + (guimp->final_image.pos.h * guimp->zoom)),
 		0xffffbe00);
+		*/
 
+	/*
 	// Make dotted outline around the selected layer dimensions;
 	if (guimp->selected_layer >= 0 && guimp->selected_layer < guimp->layer_amount)
 	{
@@ -373,6 +189,7 @@ void	layer_render(t_guimp *guimp)
 				relative_layer_pos.y + (guimp->layers[guimp->selected_layer].pos.h * guimp->zoom)),
 			0xffff00ff);
 	}
+	*/
 
 	if (guimp->hidden_texture == NULL)
 		guimp->hidden_texture = SDL_CreateTextureFromSurface(guimp->win_main->renderer, guimp->hidden_surface);
@@ -391,9 +208,17 @@ void	layer_render(t_guimp *guimp)
 	SDL_RenderClear(guimp->win_main->renderer);
 
 	// Hidden surface
+	/*
+	int	new_w = guimp->hidden_surface->w * guimp->zoom;
+	int	how_much_moved_x = (guimp->hidden_surface->w - new_w) / 2;
+	int	new_h = guimp->hidden_surface->h * guimp->zoom;
+	int	how_much_moved_y = (guimp->hidden_surface->h - new_h) / 2;
 	SDL_SetRenderTarget(guimp->win_main->renderer, guimp->win_main->texture);
-	SDL_RenderCopy(guimp->win_main->renderer, guimp->hidden_texture, NULL, NULL);
-
+	SDL_RenderCopy(guimp->win_main->renderer, guimp->hidden_texture, NULL, &(SDL_Rect){how_much_moved_x, how_much_moved_y, new_w, new_h});
+	*/
+	SDL_SetRenderTarget(guimp->win_main->renderer, guimp->win_main->texture);
+	//SDL_RenderCopy(guimp->win_main->renderer, guimp->hidden_texture, NULL, NULL); 
+	SDL_RenderCopy(guimp->win_main->renderer, guimp->hidden_texture, NULL, &(SDL_Rect){0, 0, guimp->hidden_surface->w * guimp->zoom, guimp->hidden_surface->h * guimp->zoom}); 
 	SDL_FillRect(guimp->hidden_surface, NULL, 0x00000000);
 
 	// Clear Render Target

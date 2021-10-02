@@ -5,6 +5,7 @@ SRCS = \
 	./layer.c \
 	./help.c \
 	./floodfill.c \
+	./brushes.c \
 
 OBJS = $(SRCS:.c=.o)
 
