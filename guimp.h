@@ -181,7 +181,7 @@ void				text_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_
 void				erase_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_vec2i hidden_pos);
 void				flood_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos);
 void				sticker_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_vec2i hidden_pos);
-void				move_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos);
+void				move_brush(t_guimp *guimp, t_layer *active_layer);
 void				shape_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_vec2i hidden_pos);
 void				pipette_brush(t_guimp *guimp, t_vec2i actual_pos);
 

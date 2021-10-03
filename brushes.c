@@ -105,7 +105,7 @@ void	sticker_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_
 	SDL_FreeSurface(surface);
 }
 
-void	move_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos)
+void	move_brush(t_guimp *guimp, t_layer *active_layer)
 {
 	t_vec2i	mouse_pos;
 

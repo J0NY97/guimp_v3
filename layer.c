@@ -101,10 +101,10 @@ void	layer_draw(t_guimp *guimp)
 
 	hidden_pos = vec2i(guimp->win_main->mouse_pos.x * aspect_x, guimp->win_main->mouse_pos.y * aspect_y);
 
-	real_image_pos.x = guimp->win_main->mouse_pos.x - guimp->final_image.pos.x;
-	real_image_pos.y = guimp->win_main->mouse_pos.y - guimp->final_image.pos.y;
-	actual_pos.x = (real_image_pos.x - active_layer->pos.x) * aspect_x;
-	actual_pos.y = (real_image_pos.y - active_layer->pos.y) * aspect_y;
+	real_image_pos.x = (guimp->win_main->mouse_pos.x - guimp->final_image.pos.x) * aspect_x;
+	real_image_pos.y = (guimp->win_main->mouse_pos.y - guimp->final_image.pos.y) * aspect_y;
+	actual_pos.x = (real_image_pos.x - active_layer->pos.x);
+	actual_pos.y = (real_image_pos.y - active_layer->pos.y);
 
 	// Draw Final Image Outline
 	t_vec2i	final_real_pos;
@@ -136,7 +136,7 @@ void	layer_draw(t_guimp *guimp)
 	else if (guimp->sticker_button->state == UI_STATE_CLICK)
 		sticker_brush(guimp, active_layer, actual_pos, hidden_pos);
 	else if (guimp->move_button->state == UI_STATE_CLICK)
-		move_brush(guimp, active_layer, actual_pos);
+		move_brush(guimp, active_layer);
 	else if (guimp->shape_button->state == UI_STATE_CLICK)
 		shape_brush(guimp, active_layer, actual_pos, hidden_pos);
 	else if (guimp->pipette_button->state == UI_STATE_CLICK)
