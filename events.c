@@ -89,7 +89,7 @@ void	layer_elements_render(t_guimp *guimp)
 		if (!guimp->layer_elems[jj]->texture)
 			continue ;
 		tt = ui_surface_new(guimp->layer_elems[jj]->pos.w, guimp->layer_elems[jj]->pos.h);
-		SDL_FillRect(tt, NULL, 0xffff0000);
+		SDL_FillRect(tt, NULL, 0xff037171);
 		SDL_BlitScaled(guimp->layers[jj].surface, &(SDL_Rect){-guimp->layers[jj].pos.x, -guimp->layers[jj].pos.y, guimp->final_image.pos.w, guimp->final_image.pos.h}, tt, &(SDL_Rect){pos.x + (pos.w / 2) - (final_w / 2), pos.y + (pos.h / 2) - (final_h / 2), final_w, final_h});
 		SDL_UpdateTexture(guimp->layer_elems[jj]->texture, NULL, tt->pixels, tt->pitch);
 		SDL_FreeSurface(tt);
@@ -272,21 +272,21 @@ void	color_swatch_event(t_guimp *guimp)
 	t_ui_slider		*green_slider;
 	t_ui_slider		*blue_slider;
 	t_ui_slider		*alpha_slider;
-	t_ui_element	input_label;
+	t_ui_element	*input_label;
 
 	red_slider = guimp->red_slider->element;
 	green_slider = guimp->green_slider->element;
 	blue_slider = guimp->blue_slider->element;
 	alpha_slider = guimp->alpha_slider->element;
-	input_label = ((t_ui_input *)guimp->color_swatch->element)->label;
+	input_label = ui_input_get_label_element(guimp->color_swatch);
 	if (red_slider->update || green_slider->update || blue_slider->update || alpha_slider->update)
 	{
-		guimp->combined_color = rgba_to_hex((t_rgba){.r = red_slider->value, .g = green_slider->value, .b = blue_slider->value, .a = alpha_slider->value});
+		guimp->combined_color = rgba_to_hex(rgba(red_slider->value, green_slider->value, blue_slider->value, alpha_slider->value));
 		ui_element_color_set(guimp->color_swatch, UI_STATE_DEFAULT, guimp->combined_color);
 		if (!guimp->color_swatch->is_click)
 		{
 			temp = ft_itoa_base(guimp->combined_color, 16);
-			ui_label_text_set(&input_label, temp);
+			ui_label_text_set(input_label, temp);
 			ft_strdel(&temp);
 		}
 	}
@@ -295,7 +295,7 @@ void	color_swatch_event(t_guimp *guimp)
 		t_ui_label	*label;
 		t_rgba		input_rgba;
 
-		label = input_label.element;
+		label = input_label->element;
 		guimp->combined_color = (unsigned int)strtoul(label->text, NULL, 16);
 		input_rgba = hex_to_rgba(guimp->combined_color);
 		ui_slider_value_set(guimp->red_slider, input_rgba.r);
@@ -324,6 +324,9 @@ void	save_button_event(t_guimp *guimp)
 
 void	edit_button_event(t_guimp *guimp)
 {
+	int	w;
+	int	h;
+
 	if (ui_button(guimp->edit_button))
 	{
 		ui_window_flag_set(guimp->win_image_edit, UI_WINDOW_SHOW);
@@ -331,9 +334,8 @@ void	edit_button_event(t_guimp *guimp)
 	}
 	if (ui_button(guimp->new_image_ok_button))
 	{
-		int w = atoi(guimp->new_image_width_input_label->text);
-		int h = atoi(guimp->new_image_height_input_label->text);
-		ft_printf("we want iamge size of : %d %d\n", w, h);
+		w = atoi(guimp->new_image_width_input_label->text);
+		h = atoi(guimp->new_image_height_input_label->text);
 		resize_layer(&guimp->final_image, vec2i(w, h));
 		SDL_DestroyTexture(guimp->final_image_texture);
 		guimp->final_image_texture = SDL_CreateTextureFromSurface(guimp->win_main->renderer, guimp->final_image.surface);

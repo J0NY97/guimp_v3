@@ -32,7 +32,7 @@ void	text_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_vec
 	if (!drop->active)
 		return ;
 	label = ui_button_get_label(drop->active);
-	guimp->text_input_str = ui_input_label_get(guimp->text_input)->text;
+	guimp->text_input_str = ui_input_get_label(guimp->text_input)->text;
 	full_font = ft_strjoiner("fonts/", label->text, ".ttf", NULL);
 	surface = ui_surface_text_new(guimp->text_input_str, full_font, guimp->size, guimp->combined_color);
 	ft_strdel(&full_font);

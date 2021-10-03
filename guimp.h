@@ -207,6 +207,7 @@ void				layer_draw(t_guimp *guimp);
 void				layer_render(t_guimp *guimp);
 
 // Help
+t_rgba				rgba(Uint32 r, Uint32 g, Uint32 b, Uint32 a);
 void				set_sliders_to_color(t_guimp *guimp, Uint32 color);
 void				add_to_drop_menu(t_ui_element *dropdown_elem, t_ui_element *child);
 void				get_dir_content(t_dir_content *content, char *path);

@@ -104,7 +104,7 @@ slider_button
 slider_elem
 {
 	bg_color : 0xff003707;
-	font_color : 0xff72e26c;
+	text_color : 0xff72e26c;
 	font_path : ShareTechMono-Regular.ttf;
 	text_align : center;
 };
@@ -113,7 +113,7 @@ slider_label
 {
 	x : -15;
 	y : 2;
-	font_color : 0xff72e26c;
+	text_color : 0xff037171;
 	font_path : ShareTechMono-Regular.ttf;
 	text_align : none;
 	title : 0;
@@ -406,6 +406,7 @@ button_move_layer_down : brush_button
 layer
 {
 	xywh : 0, 40, 200, 30;
+	//bg_color : 0xff72e26c;
 	bg_color : 0xffff0000;
 };
 

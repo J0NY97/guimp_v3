@@ -23,12 +23,13 @@ void	guimp_init(t_guimp *guimp)
 	guimp->win_main = ui_list_get_window_by_id(guimp->layout.windows, "main_window");
 	layer_new(&guimp->final_image, "Image", vec4i(guimp->win_main->pos.w / 2 - (1280 / 2), guimp->win_main->pos.h / 2 - (720 / 2), 1280, 720), NULL);
 	SDL_FillRect(guimp->final_image.surface, NULL, 0xff000000); // fill image with black so the alpha:ed layers can show.
-	guimp->final_image_texture = NULL;
+	guimp->final_image_texture = SDL_CreateTextureFromSurface(guimp->win_main->renderer, guimp->final_image.surface);
 	guimp->selected_layer = -1;
 	guimp->layer_amount = 0;
 	guimp->combined_color = 0xffffffff;
 	guimp->zoom = 1.0f;
 	guimp->hidden_surface = ui_surface_new(guimp->win_main->pos.w, guimp->win_main->pos.h);
+	guimp->hidden_texture = SDL_CreateTextureFromSurface(guimp->win_main->renderer, guimp->hidden_surface);
 }
 
 void	toolbox_window_init(t_guimp *guimp)
@@ -54,7 +55,7 @@ void	toolbox_window_init(t_guimp *guimp)
 	guimp->size_slider = ui_list_get_element_by_id(guimp->layout.elements, "size_slider");	
 	// text input
 	guimp->text_input = ui_list_get_element_by_id(guimp->layout.elements, "text_input");	
-	guimp->text_input_str = ui_input_label_get(guimp->text_input)->text;
+	guimp->text_input_str = ui_input_get_label(guimp->text_input)->text;
 	// loading fonts and stickers to the dropdown
 	guimp->font_dropdown = ui_list_get_element_by_id(guimp->layout.elements, "font_drop");
 	guimp->sticker_dropdown = ui_list_get_element_by_id(guimp->layout.elements, "sticker_drop");
@@ -75,15 +76,15 @@ void	new_layer_window_init(t_guimp *guimp)
 	else
 		ft_printf("[%s] Correct window got.\n", __FUNCTION__);
 	guimp->new_layer_ok_button = ui_list_get_element_by_id(guimp->layout.elements, "button_ok");
-	guimp->new_layer_name_input_label = ui_input_label_get(ui_list_get_element_by_id(guimp->layout.elements, "input_name"));
-	guimp->new_layer_width_input_label = ui_input_label_get(ui_list_get_element_by_id(guimp->layout.elements, "input_width"));
-	guimp->new_layer_height_input_label = ui_input_label_get(ui_list_get_element_by_id(guimp->layout.elements, "input_height"));
+	guimp->new_layer_name_input_label = ui_input_get_label(ui_list_get_element_by_id(guimp->layout.elements, "input_name"));
+	guimp->new_layer_width_input_label = ui_input_get_label(ui_list_get_element_by_id(guimp->layout.elements, "input_width"));
+	guimp->new_layer_height_input_label = ui_input_get_label(ui_list_get_element_by_id(guimp->layout.elements, "input_height"));
 
 	// New Image win
 	guimp->win_image_edit = ui_list_get_window_by_id(guimp->layout.windows, "image_edit_window");
 	guimp->new_image_ok_button = ui_list_get_element_by_id(guimp->layout.elements, "button_ok_image");
-	guimp->new_image_width_input_label = ui_input_label_get(ui_list_get_element_by_id(guimp->layout.elements, "input_width_image"));
-	guimp->new_image_height_input_label = ui_input_label_get(ui_list_get_element_by_id(guimp->layout.elements, "input_height_image"));
+	guimp->new_image_width_input_label = ui_input_get_label(ui_list_get_element_by_id(guimp->layout.elements, "input_width_image"));
+	guimp->new_image_height_input_label = ui_input_get_label(ui_list_get_element_by_id(guimp->layout.elements, "input_height_image"));
 }
 
 void	edit_layer_window_init(t_guimp *guimp)

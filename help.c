@@ -1,5 +1,10 @@
 #include  "guimp.h"
 
+t_rgba	rgba(Uint32 r, Uint32 g, Uint32 b, Uint32 a)
+{
+	return ((t_rgba){.r = r, .g = g, .b = b, .a = a});
+}
+
 /*
  * Sets the r,g,b,a sliders on the toolbox to specifc value according to the 'color';
 */
