@@ -6,17 +6,17 @@ t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name, int nth_layer)
 	t_ui_element	*show; // checkbox
 	t_ui_element	*image; // menu
 	t_ui_element	*select; // radio button
-	t_ui_recipe_v2	*recipe_menu;
-	t_ui_recipe_v2	*recipe_show;
-	t_ui_recipe_v2	*recipe_image;
-	t_ui_recipe_v2	*recipe_select;
+	t_ui_recipe		*recipe_menu;
+	t_ui_recipe		*recipe_show;
+	t_ui_recipe		*recipe_image;
+	t_ui_recipe		*recipe_select;
 	char			temp[20];
 	char			*pmet;
 
-	recipe_menu = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "layer");
-	recipe_show = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "layer_show_checkbox");
-	recipe_image = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "layer_image_elem");
-	recipe_select = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "layer_select_button");
+	recipe_menu = ui_list_get_recipe_by_id(guimp->layout.recipes, "layer");
+	recipe_show = ui_list_get_recipe_by_id(guimp->layout.recipes, "layer_show_checkbox");
+	recipe_image = ui_list_get_recipe_by_id(guimp->layout.recipes, "layer_image_elem");
+	recipe_select = ui_list_get_recipe_by_id(guimp->layout.recipes, "layer_select_button");
 
 	menu = ft_memalloc(sizeof(t_ui_element));
 	ui_menu_new(guimp->win_toolbox, menu);

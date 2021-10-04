@@ -16,11 +16,20 @@ void	user_events(t_guimp *guimp)
 
 void	guimp_init(t_guimp *guimp)
 {
+	t_ui_window	*win_main;
+	SDL_Window	*new_window;
+
 	memset(guimp, 0, sizeof(t_guimp));
 	SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
-	ui_layout_load_v2(&guimp->layout, "layout_v2.ui");
+	ui_layout_load(&guimp->layout, "layout_v2.ui");
+
+	win_main = ui_list_get_window_by_id(guimp->layout.windows, "main_window");
+	new_window = SDL_CreateWindow("no title", 220, 25, 1700, 1030, 0);
+	ui_window_replace_win(win_main, new_window);
+	ui_window_edit(win_main, ui_list_get_recipe_by_id(guimp->layout.recipes, "main_window"));
+
 	// Main Win
-	guimp->win_main = ui_list_get_window_by_id(guimp->layout.windows, "main_window");
+	guimp->win_main = win_main;
 	layer_new(&guimp->final_image, "Image", vec4i(guimp->win_main->pos.w / 2 - (1280 / 2), guimp->win_main->pos.h / 2 - (720 / 2), 1280, 720), NULL);
 	SDL_FillRect(guimp->final_image.surface, NULL, 0xff000000); // fill image with black so the alpha:ed layers can show.
 	guimp->final_image_texture = SDL_CreateTextureFromSurface(guimp->win_main->renderer, guimp->final_image.surface);
@@ -36,7 +45,7 @@ void	toolbox_window_init(t_guimp *guimp)
 {
 	// Toolbox Win
 	guimp->win_toolbox = ui_list_get_window_by_id(guimp->layout.windows, "toolbox_window");
-	guimp->layer_recipe = ui_list_get_recipe_by_id_v2(guimp->layout.recipes, "layer");
+	guimp->layer_recipe = ui_list_get_recipe_by_id(guimp->layout.recipes, "layer");
 	guimp->layer_parent = ui_list_get_element_by_id(guimp->layout.elements, "layer_menu");
 	ui_menu_get_menu(guimp->layer_parent)->event_and_render_children = 1;
 	// Layer buttons
@@ -110,33 +119,6 @@ int	main(void)
 	SDL_Event	e;
 
 	ui_sdl_init();
-
-	/*
-	 * TESTING
-	int	iter = 1000;
-	int	i;
-	t_vec2i wh = vec2i(1000, 1000);
-	t_vec2i v1 = vec2i(0, 0);
-	t_vec2i v2 = vec2i(wh.x - 1, wh.y - 1);
-	SDL_Surface *surf = ui_surface_new(wh.x, wh.y);
-
-	i = -1;
-	ft_timer_start();
-	while (++i < iter)
-		ui_surface_line_draw_thicc(surf, v1, v2, 1, 0);
-	ft_printf("Anti-Alien (AA): %f\n", ft_timer_end());
-
-	i = -1;
-	ft_timer_start();
-	while (++i < iter)
-		ui_surface_line_draw(surf, v1, v2, 0);
-	ft_printf("Current Best (CBA): %f\n", ft_timer_end());
-
-	exit(0);
-	*/
-	/*
-	 * TESTING END
-	*/
 
 	guimp_init(&guimp);
 	toolbox_window_init(&guimp);
@@ -213,7 +195,7 @@ int	main(void)
 			else
 			{
 				// Event
-				ui_layout_event_v2(&guimp.layout, e);
+				ui_layout_event(&guimp.layout, e);
 
 				// Layer
 				layer_event(&guimp);
@@ -231,7 +213,7 @@ int	main(void)
 		layer_render(&guimp);
 
 		// Render
-		ui_layout_render_v2(&guimp.layout);
+		ui_layout_render(&guimp.layout);
 	}
 	return (0);
 }

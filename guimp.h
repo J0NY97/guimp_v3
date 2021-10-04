@@ -93,9 +93,9 @@ typedef struct s_guimp
 	////////////////
 	// Toolbox Win
 	////////////////
-	t_ui_layout_v2	layout;
+	t_ui_layout		layout;
 	t_ui_window		*win_toolbox;
-	t_ui_recipe_v2		*layer_recipe;
+	t_ui_recipe		*layer_recipe;
 	t_ui_element	*layer_elems[5];
 	t_ui_element	*layer_parent;
 	// Layer Buttons
