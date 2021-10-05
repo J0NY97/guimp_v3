@@ -25,6 +25,7 @@ void	guimp_init(t_guimp *guimp)
 
 	win_main = ui_list_get_window_by_id(guimp->layout.windows, "main_window");
 	new_window = SDL_CreateWindow("no title", 220, 25, 1700, 1030, 0);
+	SDL_Renderer	*renderer = SDL_CreateRenderer(new_window, -1, SDL_RENDERER_ACCELERATED);
 	ui_window_replace_win(win_main, new_window);
 	ui_window_edit(win_main, ui_list_get_recipe_by_id(guimp->layout.recipes, "main_window"));
 
