@@ -77,21 +77,19 @@ void	sticker_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_
 	full_path = ft_strjoin("stickers/", label->text);
 	// Checking png
 	including_type = ft_strjoin(full_path, ".png");
-	surface = ui_surface_image_new(including_type);
 	// Checking jpg
-	if (!surface)
+	if (access(including_type, F_OK))
 	{
 		ft_strdel(&including_type);
 		including_type = ft_strjoin(full_path, ".jpg");
-		surface = ui_surface_image_new(including_type);
 	}
 	// Checking bmp
-	if (!surface)
+	if (access(including_type, F_OK))
 	{
 		ft_strdel(&including_type);
 		including_type = ft_strjoin(full_path, ".bmp");
-		surface = ui_surface_image_new(including_type);
 	}
+	surface = ui_surface_image_new(including_type);
 	ft_strdel(&including_type);
 	ft_strdel(&full_path);
 	if (!surface)
