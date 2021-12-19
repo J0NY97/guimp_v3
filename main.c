@@ -20,7 +20,10 @@ void	guimp_init(t_guimp *guimp)
 
 	memset(guimp, 0, sizeof(t_guimp));
 	SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
-	ui_layout_load(&guimp->layout, NULL, "layout_v2.ui");
+	ui_layout_load(&guimp->layout, NULL, "layout.ui");
+	if (!guimp->layout.layout_file_content
+		|| !guimp->layout.style_file_content)
+		exit(0);
 
 	win_main = ui_list_get_window_by_id(guimp->layout.windows, "main_window");
 	ui_window_edit(win_main, ui_list_get_recipe_by_id(guimp->layout.recipes, "main_window"));
