@@ -9,12 +9,12 @@ SRCS = \
 
 OBJS = $(SRCS:.c=.o)
 
-SDL_DIR		:= libs/SDL
+SDL_DIR		:= ./libs/SDL_WIN
 SDL_INC		:= -I$(SDL_DIR)/include
 SDL_LIB_DIR	:= -L$(SDL_DIR)/lib
 SDL_LIB		:= -lSDL2 -lSDL2_ttf -lSDL2_image
 
-LIB_FOLDER = libs
+LIB_FOLDER = ./libs
 
 INCLUDES = \
 	-I$(LIB_FOLDER)/libft \
@@ -50,10 +50,10 @@ clean:
 	@rm -f $(OBJS)
 	@echo "$(NAME) was cleaned."
 
-fclean:
+fclean: clean
 	@rm -f $(NAME)
 	@echo "$(NAME) was fcleaned."
 
-re: fclean $(LIBS) all
+re: fclean all
 
 .PHONY: clean, all, re, fclean

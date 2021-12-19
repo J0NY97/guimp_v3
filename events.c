@@ -20,41 +20,38 @@ t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name, int nth_layer)
 
 	menu = ft_memalloc(sizeof(t_ui_element));
 	ui_menu_new(guimp->win_toolbox, menu);
-	((t_ui_menu *)menu->element)->event_and_render_children = 1;
-	ui_element_parent_set(menu, guimp->layer_parent, UI_TYPE_ELEMENT);
+	((t_ui_menu *)menu->element)->event_children = 1;
+	((t_ui_menu *)menu->element)->render_children = 1;
+	ui_element_set_parent(menu, guimp->layer_parent, UI_TYPE_ELEMENT);
 	ui_element_edit(menu, recipe_menu);
 	ui_element_pos_set(menu, vec4(recipe_menu->pos.x, (recipe_menu->pos.h * nth_layer) + (nth_layer * 10) + recipe_menu->pos.y, recipe_menu->pos.w, recipe_menu->pos.h));
 	pmet = ft_strjoin("layer", ft_b_itoa(nth_layer, temp));
-	ui_element_id_set(menu, pmet);
+	ui_element_set_id(menu, pmet);
 	ft_strdel(&pmet);
 
 	// Only making this so it would be easier to change the values of the size of the shown image.
 	image = ft_memalloc(sizeof(t_ui_element));
-	ui_element_new(guimp->win_toolbox, image);
-	ui_element_parent_set(image, menu, UI_TYPE_ELEMENT);
+	ui_menu_new(guimp->win_toolbox, image);
+	ui_element_set_parent(image, menu, UI_TYPE_ELEMENT);
 	ui_element_edit(image, recipe_image);
-	ui_element_id_set(image, "layer_image_elem");
+	ui_element_set_id(image, "layer_image_elem");
 	image->show = 0;
 
 	show = ft_memalloc(sizeof(t_ui_element));
 	ui_checkbox_new(guimp->win_toolbox, show);
-	ui_element_parent_set(show, menu, UI_TYPE_ELEMENT);
+	ui_element_set_parent(show, menu, UI_TYPE_ELEMENT);
 	ui_element_edit(show, recipe_show);
-	ui_element_id_set(show, "layer_show_checkbox");
+	ui_element_set_id(show, "layer_show_checkbox");
 
 	select = ft_memalloc(sizeof(t_ui_element));
 	ui_button_new(guimp->win_toolbox, select);
-	ui_element_parent_set(select, menu, UI_TYPE_ELEMENT);
+	ui_element_set_parent(select, menu, UI_TYPE_ELEMENT);
 	ui_element_edit(select, recipe_select);
-	ui_element_id_set(select, "layer_select_button");
+	ui_element_set_id(select, "layer_select_button");
 
-	ui_label_text_set(&((t_ui_button *)select->element)->label, layer_name);
+	ui_label_set_text(&((t_ui_button *)select->element)->label, layer_name);
 
 	show->is_click = 1;
-
-	ui_element_print(menu);
-	ui_element_print(show);
-	ui_element_print(select);
 
 	return (menu);
 }
@@ -75,7 +72,7 @@ void	layer_elements_render(t_guimp *guimp)
 {
 	int			jj;
 	SDL_Surface	*tt;
-	t_vec4	pos;
+	t_vec4		pos;
 
 	pos = vec4(30, 5, 72, 20);
 	if (guimp->layer_amount > 0)
@@ -143,7 +140,6 @@ void	button_add_layer_event(t_guimp *guimp)
 		{
 			new_layer_combination(guimp);
 			ui_window_flag_set(guimp->win_layer_new, UI_WINDOW_HIDE);
-			ui_element_print(guimp->new_layer_ok_button);
 		}
 	}
 }
@@ -202,11 +198,11 @@ void	button_edit_layer_event(t_guimp *guimp)
 		SDL_RaiseWindow(guimp->win_layer_edit->win);
 		guimp->win_layer_edit->textures_recreate = 1; // this is how to fix small bug;
 		// fill with the current info of the layer
-		ui_label_text_set(&((t_ui_input *)guimp->input_edit_layer_name->element)->label,
+		ui_label_set_text(&((t_ui_input *)guimp->input_edit_layer_name->element)->label,
 			guimp->layers[guimp->selected_layer].name);	
-		ui_label_text_set(&((t_ui_input *)guimp->input_edit_layer_width->element)->label,
+		ui_label_set_text(&((t_ui_input *)guimp->input_edit_layer_width->element)->label,
 			ft_b_itoa(guimp->layers[guimp->selected_layer].pos.w, temp));	
-		ui_label_text_set(&((t_ui_input *)guimp->input_edit_layer_height->element)->label,
+		ui_label_set_text(&((t_ui_input *)guimp->input_edit_layer_height->element)->label,
 			ft_b_itoa(guimp->layers[guimp->selected_layer].pos.h, temp));	
 	}
 	// the window events
@@ -220,7 +216,7 @@ void	button_edit_layer_event(t_guimp *guimp)
 			ft_strdel(&guimp->layers[guimp->selected_layer].name);
 			guimp->layers[guimp->selected_layer].name
 					= ft_strdup(((t_ui_label *)((t_ui_input *)guimp->input_edit_layer_name->element)->label.element)->text);
-			ui_label_text_set(&((t_ui_button *)ui_list_get_element_by_id(guimp->layer_elems[guimp->selected_layer]->children, "layer_select_button")->element)->label, guimp->layers[guimp->selected_layer].name);
+			ui_label_set_text(&((t_ui_button *)ui_list_get_element_by_id(guimp->layer_elems[guimp->selected_layer]->children, "layer_select_button")->element)->label, guimp->layers[guimp->selected_layer].name);
 			ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_HIDE);
 		}
 	}
@@ -286,7 +282,7 @@ void	color_swatch_event(t_guimp *guimp)
 		if (!guimp->color_swatch->is_click)
 		{
 			temp = ft_itoa_base(guimp->combined_color, 16);
-			ui_label_text_set(input_label, temp);
+			ui_label_set_text(input_label, temp);
 			ft_strdel(&temp);
 		}
 	}
@@ -317,7 +313,7 @@ void	save_button_event(t_guimp *guimp)
 	}
 	if (ui_button(guimp->button_save_image_ok))
 	{
-		save_surface(guimp->final_image.surface, ui_input_text_get(guimp->input_save_image_name));
+		save_surface(guimp->final_image.surface, ui_input_get_text(guimp->input_save_image_name));
 		ui_window_flag_set(guimp->win_save_image, UI_WINDOW_HIDE);
 	}
 }

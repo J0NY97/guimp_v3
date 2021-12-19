@@ -1,26 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_arraydel.c                                      :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/11 10:09:29 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/11 10:09:30 by jsalmi           ###   ########.fr       */
+/*   Created: 2021/05/20 16:07:56 by nneronin          #+#    #+#             */
+/*   Updated: 2021/05/20 16:09:35 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "bxpm.h"
 
-void	ft_arraydel(char **arr)
+void	free_bxpm(t_bxpm *bxpm)
 {
-	int	i;
+	free(bxpm->clr);
+	free(bxpm->pix);
+	free(bxpm);
+}
 
-	if (!arr)
-		return ;
-	i = -1;
-	while (arr[++i])
-		ft_strdel(&arr[i]);
-	free(arr);
-	arr = NULL;
+void	free_bmp(t_bmp *bmp)
+{
+	free(bmp->data);
+	free(bmp);
 }

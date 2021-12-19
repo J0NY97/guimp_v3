@@ -1,26 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_arraydel.c                                      :+:      :+:    :+:   */
+/*   ft_strnclr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/11 10:09:29 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/11 10:09:30 by jsalmi           ###   ########.fr       */
+/*   Created: 2021/12/11 10:10:21 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/12/11 10:10:21 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_arraydel(char **arr)
+void	ft_strnclr(char *str, size_t n)
 {
-	int	i;
-
-	if (!arr)
+	if (!str)
 		return ;
-	i = -1;
-	while (arr[++i])
-		ft_strdel(&arr[i]);
-	free(arr);
-	arr = NULL;
+	while (--n)
+		str[n] = '\0';
 }

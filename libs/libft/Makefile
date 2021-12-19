@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/18 11:13:47 by nneronin          #+#    #+#              #
-#    Updated: 2021/09/03 15:25:34 by nneronin         ###   ########.fr        #
+#    Updated: 2021/12/09 13:40:52 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,13 +23,17 @@ RAW =	add_to_list.c\
 		ft_atoi.c\
 		ft_atoi_base.c\
 		ft_arraydel.c\
+		ft_arrlen.c\
+		ft_arrjoin.c\
 		ft_b_itoa.c\
+		ft_b_ftoa.c\
 		ft_bzero.c\
 		ft_clamp.c\
 		ft_compile_string.c\
 		ft_dellstnode.c\
 		ft_filetostr.c\
 		ft_ftoa.c\
+		ft_get_file_content.c\
 		ft_isalnum.c\
 		ft_isalpha.c\
 		ft_isascii.c\
@@ -64,6 +68,7 @@ RAW =	add_to_list.c\
 		ft_nbrlen.c\
 		ft_nstrstr.c\
 		ft_pow.c\
+		ft_putarr.c\
 		ft_putchar.c\
 		ft_putchar_fd.c\
 		ft_putendl.c\
@@ -85,6 +90,7 @@ RAW =	add_to_list.c\
 		ft_strchr.c\
 		ft_strchrlen.c\
 		ft_strclr.c\
+		ft_strnclr.c\
 		ft_strcmp.c\
 		ft_strcpy.c\
 		ft_strcut.c\
@@ -138,7 +144,7 @@ OBJS = $(addprefix $(ODIR)/, $(RAW:.c=.o))
 CFLAGS = -Wall -Wextra -Werror -MMD -O3
 
 all: $(NAME)
-	@printf ${GREEN}"\e[J> $(NAME) ready!\n"${RESET}
+	@printf $(GREEN)"\e[J[INFO] $(NAME) ready!\n"$(RESET)
 
 $(ODIR):
 	@mkdir -p $(ODIR)
@@ -152,11 +158,11 @@ $(NAME): $(ODIR) $(OBJS)
 	@ranlib $(NAME)
 
 clean: 
-	@printf ${CYAN}"[INFO] Removing objs.\n"${RESET}
+	@printf $(CYAN)"[INFO] $(NAME) cleaned!\n"$(RESET)
 	@rm -rf $(ODIR)
 
 fclean: clean
-	@printf ${CYAN}"[INFO] Removing $(NAME)\n"${RESET}
+	
 	@rm $(NAME)
 
 re: fclean all

@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 11:56:18 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/26 14:20:43 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/10 09:21:20 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ int					ft_nbrlen(long nbr);
 int					ft_nstrstr(char *str1, char *str2);
 double				ft_pow(double n, int pow);
 long double			ft_long_pow(long double n, int pow);
+void				ft_putarr(char **arr);
 void				ft_putchar(char c);
 void				ft_putchar_fd(char c, int fd);
 void				ft_putendl(char const *s);
@@ -101,6 +102,7 @@ float				ft_pythagoras(float a, float b);
 char				*ft_readtostr(int fd);
 void				*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 char				*ft_reverse(char *s);
+char				*ft_b_reverse(char *s);
 int					ft_stradd(char **dest, char *src);
 void				ft_straddchar(char **str, char c);
 int					ft_strarr_func(char **arr, void (*f)(char **));
@@ -108,6 +110,7 @@ char				*ft_strcat(char *dest, const char *src);
 char				*ft_strchr(const char *str, int c);
 int					ft_strchrlen(const char *str, int c);
 void				ft_strclr(char *s);
+void				ft_strnclr(char *str, size_t n);
 int					ft_strcmp(const char *s1, const char *s2);
 char				*ft_strcpy(char *dest, const char *src);
 char				*ft_strcut(char *str, int start, int end);
@@ -139,20 +142,28 @@ char				*ft_strremove(char *str, const char *sub);
 int					ft_strreplace(char **dest, char **src);
 void				ft_strrev(char *str);
 char				**ft_strsplit(char const *s, char c);
+char				**ft_strsplit_nik(const char *s, char c);
+char				**ft_strsplit_old(char const *s, char c);
 size_t				ft_strspn(const char *s, const char *accept);
 char				*ft_strstr(const char *haystack, const char *needle);
 char				*ft_strsub(char const *s, unsigned int start, size_t len);
 char				*ft_strtoupper(const char *src);
 char				*ft_strtrim(char const *s);
 void				ft_swap(int *a, int *b);
+void				ft_fswap(float *a, float *b);
 int					ft_tolower(int c);
 int					ft_toupper(int c);
 int					ft_wordcount(const char *s, char c);
+int					ft_strwordcount(const char *str, char c);
 int					get_next_line(const int fd, char **line);
 char				*ft_b_itoa(int nbr, char *buffer);
+char				*ft_b_ftoa(double d, int precision, char *buffer);
 void				ft_arraydel(char **arr);
+int					ft_arrlen(char **arr);
+char				**ft_arrjoin(char **to_this, char **from_this);
 double				ft_timer_end(void);
 void				ft_timer_start(void);
 void				ft_lstdelone_nonfree(t_list **lst, t_list *del);
+char				*ft_get_file_content(char *file);
 
 #endif

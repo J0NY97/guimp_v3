@@ -5,12 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/17 12:59:44 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/26 08:44:56 by nneronin         ###   ########.fr       */
+/*   Created: 2021/05/16 15:01:20 by nneronin          #+#    #+#             */
+/*   Updated: 2021/12/09 12:38:55 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./libft.h"
+#include "../libft.h"
 
 static int	ft_wordlen(char const *str, char c, int x)
 {
@@ -32,6 +32,8 @@ char	**ft_strsplit(char const *s, char c)
 
 	x[1] = 0;
 	x[0] = 0;
+	if (!s)
+		return (NULL);
 	arr = ft_memalloc(sizeof(char *) * (ft_wordcount(s, c) + 1));
 	while (s[x[0]])
 	{

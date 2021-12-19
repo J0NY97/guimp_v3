@@ -5,7 +5,7 @@
 #                                                     +:+ +:+         +:+      #
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2020/09/23 13:48:12 by nneronin          #+#    #+#              #
+#    Created: 2021/05/10 10:44:15 by nneronin          #+#    #+#              #
 #    Updated: 2021/12/09 13:40:52 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
@@ -18,31 +18,20 @@ MAGENTA	:= "\e[0;35m"
 CYAN	:= "\e[0;36m"
 RESET	:= "\e[0m"
 
-RAW =	pf_printf.c\
-	   	pf_format.c\
-	   	pf_formats1.c\
-	   	pf_formats2.c\
-	   	pf_padding.c\
-	   	pf_flags.c\
-	   	pf_buffer.c\
-	   	pf_nbr.c\
-	   	pf_str.c\
-	   	pf_char.c\
-	   	pf_nbr_u.c\
-	   	pf_nbr_o.c\
-	   	pf_nbr_x.c\
-		pf_nbr_p.c\
-	   	pf_percent.c\
-	   	pf_float.c\
-	   	pf_base.c\
-	   	pf_nbr_inf.c\
-	   	pf_reset.c\
-		pf_specials.c\
-		error_msg.c
-
-NAME = libpf.a
+RAW	=	read_bmp.c \
+		read_bxpm.c \
+		surf_to_bmp.c \
+		surf_to_bxpm.c \
+		bmp_to_bxpm.c \
+		write_bmp.c \
+		write_bxpm.c \
+		write_bxpm2.c \
+		byte_utils.c \
+		free.c
+ 
+NAME = libbxpm.a
 CDIR = srcs
-IDIR = -I.
+IDIR = -I. -I ../libft -I ../libpf
 ODIR = objs
 SRCS = $(addprefix $(CDIR)/, $(RAW))
 OBJS = $(addprefix $(ODIR)/, $(RAW:.c=.o))

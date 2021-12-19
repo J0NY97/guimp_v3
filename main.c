@@ -17,16 +17,12 @@ void	user_events(t_guimp *guimp)
 void	guimp_init(t_guimp *guimp)
 {
 	t_ui_window	*win_main;
-	SDL_Window	*new_window;
 
 	memset(guimp, 0, sizeof(t_guimp));
 	SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
-	ui_layout_load(&guimp->layout, "layout_v2.ui");
+	ui_layout_load(&guimp->layout, NULL, "layout_v2.ui");
 
 	win_main = ui_list_get_window_by_id(guimp->layout.windows, "main_window");
-	new_window = SDL_CreateWindow("no title", 220, 25, 1700, 1030, 0);
-	SDL_Renderer	*renderer = SDL_CreateRenderer(new_window, -1, SDL_RENDERER_ACCELERATED);
-	ui_window_replace_win(win_main, new_window);
 	ui_window_edit(win_main, ui_list_get_recipe_by_id(guimp->layout.recipes, "main_window"));
 
 	// Main Win
@@ -48,7 +44,8 @@ void	toolbox_window_init(t_guimp *guimp)
 	guimp->win_toolbox = ui_list_get_window_by_id(guimp->layout.windows, "toolbox_window");
 	guimp->layer_recipe = ui_list_get_recipe_by_id(guimp->layout.recipes, "layer");
 	guimp->layer_parent = ui_list_get_element_by_id(guimp->layout.elements, "layer_menu");
-	ui_menu_get_menu(guimp->layer_parent)->event_and_render_children = 1;
+	ui_menu_get_menu(guimp->layer_parent)->event_children = 1;
+	ui_menu_get_menu(guimp->layer_parent)->render_children = 1;
 	// Layer buttons
 	guimp->button_add_layer = ui_list_get_element_by_id(guimp->layout.elements, "button_add_layer");
 	guimp->button_remove_layer = ui_list_get_element_by_id(guimp->layout.elements, "button_remove_layer");
@@ -116,7 +113,6 @@ void	save_image_window_init(t_guimp *guimp)
 int	main(void)
 {
 	t_guimp		guimp;
-	int			run;
 	SDL_Event	e;
 
 	ui_sdl_init();
@@ -127,8 +123,6 @@ int	main(void)
 	edit_layer_window_init(&guimp);
 	save_image_window_init(&guimp);
 	ft_printf("All Inits done.\n");
-
-	run = 1;
 
 	ui_radio_new(guimp.win_toolbox, &guimp.radio_layer);
 	guimp.radio_buttons = guimp.radio_layer.children;
@@ -152,14 +146,14 @@ int	main(void)
 	guimp.win_main->user_handled_event = 1;
 	guimp.win_toolbox->user_handled_event = 1;
 
-	while (run)
+	while (!guimp.win_toolbox->wants_to_close)
 	{
-		if (guimp.win_toolbox->wants_to_close)
-			run = 0;
 		while (SDL_PollEvent(&e))
 		{
 			ui_window_event(guimp.win_main, e);
 			ui_window_event(guimp.win_toolbox, e);
+			/*
+			*/
 			// Drop Event
 			if (e.drop.type == SDL_DROPFILE && e.drop.windowID == guimp.win_main->window_id)
 			{
@@ -167,7 +161,7 @@ int	main(void)
 
 				ft_printf("File : %s dropped on windowID %d\n", e.drop.file, e.drop.windowID);
 				new_layer_combination(&guimp);
-				ui_label_text_set(ui_button_get_label_element(ui_list_get_element_by_id(guimp.layer_elems[guimp.layer_amount - 1]->children, "layer_select_button")), e.drop.file);
+				ui_label_set_text(ui_button_get_label_element(ui_list_get_element_by_id(guimp.layer_elems[guimp.layer_amount - 1]->children, "layer_select_button")), e.drop.file);
 				dropped_image = ui_surface_image_new(e.drop.file);	
 				resize_layer(&guimp.layers[guimp.layer_amount - 1], vec2i(dropped_image->w, dropped_image->h));
 				SDL_BlitSurface(dropped_image, NULL, guimp.layers[guimp.layer_amount - 1].surface, NULL);
@@ -179,20 +173,12 @@ int	main(void)
 				guimp.final_image.pos.x = guimp.win_main->pos.w / 2 - guimp.final_image.pos.w / 2;
 				guimp.final_image.pos.y = guimp.win_main->pos.h / 2 - guimp.final_image.pos.h / 2;
 			}
-			if (e.key.keysym.scancode == SDL_SCANCODE_P)
-			{
-				ui_element_print(ui_list_get_element_by_id(guimp.layout.elements, "label_edit_layer_name"));
-			}
 			// dropdown elems will be evented here, we dont want anything else to get evented if its open;
 			// i hope i come up with other way of doing this.
 			if (ui_dropdown_get_dropdown(guimp.font_dropdown)->menu.show)
-			{
 				ui_dropdown_event(guimp.font_dropdown, e);
-			}
 			else if (ui_dropdown_get_dropdown(guimp.sticker_dropdown)->menu.show)
-			{
 				ui_dropdown_event(guimp.sticker_dropdown, e);
-			}
 			else
 			{
 				// Event
@@ -204,7 +190,6 @@ int	main(void)
 				ui_radio_event(&guimp.radio_layer, e);
 			}
 		}
-
 		// User
 		user_events(&guimp);
 		

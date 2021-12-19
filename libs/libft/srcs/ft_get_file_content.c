@@ -1,33 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strsub.c                                        :+:      :+:    :+:   */
+/*   ft_get_file_content.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/21 14:36:26 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/08 15:53:53 by nneronin         ###   ########.fr       */
+/*   Created: 2021/12/08 15:39:53 by nneronin          #+#    #+#             */
+/*   Updated: 2021/12/08 15:40:24 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "stdio.h"
 
-char	*ft_strsub(char const *s, unsigned int start, size_t len)
+char	*ft_get_file_content(char *file)
 {
-	char	*str;
-	size_t	i;
+	char	*final;
+	FILE	*fd;
+	int		read_this_loop;
+	int		read_total;
+	int		i;
 
-	i = 0;
-	if (!s || len == 0)
-		return (NULL);
-	str = malloc(len + 1);
-	if (!len)
-		return (0);
-	while (i < len && s[start + i])
+	fd = fopen(file, "r");
+	final = NULL;
+	read_this_loop = 0;
+	read_total = 0;
+	i = 1;
+	while (fd)
 	{
-		str[i] = s[start + i];
+		final = realloc(final, sizeof(char) * (i * 100));
+		read_this_loop = fread(final + read_total, 1, 100, fd);
+		read_total += read_this_loop;
 		i++;
+		if (read_this_loop < 100)
+			break ;
 	}
-	str[i] = '\0';
-	return (str);
+	fclose(fd);
+	return (final);
 }
