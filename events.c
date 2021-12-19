@@ -20,8 +20,6 @@ t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name, int nth_layer)
 
 	menu = ft_memalloc(sizeof(t_ui_element));
 	ui_menu_new(guimp->win_toolbox, menu);
-	((t_ui_menu *)menu->element)->event_children = 1;
-	((t_ui_menu *)menu->element)->render_children = 1;
 	ui_element_set_parent(menu, guimp->layer_parent, UI_TYPE_ELEMENT);
 	ui_element_edit(menu, recipe_menu);
 	ui_element_pos_set(menu, vec4(recipe_menu->pos.x, (recipe_menu->pos.h * nth_layer) + (nth_layer * 10) + recipe_menu->pos.y, recipe_menu->pos.w, recipe_menu->pos.h));
@@ -73,26 +71,35 @@ void	layer_elements_render(t_guimp *guimp)
 	int			jj;
 	SDL_Surface	*tt;
 	t_vec4		pos;
+	t_vec2i		final;
+	float		ratio;
 
 	pos = vec4(30, 5, 72, 20);
 	if (guimp->layer_amount > 0)
-		pos = ui_list_get_element_by_id(guimp->layer_elems[0]->children, "layer_image_elem")->pos;
-	float	ratio = get_ratio(vec2i(guimp->final_image.pos.w, guimp->final_image.pos.h), vec2i(pos.w, pos.h));
-	int		final_w = guimp->final_image.pos.w * ratio;
-	int		final_h = guimp->final_image.pos.h * ratio;
+		pos = ui_list_get_element_by_id(guimp->layer_elems[0]->children,
+				"layer_image_elem")->pos;
+	ratio = get_ratio(
+			vec2i(guimp->final_image.pos.w, guimp->final_image.pos.h),
+			vec2i(pos.w, pos.h));
+	final.x = guimp->final_image.pos.w * ratio;
+	final.y = guimp->final_image.pos.h * ratio;
 	jj = -1;
 	while (++jj < guimp->layer_amount)
 	{
 		if (!guimp->layer_elems[jj]->texture)
 			continue ;
-		tt = ui_surface_new(guimp->layer_elems[jj]->pos.w, guimp->layer_elems[jj]->pos.h);
+		tt = ui_surface_new(guimp->layer_elems[jj]->pos.w,
+				guimp->layer_elems[jj]->pos.h);
 		SDL_FillRect(tt, NULL, 0xff037171);
-		SDL_BlitScaled(guimp->layers[jj].surface, &(SDL_Rect){-guimp->layers[jj].pos.x, -guimp->layers[jj].pos.y, guimp->final_image.pos.w, guimp->final_image.pos.h}, tt, &(SDL_Rect){pos.x + (pos.w / 2) - (final_w / 2), pos.y + (pos.h / 2) - (final_h / 2), final_w, final_h});
-		SDL_UpdateTexture(guimp->layer_elems[jj]->texture, NULL, tt->pixels, tt->pitch);
+		SDL_BlitScaled(guimp->layers[jj].surface,
+			&(SDL_Rect){-guimp->layers[jj].pos.x, -guimp->layers[jj].pos.y,
+				guimp->final_image.pos.w, guimp->final_image.pos.h}, tt,
+			&(SDL_Rect){pos.x + (pos.w / 2) - (final.x / 2),
+				pos.y + (pos.h / 2) - (final.y / 2), final.x, final.y});
+		SDL_UpdateTexture(guimp->layer_elems[jj]->texture,
+			NULL, tt->pixels, tt->pitch);
 		SDL_FreeSurface(tt);
 	}
-	SDL_RenderPresent(guimp->win_toolbox->renderer);
-	SDL_SetRenderTarget(guimp->win_toolbox->renderer, NULL);
 }
 
 void	new_layer_combination(t_guimp *guimp)
@@ -155,10 +162,7 @@ void	remove_nth_layer(t_guimp *guimp, int nth)
 	if (nth < 0 || nth >= guimp->layer_amount)
 		return ;
 	layer_free(&guimp->layers[nth]);
-	/*
-	ui_menu_free(guimp->layer_elems[guimp->selected_layer]);
-	*/
-	ui_element_remove_child_from_parent(guimp->layer_elems[nth]);
+	ui_element_free(guimp->layer_elems[guimp->selected_layer], sizeof(t_ui_element));
 	guimp->layer_elems[nth] = NULL; // this should be removed when freeing it correctly;
 	i = nth;
 	for (; i < guimp->layer_amount - 1; ++i)
