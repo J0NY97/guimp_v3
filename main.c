@@ -191,6 +191,8 @@ int	main(void)
 				layer_event(&guimp);
 
 				ui_radio_event(&guimp.radio_layer, e);
+				if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+					guimp.win_toolbox->wants_to_close = 1;
 			}
 		}
 		// User
