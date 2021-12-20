@@ -2,12 +2,10 @@
 
 void	user_events(t_guimp *guimp)
 {
-	// Layer button events
 	button_add_layer_event(guimp);
 	button_remove_layer_event(guimp);
 	button_edit_layer_event(guimp);
 	button_move_layer_event(guimp);
-	// Other button events
 	color_swatch_event(guimp);
 	save_button_event(guimp);
 	edit_button_event(guimp);
@@ -16,101 +14,131 @@ void	user_events(t_guimp *guimp)
 
 void	guimp_init(t_guimp *guimp)
 {
-	t_ui_window	*win_main;
-
 	memset(guimp, 0, sizeof(t_guimp));
 	SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
 	ui_layout_load(&guimp->layout, NULL, "layout.ui");
 	if (!guimp->layout.layout_file_content
 		|| !guimp->layout.style_file_content)
 		exit(0);
-
-	win_main = ui_list_get_window_by_id(guimp->layout.windows, "main_window");
-	ui_window_edit(win_main, ui_list_get_recipe_by_id(guimp->layout.recipes, "main_window"));
-
-	// Main Win
-	guimp->win_main = win_main;
-	layer_new(&guimp->final_image, "Image", vec4i(guimp->win_main->pos.w / 2 - (1280 / 2), guimp->win_main->pos.h / 2 - (720 / 2), 1280, 720), NULL);
-	SDL_FillRect(guimp->final_image.surface, NULL, 0xff000000); // fill image with black so the alpha:ed layers can show.
-	guimp->final_image_texture = SDL_CreateTextureFromSurface(guimp->win_main->renderer, guimp->final_image.surface);
+	guimp->win_main = ui_layout_get_window(&guimp->layout, "main_window");
+	layer_new(&guimp->final_image, "Image",
+		vec4i(guimp->win_main->pos.w / 2 - (1280 / 2),
+			guimp->win_main->pos.h / 2 - (720 / 2), 1280, 720), NULL);
+	SDL_FillRect(guimp->final_image.surface, NULL, 0xff000000);
+	guimp->final_image_texture
+		= SDL_CreateTextureFromSurface(
+			guimp->win_main->renderer, guimp->final_image.surface);
 	guimp->selected_layer = -1;
 	guimp->layer_amount = 0;
 	guimp->combined_color = 0xffffffff;
 	guimp->zoom = 1.0f;
-	guimp->hidden_surface = ui_surface_new(guimp->win_main->pos.w, guimp->win_main->pos.h);
-	guimp->hidden_texture = SDL_CreateTextureFromSurface(guimp->win_main->renderer, guimp->hidden_surface);
+	guimp->hidden_surface
+		= ui_surface_new(guimp->win_main->pos.w, guimp->win_main->pos.h);
+	guimp->hidden_texture
+		= SDL_CreateTextureFromSurface(
+			guimp->win_main->renderer, guimp->hidden_surface);
+}
+
+void	color_swatch_init(t_guimp *guimp)
+{
+	guimp->color_swatch = ui_layout_get_element(&guimp->layout, "color_swatch");
+	guimp->red_slider = ui_layout_get_element(&guimp->layout, "r_slider");
+	guimp->green_slider = ui_layout_get_element(&guimp->layout, "g_slider");
+	guimp->blue_slider = ui_layout_get_element(&guimp->layout, "b_slider");
+	guimp->alpha_slider = ui_layout_get_element(&guimp->layout, "a_slider");
+	guimp->size_slider = ui_layout_get_element(&guimp->layout, "size_slider");
 }
 
 void	toolbox_window_init(t_guimp *guimp)
 {
-	// Toolbox Win
-	guimp->win_toolbox = ui_list_get_window_by_id(guimp->layout.windows, "toolbox_window");
-	guimp->layer_recipe = ui_list_get_recipe_by_id(guimp->layout.recipes, "layer");
-	guimp->layer_parent = ui_list_get_element_by_id(guimp->layout.elements, "layer_menu");
-	ui_menu_get_menu(guimp->layer_parent)->event_children = 1;
-	ui_menu_get_menu(guimp->layer_parent)->render_children = 1;
-	// Layer buttons
-	guimp->button_add_layer = ui_list_get_element_by_id(guimp->layout.elements, "button_add_layer");
-	guimp->button_remove_layer = ui_list_get_element_by_id(guimp->layout.elements, "button_remove_layer");
-	guimp->button_edit_layer = ui_list_get_element_by_id(guimp->layout.elements, "button_edit_layer");
-	guimp->button_move_layer_up = ui_list_get_element_by_id(guimp->layout.elements, "button_move_layer_up");
-	guimp->button_move_layer_down = ui_list_get_element_by_id(guimp->layout.elements, "button_move_layer_down");
-	// Color Stuff
-	guimp->color_swatch = ui_list_get_element_by_id(guimp->layout.elements, "color_swatch");
-	guimp->red_slider = ui_list_get_element_by_id(guimp->layout.elements, "r_slider");
-	guimp->green_slider = ui_list_get_element_by_id(guimp->layout.elements, "g_slider");
-	guimp->blue_slider = ui_list_get_element_by_id(guimp->layout.elements, "b_slider");
-	guimp->alpha_slider = ui_list_get_element_by_id(guimp->layout.elements, "a_slider");
-	// size slider get
-	guimp->size_slider = ui_list_get_element_by_id(guimp->layout.elements, "size_slider");	
-	// text input
-	guimp->text_input = ui_list_get_element_by_id(guimp->layout.elements, "text_input");	
-	guimp->text_input_str = ui_input_get_label(guimp->text_input)->text;
-	// loading fonts and stickers to the dropdown
-	guimp->font_dropdown = ui_list_get_element_by_id(guimp->layout.elements, "font_drop");
-	guimp->sticker_dropdown = ui_list_get_element_by_id(guimp->layout.elements, "sticker_drop");
-	// other buttons
-	guimp->save_button = ui_list_get_element_by_id(guimp->layout.elements, "save_button");
-	guimp->edit_button = ui_list_get_element_by_id(guimp->layout.elements, "edit_image_button");
-	guimp->clear_button = ui_list_get_element_by_id(guimp->layout.elements, "clear_button");
+	guimp->win_toolbox = ui_layout_get_window(&guimp->layout, "toolbox_window");
+	guimp->layer_recipe = ui_layout_get_recipe(&guimp->layout, "layer");
+	guimp->layer_parent = ui_layout_get_element(&guimp->layout, "layer_menu");
+	guimp->button_add_layer
+		= ui_layout_get_element(&guimp->layout, "button_add_layer");
+	guimp->button_remove_layer
+		= ui_layout_get_element(&guimp->layout, "button_remove_layer");
+	guimp->button_edit_layer
+		= ui_layout_get_element(&guimp->layout, "button_edit_layer");
+	guimp->button_move_layer_up
+		= ui_layout_get_element(&guimp->layout, "button_move_layer_up");
+	guimp->button_move_layer_down
+		= ui_layout_get_element(&guimp->layout, "button_move_layer_down");
+	guimp->text_input = ui_layout_get_element(&guimp->layout, "text_input");
+	guimp->text_input_str = ui_input_get_text(guimp->text_input);
+	guimp->font_dropdown = ui_layout_get_element(&guimp->layout, "font_drop");
+	guimp->sticker_dropdown
+		= ui_layout_get_element(&guimp->layout, "sticker_drop");
+	guimp->save_button = ui_layout_get_element(&guimp->layout, "save_button");
+	guimp->edit_button
+		= ui_layout_get_element(&guimp->layout, "edit_image_button");
+	guimp->clear_button = ui_layout_get_element(&guimp->layout, "clear_button");
+	color_swatch_init(guimp);
 }
 
 void	new_layer_window_init(t_guimp *guimp)
 {
-	guimp->win_layer_new = ui_list_get_window_by_id(guimp->layout.windows, "new_layer_window");
-	if (!guimp->win_layer_new)
-	{
-		ft_printf("[%s] Couldnt find window from layout.\n", __FUNCTION__);
-		exit(0);
-	}
-	else
-		ft_printf("[%s] Correct window got.\n", __FUNCTION__);
-	guimp->new_layer_ok_button = ui_list_get_element_by_id(guimp->layout.elements, "button_ok");
-	guimp->new_layer_name_input_label = ui_input_get_label(ui_list_get_element_by_id(guimp->layout.elements, "input_name"));
-	guimp->new_layer_width_input_label = ui_input_get_label(ui_list_get_element_by_id(guimp->layout.elements, "input_width"));
-	guimp->new_layer_height_input_label = ui_input_get_label(ui_list_get_element_by_id(guimp->layout.elements, "input_height"));
-
-	// New Image win
-	guimp->win_image_edit = ui_list_get_window_by_id(guimp->layout.windows, "image_edit_window");
-	guimp->new_image_ok_button = ui_list_get_element_by_id(guimp->layout.elements, "button_ok_image");
-	guimp->new_image_width_input_label = ui_input_get_label(ui_list_get_element_by_id(guimp->layout.elements, "input_width_image"));
-	guimp->new_image_height_input_label = ui_input_get_label(ui_list_get_element_by_id(guimp->layout.elements, "input_height_image"));
+	guimp->win_layer_new
+		= ui_layout_get_window(&guimp->layout, "new_layer_window");
+	guimp->new_layer_ok_button
+		= ui_layout_get_element(&guimp->layout, "button_ok");
+	guimp->new_layer_name_input_label = ui_input_get_label(
+			ui_layout_get_element(&guimp->layout, "input_name"));
+	guimp->new_layer_width_input_label = ui_input_get_label(
+			ui_layout_get_element(&guimp->layout, "input_width"));
+	guimp->new_layer_height_input_label = ui_input_get_label(
+			ui_layout_get_element(&guimp->layout, "input_height"));
+	guimp->win_image_edit
+		= ui_layout_get_window(&guimp->layout, "image_edit_window");
+	guimp->new_image_ok_button
+		= ui_layout_get_element(&guimp->layout, "button_ok_image");
+	guimp->new_image_width_input_label = ui_input_get_label(
+			ui_layout_get_element(&guimp->layout, "input_width_image"));
+	guimp->new_image_height_input_label = ui_input_get_label(
+			ui_layout_get_element(&guimp->layout, "input_height_image"));
 }
 
 void	edit_layer_window_init(t_guimp *guimp)
 {
-	guimp->win_layer_edit = ui_list_get_window_by_id(guimp->layout.windows, "window_edit_layer");
-	guimp->button_edit_layer_ok = ui_list_get_element_by_id(guimp->layout.elements, "button_edit_layer_ok");
-	guimp->input_edit_layer_name = ui_list_get_element_by_id(guimp->layout.elements, "input_edit_layer_name");
-	guimp->input_edit_layer_width = ui_list_get_element_by_id(guimp->layout.elements, "input_edit_layer_width");
-	guimp->input_edit_layer_height = ui_list_get_element_by_id(guimp->layout.elements, "input_edit_layer_height");
+	guimp->win_layer_edit
+		= ui_layout_get_window(&guimp->layout, "window_edit_layer");
+	guimp->button_edit_layer_ok
+		= ui_layout_get_element(&guimp->layout, "button_edit_layer_ok");
+	guimp->input_edit_layer_name
+		= ui_layout_get_element(&guimp->layout, "input_edit_layer_name");
+	guimp->input_edit_layer_width
+		= ui_layout_get_element(&guimp->layout, "input_edit_layer_width");
+	guimp->input_edit_layer_height
+		= ui_layout_get_element(&guimp->layout, "input_edit_layer_height");
 }
 
 void	save_image_window_init(t_guimp *guimp)
 {
-	guimp->win_save_image = ui_list_get_window_by_id(guimp->layout.windows, "window_save_image");
-	guimp->input_save_image_name = ui_list_get_element_by_id(guimp->layout.elements, "input_save_image_name");
-	guimp->button_save_image_ok = ui_list_get_element_by_id(guimp->layout.elements, "button_save_image_ok");
+	guimp->win_save_image
+		= ui_layout_get_window(&guimp->layout, "window_save_image");
+	guimp->input_save_image_name
+		= ui_layout_get_element(&guimp->layout, "input_save_image_name");
+	guimp->button_save_image_ok
+		= ui_layout_get_element(&guimp->layout, "button_save_image_ok");
+}
+
+void	brush_init(t_guimp *guimp)
+{
+	guimp->draw_button = ui_layout_get_element(&guimp->layout, "draw_button");
+	guimp->text_button = ui_layout_get_element(&guimp->layout, "text_button");
+	guimp->erase_button = ui_layout_get_element(&guimp->layout, "erase_button");
+	guimp->flood_button = ui_layout_get_element(&guimp->layout, "flood_button");
+	guimp->sticker_button
+		= ui_layout_get_element(&guimp->layout, "sticker_button");
+	guimp->move_button = ui_layout_get_element(&guimp->layout, "move_button");
+	guimp->shape_button = ui_layout_get_element(&guimp->layout, "shape_button");
+	guimp->pipette_button
+		= ui_layout_get_element(&guimp->layout, "pipette_button");
+	guimp->circle_button
+		= ui_layout_get_element(&guimp->layout, "circle_button");
+	guimp->square_button
+		= ui_layout_get_element(&guimp->layout, "square_button");
+	guimp->line_button = ui_layout_get_element(&guimp->layout, "line_button");
 }
 
 int	main(void)
@@ -125,37 +153,23 @@ int	main(void)
 	new_layer_window_init(&guimp);
 	edit_layer_window_init(&guimp);
 	save_image_window_init(&guimp);
-	ft_printf("All Inits done.\n");
-
+	brush_init(&guimp);
 	ui_radio_new(guimp.win_toolbox, &guimp.radio_layer);
 	guimp.radio_buttons = guimp.radio_layer.children;
-
-	// Brush Buttons
-	guimp.draw_button = ui_list_get_element_by_id(guimp.layout.elements, "draw_button");
-	guimp.text_button = ui_list_get_element_by_id(guimp.layout.elements, "text_button");
-	guimp.erase_button = ui_list_get_element_by_id(guimp.layout.elements, "erase_button");
-	guimp.flood_button = ui_list_get_element_by_id(guimp.layout.elements, "flood_button");
-	guimp.sticker_button = ui_list_get_element_by_id(guimp.layout.elements, "sticker_button");
-	guimp.move_button = ui_list_get_element_by_id(guimp.layout.elements, "move_button");
-	guimp.shape_button = ui_list_get_element_by_id(guimp.layout.elements, "shape_button");
-	guimp.pipette_button = ui_list_get_element_by_id(guimp.layout.elements, "pipette_button");
-
-	// Shape Buttons
-	guimp.circle_button = ui_list_get_element_by_id(guimp.layout.elements, "circle_button");
-	guimp.square_button = ui_list_get_element_by_id(guimp.layout.elements, "square_button");
-	guimp.line_button = ui_list_get_element_by_id(guimp.layout.elements, "line_button");
-
 	new_layer_combination(&guimp); // lets make default 1 layer;
+	/*
 	guimp.win_main->user_handled_event = 1;
 	guimp.win_toolbox->user_handled_event = 1;
+	*/
+	ft_printf("All Inits done.\n");
 
 	while (!guimp.win_toolbox->wants_to_close)
 	{
 		while (SDL_PollEvent(&e))
 		{
+			/*
 			ui_window_event(guimp.win_main, e);
 			ui_window_event(guimp.win_toolbox, e);
-			/*
 			*/
 			// Drop Event
 			if (e.drop.type == SDL_DROPFILE && e.drop.windowID == guimp.win_main->window_id)
