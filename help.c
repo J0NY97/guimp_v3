@@ -6,13 +6,14 @@ t_rgba	rgba(Uint32 r, Uint32 g, Uint32 b, Uint32 a)
 }
 
 /*
- * Sets the r,g,b,a sliders on the toolbox to specifc value according to the 'color';
+ * Sets the r,g,b,a sliders on the toolbox to specific
+ * 	value according to the 'color';
 */
 void	set_sliders_to_color(t_guimp *guimp, Uint32 color)
 {
 	t_ui_element	color_swatch_label;
-	t_rgba		rgba;
-	char		*temp;
+	t_rgba			rgba;
+	char			*temp;
 
 	rgba = hex_to_rgba(color);
 	color_swatch_label = ((t_ui_input *)guimp->color_swatch->element)->label;
@@ -21,15 +22,17 @@ void	set_sliders_to_color(t_guimp *guimp, Uint32 color)
 	ui_slider_value_set(guimp->blue_slider, rgba.b);
 	ui_slider_value_set(guimp->alpha_slider, rgba.a);
 	guimp->combined_color = color;
-	ui_element_color_set(guimp->color_swatch, UI_STATE_DEFAULT, guimp->combined_color);
+	ui_element_color_set(guimp->color_swatch,
+		UI_STATE_DEFAULT, guimp->combined_color);
 	temp = ft_itoa_base(guimp->combined_color, 16);
 	ui_label_set_text(&color_swatch_label, temp);
 	ft_strdel(&temp);
 }
 
 /*
- * This functions is only made for adding font and sticker buttons to the dropdown menus
- * without having to specifically set every button position manually.
+ * This functions is only made for adding font and sticker
+ * buttons to the dropdown menus without having to specifically set
+ * every button position manually.
 */
 void	add_to_drop_menu(t_ui_element *dropdown_elem, t_ui_element *child)
 {
@@ -40,7 +43,7 @@ void	add_to_drop_menu(t_ui_element *dropdown_elem, t_ui_element *child)
 
 	drop = dropdown_elem->element;
 	total_y = 0;
-	curr = drop->menu.children; 
+	curr = drop->menu.children;
 	while (curr)
 	{
 		temp = curr->content;
@@ -48,12 +51,16 @@ void	add_to_drop_menu(t_ui_element *dropdown_elem, t_ui_element *child)
 		curr = curr->next;
 	}
 	ui_element_set_parent(child, &drop->menu, UI_TYPE_ELEMENT);
-	ui_element_pos_set(child, vec4(0, total_y, ((t_ui_dropdown *)dropdown_elem->element)->menu.pos.w, child->pos.h));
-	ui_element_pos_set(&drop->menu, vec4(drop->menu.pos.x, drop->menu.pos.y, drop->menu.pos.w, total_y + child->pos.h));
+	ui_element_pos_set(child,
+		vec4(0, total_y, ((t_ui_dropdown *)dropdown_elem->element)->menu.pos.w,
+			child->pos.h));
+	ui_element_pos_set(&drop->menu,
+		vec4(drop->menu.pos.x, drop->menu.pos.y,
+			drop->menu.pos.w, total_y + child->pos.h));
 }
 
 /*
- * looks into path and fills the t_dir_content with all the files inside the dir.
+ * looks into path and fills the t_dir_content with all the files inside the dir
 */
 void	get_dir_content(t_dir_content *content, char *path)
 {
@@ -70,9 +77,10 @@ void	get_dir_content(t_dir_content *content, char *path)
 			dir = readdir(d);
 			if (!dir)
 				break ;
-  			if (dir->d_type != DT_REG)
+			if (dir->d_type != DT_REG)
 				continue ;
-			content->files = realloc(content->files, sizeof(char *) * ++content->file_amount);
+			content->files = realloc(content->files,
+					sizeof(char *) * ++content->file_amount);
 			content->files[content->file_amount - 1] = ft_strdup(dir->d_name);
 		}
 		closedir(d);

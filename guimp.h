@@ -43,10 +43,14 @@ typedef struct s_layer
  * t_ui_window		*win_main;			main window where all the layers are and you draw on;
  * SDL_Texture		*final_image_texture;	the texture of the final image, which will be rendered on the main window;
  * t_layer			final_image;		this is the image where all the layers are blitted to and then showed on screen;
- * t_layer			*selected_layer;	pointer to the currenctly selected layer, this is the one we will draw on;
+ * t_layer			*active_layer;		pointer to the currenctly selected layer, this is the one we will draw on;
+ * int				selected_layer;		the index of the selected layer;
  * t_layer			layers[5];			array of layers, we are capping this to 5 for now. included image at offset 0;
  * SDL_Surface		*hidden_surface;	the surface where all the tool preshowers will be drawn on;
  * SDL_Texture		*hidden_texture;	the texture where all the tool preshowers will be drawn on;
+ * t_vec2i			real_image_pos;		position on image where mouse is, taking into consideration position and zoom;
+ * t_vec2i			hidden_pos;			position on hidden layer where mouse is, taking into consideration position and zoom;
+ * t_vec2i			actual_pos;			position on selected layer where mouse is, taking into consideration position and zoom;
  *
  * t_ui_layout		layout;				the layout...;
  * t_ui_window		*win_toolbox;		window of the toolbox;
@@ -80,6 +84,7 @@ typedef struct s_guimp
 	SDL_Texture		*final_image_texture;
 	t_layer			final_image;
 	int				selected_layer;
+	t_layer			*active_layer;
 	t_layer			layers[MAX_LAYER_AMOUNT];
 	SDL_Surface		*hidden_surface;
 	SDL_Texture		*hidden_texture;
@@ -87,6 +92,9 @@ typedef struct s_guimp
 	Uint32			combined_color;
 	float			zoom;
 	int				size;
+	t_vec2i			real_image_pos;
+	t_vec2i			hidden_pos;
+	t_vec2i			actual_pos;
 
 	t_ui_element	radio_layer;
 	t_list			*radio_buttons; // this is the same list as the radio_layer.element->buttons
