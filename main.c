@@ -153,13 +153,13 @@ int	main(void)
 	new_layer_window_init(&guimp);
 	edit_layer_window_init(&guimp);
 	save_image_window_init(&guimp);
-	brush_init(&guimp);
 	ui_radio_new(guimp.win_toolbox, &guimp.radio_layer);
 	guimp.radio_buttons = guimp.radio_layer.children;
+	brush_init(&guimp);
 	new_layer_combination(&guimp); // lets make default 1 layer;
-	/*
 	guimp.win_main->user_handled_event = 1;
 	guimp.win_toolbox->user_handled_event = 1;
+	/*
 	*/
 	ft_printf("All Inits done.\n");
 
@@ -167,9 +167,9 @@ int	main(void)
 	{
 		while (SDL_PollEvent(&e))
 		{
-			/*
 			ui_window_event(guimp.win_main, e);
 			ui_window_event(guimp.win_toolbox, e);
+			/*
 			*/
 			// Drop Event
 			if (e.drop.type == SDL_DROPFILE && e.drop.windowID == guimp.win_main->window_id)
