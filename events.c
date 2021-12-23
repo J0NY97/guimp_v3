@@ -123,7 +123,7 @@ void	new_layer_combination(t_guimp *guimp)
 	layer_new(&guimp->layers[guimp->layer_amount],
 		guimp->new_layer_name_input_label->text,
 		vec4i(0, 0, atoi(guimp->new_layer_width_input_label->text), atoi(guimp->new_layer_height_input_label->text)),
-		&ui_list_get_element_by_id(layer_menu->children, "layer_show_checkbox")->is_click);
+		&ui_list_get_element_by_id(layer_menu->children, "layer_show_checkbox")->is_toggle);
 	
 	// Make the new layer the selected layer
 	guimp->selected_layer = guimp->layer_amount;

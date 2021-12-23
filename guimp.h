@@ -60,6 +60,8 @@ typedef struct s_layer
  * t_ui_element		*new_layer_button;	pretty self-explanatory, event : new_layer_button_event();
  * int				layer_count;		amount of layers currently;
  *
+ * t_list			*radio_buttons;		pointer to the layout element 'radio_buttons'->children; dont free!
+ *
  * Color shower:
  * t_ui_element		*color_swatch;		final color of the color sliders;	
  * t_ui_element		*red_slider;		<-
@@ -97,29 +99,27 @@ typedef struct s_guimp
 	t_vec2i			actual_pos;
 
 	t_ui_element	radio_layer;
-	t_list			*radio_buttons; // this is the same list as the radio_layer.element->buttons
-	////////////////
-	// Toolbox Win
-	////////////////
+	t_list			*radio_buttons;
+
 	t_ui_layout		layout;
 	t_ui_window		*win_toolbox;
 	t_ui_recipe		*layer_recipe;
 	t_ui_element	*layer_elems[5];
 	t_ui_element	*layer_parent;
-	// Layer Buttons
+
 	t_ui_element	*button_add_layer;
 	t_ui_element	*button_remove_layer;
 	t_ui_element	*button_edit_layer;
 	t_ui_element	*button_move_layer_up;
 	t_ui_element	*button_move_layer_down;
-	// Color
+
 	t_ui_element	*color_swatch;
 	t_ui_element	*red_slider;
 	t_ui_element	*green_slider;
 	t_ui_element	*blue_slider;
 	t_ui_element	*alpha_slider;
 	t_ui_element	*size_slider;
-	// Mode Buttons
+
 	t_ui_element	*draw_button;
 	t_ui_element	*text_button;
 	t_ui_element	*erase_button;

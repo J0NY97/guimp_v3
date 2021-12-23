@@ -1,13 +1,16 @@
 NAME = guimp
 SRCS = \
-	./main.c \
-	./events.c \
-	./layer.c \
-	./help.c \
-	./floodfill.c \
-	./brushes.c \
+	main.c \
+	events.c \
+	layer.c \
+	help.c \
+	floodfill.c \
+	brushes.c \
 
-OBJS = $(SRCS:.c=.o)
+CDIR = .
+ODIR = obj
+OBJS = $(addprefix $(ODIR)/, $(SRCS:.c=.o))
+JOHNNY = $(OBJS:.o=.d)
 
 SDL_DIR		:= ./libs/SDL_WIN
 SDL_INC		:= -I$(SDL_DIR)/include
@@ -32,22 +35,24 @@ LIB = $(SDL_LIB) -lui -lpf -lft
 
 FLAGS = -Wall -Wextra
 
-all: $(NAME)
+all: $(ODIR) $(NAME)
 
-ODIR = .
-CDIR = .
+-include $(JOHNNY)
+
+$(ODIR):
+	@mkdir -p $@
 
 $(ODIR)/%.o: $(CDIR)/%.c
 	@gcc -c $< -o $@ -MMD -O3 \
 		$(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
 	@printf $(YELLOW)"\e[F\e[JCompiling $<\n"$(RESET)
 
-$(NAME): $(SRCS)
-	@gcc -O3 -o $(NAME) $(SRCS) $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
+$(NAME): $(OBJS)
+	@gcc -o $(NAME) $(OBJS) $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
 	@echo "$(NAME) was successfully created."
 
 clean:
-	@rm -f $(OBJS)
+	@rm -rf $(ODIR)
 	@echo "$(NAME) was cleaned."
 
 fclean: clean

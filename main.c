@@ -157,9 +157,9 @@ int	main(void)
 	guimp.radio_buttons = guimp.radio_layer.children;
 	brush_init(&guimp);
 	new_layer_combination(&guimp); // lets make default 1 layer;
+	/*
 	guimp.win_main->user_handled_event = 1;
 	guimp.win_toolbox->user_handled_event = 1;
-	/*
 	*/
 	ft_printf("All Inits done.\n");
 
@@ -167,9 +167,9 @@ int	main(void)
 	{
 		while (SDL_PollEvent(&e))
 		{
+			/*
 			ui_window_event(guimp.win_main, e);
 			ui_window_event(guimp.win_toolbox, e);
-			/*
 			*/
 			// Drop Event
 			if (e.drop.type == SDL_DROPFILE && e.drop.windowID == guimp.win_main->window_id)
@@ -219,6 +219,10 @@ int	main(void)
 
 		// Render
 		ui_layout_render(&guimp.layout);
+
+		ui_element_print(ui_layout_get_element(&guimp.layout, "brush_buttons_menu"));
+		ui_element_print(ui_layout_get_element(&guimp.layout, "brush_radio"));
+		ui_element_print(ui_layout_get_element(&guimp.layout, "draw_button"));
 	}
 	return (0);
 }
