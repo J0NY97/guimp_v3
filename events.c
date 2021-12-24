@@ -49,7 +49,8 @@ t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name, int nth_layer)
 
 	ui_label_set_text(&((t_ui_button *)select->element)->label, layer_name);
 
-	show->is_click = 1;
+	ui_checkbox_toggle_on(show);
+	//show->is_click = 1;
 
 	return (menu);
 }

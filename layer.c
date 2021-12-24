@@ -82,7 +82,8 @@ void	layer_event(t_guimp *guimp)
 		if (ui_button(button))
 		{
 			guimp->selected_layer = ii;
-//			ui_checkbox_toggle();
+			button->is_click = 1;
+			button->state = UI_STATE_CLICK;
 		}
 	}
 	if (SDL_GetModState() & KMOD_LCTRL && guimp->win_main->scroll)

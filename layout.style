@@ -13,7 +13,7 @@ toolbox_window
 brush_buttons_menu
 {
 	xywh : 10, 10, 200, 100;
-	bg_color : 0xffff0000;
+//	bg_color : 0xffff0000;
 };
 
 brush_button_label
@@ -369,7 +369,7 @@ edit_image_button : brush_button
 layer_menu
 {
 	xywh : 10, 520, 200, 240;
-	flags : event_childre render_children;
+	flags : event_children render_children;
 };
 
 button_add_layer : brush_button
