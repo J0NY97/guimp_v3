@@ -100,6 +100,8 @@ void	layer_elements_render(t_guimp *guimp)
 			NULL, tt->pixels, tt->pitch);
 		SDL_FreeSurface(tt);
 	}
+	SDL_RenderPresent(guimp->win_toolbox->renderer);
+	SDL_SetRenderTarget(guimp->win_toolbox->renderer, NULL);
 }
 
 void	new_layer_combination(t_guimp *guimp)
