@@ -103,6 +103,8 @@ void	layer_elements_render(t_guimp *guimp)
 	}
 	SDL_RenderPresent(guimp->win_toolbox->renderer);
 	SDL_SetRenderTarget(guimp->win_toolbox->renderer, NULL);
+	/*
+	*/
 }
 
 void	new_layer_combination(t_guimp *guimp)

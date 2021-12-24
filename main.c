@@ -219,11 +219,6 @@ int	main(void)
 
 		// Render
 		ui_layout_render(&guimp.layout);
-
-		ui_element_print(ui_layout_get_element(&guimp.layout, "brush_buttons_menu"));
-		ui_element_print(ui_layout_get_element(&guimp.layout, "brush_radio"));
-		ui_element_print(ui_layout_get_element(&guimp.layout, "draw_button"));
-		ui_element_print(ui_list_get_element_by_id(guimp.layer_elems[guimp.selected_layer]->children, "layer_show_checkbox"));
 	}
 	return (0);
 }
