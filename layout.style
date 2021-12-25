@@ -7,21 +7,22 @@ Window
 toolbox_window
 {
 	xywh : 0, 25, 220, 1030;
-	flag : xdoesnthides resizeable;
+	flag : xdoesnthides;
 };
 
 brush_buttons_menu
 {
 	xywh : 10, 10, 200, 100;
-//	bg_color : 0xffff0000;
 };
 
+// Dont remove the title text, the font will not be created the first rendering,
+// 	which means even if you change the text we wont have a font.
 brush_button_label
 {
 	text_color : 0xff72e26c;
 	font : ShareTechMono-Regular.ttf;
 	text_align : center;
-	title : no title;
+	title : dont remove me even if not needed;
 };
 
 brush_button_elem
@@ -327,7 +328,8 @@ text_input : brush_button
 {
 	xywh : 10, 280, 180, 20;
 	bg_image_hover : libs/libui/images/button_hover.png;
-	title : Text Input;
+	title : ;
+	placeholder : Text Input;
 };
 
 //////////////////////
