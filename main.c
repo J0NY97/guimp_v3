@@ -141,6 +141,44 @@ void	brush_init(t_guimp *guimp)
 	guimp->line_button = ui_layout_get_element(&guimp->layout, "line_button");
 }
 
+/*
+ * Reseting the final_image to the center of the
+ * 	screen if it has disappeard somewhere.
+*/
+void	reset_image_events(t_guimp *guimp, SDL_Event e)
+{
+	if (e.key.keysym.scancode == SDL_SCANCODE_SPACE)
+	{
+		guimp->zoom = 1.0;
+		guimp->final_image.pos.x = guimp->win_main->pos.w / 2
+			- guimp->final_image.pos.w / 2;
+		guimp->final_image.pos.y = guimp->win_main->pos.h / 2
+			- guimp->final_image.pos.h / 2;
+	}
+}
+
+void	drag_n_drop_events(t_guimp *guimp, SDL_Event e)
+{
+	SDL_Surface	*dropped_image;
+
+	if (e.drop.type == SDL_DROPFILE
+		&& e.drop.windowID == guimp->win_main->window_id)
+	{
+		ft_printf("File : %s dropped on windowID %d\n", e.drop.file, e.drop.windowID);
+		new_layer_combination(guimp);
+		ui_label_set_text(ui_button_get_label_element(
+				ui_list_get_element_by_id(
+					guimp->layer_elems[guimp->layer_amount - 1]->children,
+						"layer_select_button")), e.drop.file);
+		dropped_image = ui_surface_image_new(e.drop.file);	
+		resize_layer(&guimp->layers[guimp->layer_amount - 1],
+			vec2i(dropped_image->w, dropped_image->h));
+		SDL_BlitSurface(dropped_image, NULL,
+			guimp->layers[guimp->layer_amount - 1].surface, NULL);
+		SDL_FreeSurface(dropped_image);
+	}
+}
+
 int	main(void)
 {
 	t_guimp		guimp;
@@ -157,39 +195,16 @@ int	main(void)
 	guimp.radio_buttons = guimp.radio_layer.children;
 	brush_init(&guimp);
 	new_layer_combination(&guimp); // lets make default 1 layer;
-	/*
-	guimp.win_main->user_handled_event = 1;
-	guimp.win_toolbox->user_handled_event = 1;
-	*/
 	ft_printf("All Inits done.\n");
 
 	while (!guimp.win_toolbox->wants_to_close)
 	{
 		while (SDL_PollEvent(&e))
 		{
-			/*
-			ui_window_event(guimp.win_main, e);
-			ui_window_event(guimp.win_toolbox, e);
-			*/
-			// Drop Event
-			if (e.drop.type == SDL_DROPFILE && e.drop.windowID == guimp.win_main->window_id)
-			{
-				SDL_Surface	*dropped_image;
-
-				ft_printf("File : %s dropped on windowID %d\n", e.drop.file, e.drop.windowID);
-				new_layer_combination(&guimp);
-				ui_label_set_text(ui_button_get_label_element(ui_list_get_element_by_id(guimp.layer_elems[guimp.layer_amount - 1]->children, "layer_select_button")), e.drop.file);
-				dropped_image = ui_surface_image_new(e.drop.file);	
-				resize_layer(&guimp.layers[guimp.layer_amount - 1], vec2i(dropped_image->w, dropped_image->h));
-				SDL_BlitSurface(dropped_image, NULL, guimp.layers[guimp.layer_amount - 1].surface, NULL);
-				SDL_FreeSurface(dropped_image);
-			}
-			if (e.key.keysym.scancode == SDL_SCANCODE_SPACE) // reseting the final_image to the center of the screen if it has disappeard somewhere.
-			{
-				guimp.zoom = 1.0;
-				guimp.final_image.pos.x = guimp.win_main->pos.w / 2 - guimp.final_image.pos.w / 2;
-				guimp.final_image.pos.y = guimp.win_main->pos.h / 2 - guimp.final_image.pos.h / 2;
-			}
+			if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+				guimp.win_toolbox->wants_to_close = 1;
+			reset_image_events(&guimp, e);
+			drag_n_drop_events(&guimp, e);
 			// dropdown elems will be evented here, we dont want anything else to get evented if its open;
 			// i hope i come up with other way of doing this.
 			if (ui_dropdown_get_dropdown(guimp.font_dropdown)->menu.show)
@@ -205,8 +220,6 @@ int	main(void)
 				layer_event(&guimp);
 
 				ui_radio_event(&guimp.radio_layer, e);
-				if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-					guimp.win_toolbox->wants_to_close = 1;
 			}
 		}
 		// User

@@ -8,6 +8,8 @@ t_rgba	rgba(Uint32 r, Uint32 g, Uint32 b, Uint32 a)
 /*
  * Sets the r,g,b,a sliders on the toolbox to specific
  * 	value according to the 'color';
+ *
+ * 	Happens in the init btw.
 */
 void	set_sliders_to_color(t_guimp *guimp, Uint32 color)
 {
@@ -27,36 +29,6 @@ void	set_sliders_to_color(t_guimp *guimp, Uint32 color)
 	temp = ft_itoa_base(guimp->combined_color, 16);
 	ui_label_set_text(&color_swatch_label, temp);
 	ft_strdel(&temp);
-}
-
-/*
- * This functions is only made for adding font and sticker
- * buttons to the dropdown menus without having to specifically set
- * every button position manually.
-*/
-void	add_to_drop_menu(t_ui_element *dropdown_elem, t_ui_element *child)
-{
-	t_ui_dropdown	*drop;
-	t_list			*curr;
-	t_ui_element	*temp;
-	float			total_y;
-
-	drop = dropdown_elem->element;
-	total_y = 0;
-	curr = drop->menu.children;
-	while (curr)
-	{
-		temp = curr->content;
-		total_y += temp->pos.h;
-		curr = curr->next;
-	}
-	ui_element_set_parent(child, &drop->menu, UI_TYPE_ELEMENT);
-	ui_element_pos_set(child,
-		vec4(0, total_y, ((t_ui_dropdown *)dropdown_elem->element)->menu.pos.w,
-			child->pos.h));
-	ui_element_pos_set(&drop->menu,
-		vec4(drop->menu.pos.x, drop->menu.pos.y,
-			drop->menu.pos.w, total_y + child->pos.h));
 }
 
 /*
