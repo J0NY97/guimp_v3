@@ -2,6 +2,7 @@ style : layout.style;
 
 Window toolbox_window
 {
+	Menu dummy {};
 	Menu brush_buttons_menu
 	{
 		Radio brush_radio

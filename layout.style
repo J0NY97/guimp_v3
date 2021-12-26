@@ -13,6 +13,7 @@ toolbox_window
 brush_buttons_menu
 {
 	xywh : 10, 10, 200, 100;
+	bg_color : 0xff95d7ae;
 };
 
 // Dont remove the title text, the font will not be created the first rendering,
