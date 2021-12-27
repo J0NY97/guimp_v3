@@ -210,7 +210,6 @@ void	layer_render(t_guimp *guimp)
 		&(SDL_Rect){guimp->final_image.pos.x, guimp->final_image.pos.y,
 		guimp->final_image.pos.w * guimp->zoom,
 		guimp->final_image.pos.h * guimp->zoom});
-	SDL_SetRenderTarget(guimp->win_main->renderer, NULL);
 	SDL_SetRenderTarget(guimp->win_main->renderer, guimp->final_image_texture);
 	SDL_RenderClear(guimp->win_main->renderer);
 	SDL_SetRenderTarget(guimp->win_main->renderer, guimp->win_main->texture);

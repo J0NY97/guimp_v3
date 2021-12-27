@@ -360,8 +360,11 @@ void	edit_button_event(t_guimp *guimp)
 		h = atoi(guimp->new_image_height_input_label->text);
 		resize_layer(&guimp->final_image, vec2i(w, h));
 		SDL_DestroyTexture(guimp->final_image_texture);
-		guimp->final_image_texture = SDL_CreateTextureFromSurface(
-				guimp->win_main->renderer, guimp->final_image.surface);
+		guimp->final_image_texture
+			= ui_create_texture(guimp->win_main->renderer, vec2i(w, h));
+		SDL_UpdateTexture(guimp->final_image_texture, NULL,
+			guimp->final_image.surface->pixels,
+			guimp->final_image.surface->pitch);
 		ui_window_flag_set(guimp->win_image_edit, UI_WINDOW_HIDE);
 	}
 }

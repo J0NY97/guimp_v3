@@ -26,8 +26,11 @@ void	guimp_init(t_guimp *guimp)
 			guimp->win_main->pos.h / 2 - (720 / 2), 1280, 720), NULL);
 	SDL_FillRect(guimp->final_image.surface, NULL, 0xff000000);
 	guimp->final_image_texture
-		= SDL_CreateTextureFromSurface(
-			guimp->win_main->renderer, guimp->final_image.surface);
+		= ui_create_texture(guimp->win_main->renderer,
+			vec2i(guimp->final_image.surface->w,
+				guimp->final_image.surface->h));
+	SDL_UpdateTexture(guimp->final_image_texture, NULL,
+		guimp->final_image.surface->pixels, guimp->final_image.surface->pitch);
 	guimp->selected_layer = -1;
 	guimp->layer_amount = 0;
 	guimp->combined_color = 0xffffffff;
@@ -177,6 +180,23 @@ void	drag_n_drop_events(t_guimp *guimp, SDL_Event e)
 			guimp->layers[guimp->layer_amount - 1].surface, NULL);
 		SDL_FreeSurface(dropped_image);
 	}
+}
+
+int	which_nth_element_is_this(t_list *list, char *id)
+{
+	t_ui_element	*elem;
+	int				i;
+
+	i = 0;
+	while (list)
+	{
+		elem = list->content;
+		if (ft_strequ(elem->id, id))
+			return (i);
+		list = list->next;
+		i++;
+	}
+	return (-1); // not in list;
 }
 
 int	main(void)
