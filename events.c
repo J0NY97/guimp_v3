@@ -26,7 +26,7 @@ t_ui_element	*new_layer_element(
 	new_element_from_recipe_with_parent(
 		menu, UI_TYPE_MENU, "layer", guimp->layer_parent);
 	ui_element_pos_set(menu, vec4(r_menu->pos.x, (r_menu->pos.h * nth_layer)
-		+ (nth_layer * 10) + r_menu->pos.y, r_menu->pos.w, r_menu->pos.h));
+			+ (nth_layer * 10) + r_menu->pos.y, r_menu->pos.w, r_menu->pos.h));
 	image = ft_memalloc(sizeof(t_ui_element));
 	new_element_from_recipe_with_parent(
 		image, UI_TYPE_MENU, "layer_image_elem", menu);
@@ -53,6 +53,12 @@ float	get_ratio(t_vec2i orig_wh, t_vec2i new_wh)
 	return (ratio_y);
 }
 
+/*
+ * from guimp->layers (t_layer, that have the surface we draw on, specific to
+ *	that layer) we take the surface and figure out the ratio so it fits inside
+ *	a set dimension (the size of the layer_elems texture), and blit that surface
+ *	with that ratio on the 'layer_elems' element->texture;
+*/
 void	layer_elements_render(t_guimp *guimp)
 {
 	int			jj;
@@ -77,15 +83,21 @@ void	layer_elements_render(t_guimp *guimp)
 		tt = ui_surface_new(final.x, final.y);
 		SDL_BlitScaled(guimp->layers[jj].surface,
 			&(SDL_Rect){-guimp->layers[jj].pos.x, -guimp->layers[jj].pos.y,
-				guimp->final_image.pos.w, guimp->final_image.pos.h}, tt, NULL);
+			guimp->final_image.pos.w, guimp->final_image.pos.h}, tt, NULL);
 		SDL_UpdateTexture(guimp->layer_elems[jj]->texture,
 			&(SDL_Rect){pos.x + (pos.w / 2) - (final.x / 2),
-				pos.y + (pos.h / 2) - (final.y / 2), final.x, final.y},
+			pos.y + (pos.h / 2) - (final.y / 2), final.x, final.y},
 			tt->pixels, tt->pitch);
 		SDL_FreeSurface(tt);
 	}
 }
 
+/*
+ * Create new layer element;
+ * Add layer element button to radio buttons list;
+ * Create new layer (t_layer);
+ * Set the newly created layer (t_layer) the currently selected layer;
+*/
 void	new_layer_combination(t_guimp *guimp)
 {
 	t_ui_element	*layer_menu;
@@ -93,28 +105,26 @@ void	new_layer_combination(t_guimp *guimp)
 
 	if (guimp->layer_amount >= MAX_LAYER_AMOUNT)
 	{
-		ft_printf("[%s] No new layer added, layer cap reached (%d).\n", __FUNCTION__, MAX_LAYER_AMOUNT);
+		ft_printf("[%s] No new layer added, layer cap reached (%d).\n",
+			__FUNCTION__, MAX_LAYER_AMOUNT);
 		return ;
 	}
-	// Making new layer element
-	layer_menu = new_layer_element(guimp, guimp->new_layer_name_input_label->text, guimp->layer_amount);
+	layer_menu = new_layer_element(guimp,
+			guimp->new_layer_name_input_label->text, guimp->layer_amount);
 	guimp->layer_elems[guimp->layer_amount] = layer_menu;
-	// adding layer to the radio buttons;
-	layer_button = ui_list_get_element_by_id(layer_menu->children, "layer_select_button");
+	layer_button = ui_list_get_element_by_id(layer_menu->children,
+			"layer_select_button");
 	add_to_list(&guimp->radio_layer.children, layer_button, UI_TYPE_ELEMENT);
-
-	// Making new actual layer
 	layer_new(&guimp->layers[guimp->layer_amount],
 		guimp->new_layer_name_input_label->text,
-		vec4i(0, 0, atoi(guimp->new_layer_width_input_label->text), atoi(guimp->new_layer_height_input_label->text)),
-		&ui_list_get_element_by_id(layer_menu->children, "layer_show_checkbox")->is_toggle);
-	
-	// Make the new layer the selected layer
+		vec4i(0, 0, atoi(guimp->new_layer_width_input_label->text),
+			atoi(guimp->new_layer_height_input_label->text)),
+		&ui_list_get_element_by_id(layer_menu->children,
+			"layer_show_checkbox")->is_toggle);
 	guimp->selected_layer = guimp->layer_amount;
 	ui_radio_button_toggle_on(&guimp->radio_layer, layer_button);
-	
 	guimp->layer_amount += 1;
-	ft_printf("[%s] New layer added. (%d)\n", __FUNCTION__, guimp->layer_amount);
+	ft_printf("[%s] Layer added. (%d)\n", __FUNCTION__, guimp->layer_amount);
 }
 
 void	button_add_layer_event(t_guimp *guimp)
@@ -124,7 +134,6 @@ void	button_add_layer_event(t_guimp *guimp)
 		ui_window_flag_set(guimp->win_layer_new, UI_WINDOW_SHOW);
 		SDL_RaiseWindow(guimp->win_layer_new->win);
 	}
-	// new layer window events
 	if (ui_button(guimp->new_layer_ok_button))
 	{
 		new_layer_combination(guimp);
@@ -148,8 +157,8 @@ void	remove_nth_layer(t_guimp *guimp, int nth)
 	ui_element_free(guimp->layer_elems[guimp->selected_layer],
 		sizeof(t_ui_element));
 	guimp->layer_elems[nth] = NULL;
-	i = nth;
-	for (; i < guimp->layer_amount - 1; ++i)
+	i = nth - 1;
+	while (++i < guimp->layer_amount - 1)
 	{
 		if (guimp->layer_elems[i] == NULL)
 		{
@@ -162,7 +171,8 @@ void	remove_nth_layer(t_guimp *guimp, int nth)
 		}
 	}
 	guimp->layer_amount--;
-	guimp->selected_layer = ft_clamp(guimp->selected_layer - 1, 0, guimp->layer_amount);
+	guimp->selected_layer
+		= ft_clamp(guimp->selected_layer - 1, 0, guimp->layer_amount);
 	if (guimp->layer_amount <= 0)
 		return ;
 	button = ui_list_get_element_by_id(
