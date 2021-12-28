@@ -66,20 +66,20 @@ Window toolbox_window
 			Button line_button {};	
 		};
 		Input text_input {};	
-		Dropdown font_drop
-		{
-			Menu font_drop_menu
-			{
-				Button droidsans_drop_button {};
-				Button sharetech_drop_button {};
-			};
-		};
 		Dropdown sticker_drop
 		{
 			Menu sticker_drop_menu
 			{
 				Button hamster_drop_button {};
 				Button potato_drop_button {};
+			};
+		};
+		Dropdown font_drop
+		{
+			Menu font_drop_menu
+			{
+				Button droidsans_drop_button {};
+				Button sharetech_drop_button {};
 			};
 		};
 	};

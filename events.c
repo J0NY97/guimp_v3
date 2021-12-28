@@ -1,56 +1,43 @@
 #include "guimp.h"
 
-t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name, int nth_layer)
+void	new_element_from_recipe_with_parent(
+	t_ui_element *elem, int elem_type, char *recipe_id, t_ui_element *parent)
 {
-	t_ui_element	*menu; // menu
-	t_ui_element	*show; // checkbox
-	t_ui_element	*image; // menu
-	t_ui_element	*select; // radio button
-	t_ui_recipe		*recipe_menu;
-	t_ui_recipe		*recipe_show;
-	t_ui_recipe		*recipe_image;
-	t_ui_recipe		*recipe_select;
-	char			temp[20];
-	char			*pmet;
+	t_ui_recipe		*recipe;
 
-	recipe_menu = ui_list_get_recipe_by_id(guimp->layout.recipes, "layer");
-	recipe_show = ui_list_get_recipe_by_id(guimp->layout.recipes, "layer_show_checkbox");
-	recipe_image = ui_list_get_recipe_by_id(guimp->layout.recipes, "layer_image_elem");
-	recipe_select = ui_list_get_recipe_by_id(guimp->layout.recipes, "layer_select_button");
+	recipe = ui_layout_get_recipe(parent->win->layout, recipe_id);
+	g_acceptable[elem_type].maker(parent->win, elem);
+	ui_element_set_parent(elem, parent, UI_TYPE_ELEMENT);
+	ui_element_edit(elem, recipe);
+	ui_element_set_id(elem, recipe_id);
+}
 
+t_ui_element	*new_layer_element(
+	t_guimp *guimp, char *layer_name, int nth_layer)
+{
+	t_ui_element	*menu;
+	t_ui_element	*show;
+	t_ui_element	*image;
+	t_ui_element	*select;
+	t_ui_recipe		*r_menu;
+
+	r_menu = ui_list_get_recipe_by_id(guimp->layout.recipes, "layer");
 	menu = ft_memalloc(sizeof(t_ui_element));
-	ui_menu_new(guimp->win_toolbox, menu);
-	ui_element_set_parent(menu, guimp->layer_parent, UI_TYPE_ELEMENT);
-	ui_element_edit(menu, recipe_menu);
-	ui_element_pos_set(menu, vec4(recipe_menu->pos.x, (recipe_menu->pos.h * nth_layer) + (nth_layer * 10) + recipe_menu->pos.y, recipe_menu->pos.w, recipe_menu->pos.h));
-	pmet = ft_strjoin("layer", ft_b_itoa(nth_layer, temp));
-	ui_element_set_id(menu, pmet);
-	ft_strdel(&pmet);
-
-	// Only making this so it would be easier to change the values of the size of the shown image.
+	new_element_from_recipe_with_parent(
+		menu, UI_TYPE_MENU, "layer", guimp->layer_parent);
+	ui_element_pos_set(menu, vec4(r_menu->pos.x, (r_menu->pos.h * nth_layer)
+		+ (nth_layer * 10) + r_menu->pos.y, r_menu->pos.w, r_menu->pos.h));
 	image = ft_memalloc(sizeof(t_ui_element));
-	ui_menu_new(guimp->win_toolbox, image);
-	ui_element_set_parent(image, menu, UI_TYPE_ELEMENT);
-	ui_element_edit(image, recipe_image);
-	ui_element_set_id(image, "layer_image_elem");
-	image->show = 0;
-
+	new_element_from_recipe_with_parent(
+		image, UI_TYPE_MENU, "layer_image_elem", menu);
 	show = ft_memalloc(sizeof(t_ui_element));
-	ui_checkbox_new(guimp->win_toolbox, show);
-	ui_element_set_parent(show, menu, UI_TYPE_ELEMENT);
-	ui_element_edit(show, recipe_show);
-	ui_element_set_id(show, "layer_show_checkbox");
-
+	new_element_from_recipe_with_parent(
+		show, UI_TYPE_CHECKBOX, "layer_show_checkbox", menu);
 	select = ft_memalloc(sizeof(t_ui_element));
-	ui_button_new(guimp->win_toolbox, select);
-	ui_element_set_parent(select, menu, UI_TYPE_ELEMENT);
-	ui_element_edit(select, recipe_select);
-	ui_element_set_id(select, "layer_select_button");
-
+	new_element_from_recipe_with_parent(
+		select, UI_TYPE_BUTTON, "layer_select_button", menu);
 	ui_label_set_text(&((t_ui_button *)select->element)->label, layer_name);
-
 	ui_checkbox_toggle_on(show);
-
 	return (menu);
 }
 
@@ -78,8 +65,7 @@ void	layer_elements_render(t_guimp *guimp)
 	if (guimp->layer_amount > 0)
 		pos = ui_list_get_element_by_id(guimp->layer_elems[0]->children,
 				"layer_image_elem")->pos;
-	ratio = get_ratio(
-			vec2i(guimp->final_image.pos.w, guimp->final_image.pos.h),
+	ratio = get_ratio(vec2i(guimp->final_image.pos.w, guimp->final_image.pos.h),
 			vec2i(pos.w, pos.h));
 	final.x = guimp->final_image.pos.w * ratio;
 	final.y = guimp->final_image.pos.h * ratio;
@@ -88,22 +74,16 @@ void	layer_elements_render(t_guimp *guimp)
 	{
 		if (!guimp->layer_elems[jj]->texture)
 			continue ;
-		tt = ui_surface_new(guimp->layer_elems[jj]->pos.w,
-				guimp->layer_elems[jj]->pos.h);
-		SDL_FillRect(tt, NULL, 0xff037171);
+		tt = ui_surface_new(final.x, final.y);
 		SDL_BlitScaled(guimp->layers[jj].surface,
 			&(SDL_Rect){-guimp->layers[jj].pos.x, -guimp->layers[jj].pos.y,
-				guimp->final_image.pos.w, guimp->final_image.pos.h}, tt,
-			&(SDL_Rect){pos.x + (pos.w / 2) - (final.x / 2),
-				pos.y + (pos.h / 2) - (final.y / 2), final.x, final.y});
+				guimp->final_image.pos.w, guimp->final_image.pos.h}, tt, NULL);
 		SDL_UpdateTexture(guimp->layer_elems[jj]->texture,
-			NULL, tt->pixels, tt->pitch);
+			&(SDL_Rect){pos.x + (pos.w / 2) - (final.x / 2),
+				pos.y + (pos.h / 2) - (final.y / 2), final.x, final.y},
+			tt->pixels, tt->pitch);
 		SDL_FreeSurface(tt);
 	}
-	/*
-	SDL_RenderPresent(guimp->win_toolbox->renderer);
-	SDL_SetRenderTarget(guimp->win_toolbox->renderer, NULL);
-	*/
 }
 
 void	new_layer_combination(t_guimp *guimp)

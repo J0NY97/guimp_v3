@@ -37,8 +37,7 @@ void	guimp_init(t_guimp *guimp)
 	guimp->zoom = 1.0f;
 	guimp->hidden_surface
 		= ui_surface_new(guimp->win_main->pos.w, guimp->win_main->pos.h);
-	guimp->hidden_texture
-		= SDL_CreateTextureFromSurface(
+	guimp->hidden_texture = SDL_CreateTextureFromSurface(
 			guimp->win_main->renderer, guimp->hidden_surface);
 }
 
@@ -167,36 +166,18 @@ void	drag_n_drop_events(t_guimp *guimp, SDL_Event e)
 	if (e.drop.type == SDL_DROPFILE
 		&& e.drop.windowID == guimp->win_main->window_id)
 	{
-		ft_printf("File : %s dropped on windowID %d\n", e.drop.file, e.drop.windowID);
+		ft_printf("%s dropped on window id %d\n", e.drop.file, e.drop.windowID);
 		new_layer_combination(guimp);
-		ui_label_set_text(ui_button_get_label_element(
-				ui_list_get_element_by_id(
+		ui_label_set_text(ui_button_get_label_element(ui_list_get_element_by_id(
 					guimp->layer_elems[guimp->layer_amount - 1]->children,
-						"layer_select_button")), e.drop.file);
-		dropped_image = ui_surface_image_new(e.drop.file);	
+					"layer_select_button")), e.drop.file);
+		dropped_image = ui_surface_image_new(e.drop.file);
 		resize_layer(&guimp->layers[guimp->layer_amount - 1],
 			vec2i(dropped_image->w, dropped_image->h));
 		SDL_BlitSurface(dropped_image, NULL,
 			guimp->layers[guimp->layer_amount - 1].surface, NULL);
 		SDL_FreeSurface(dropped_image);
 	}
-}
-
-int	which_nth_element_is_this(t_list *list, char *id)
-{
-	t_ui_element	*elem;
-	int				i;
-
-	i = 0;
-	while (list)
-	{
-		elem = list->content;
-		if (ft_strequ(elem->id, id))
-			return (i);
-		list = list->next;
-		i++;
-	}
-	return (-1); // not in list;
 }
 
 int	main(void)
@@ -225,22 +206,29 @@ int	main(void)
 				guimp.win_toolbox->wants_to_close = 1;
 			reset_image_events(&guimp, e);
 			drag_n_drop_events(&guimp, e);
-			// dropdown elems will be evented here, we dont want anything else to get evented if its open;
-			// i hope i come up with other way of doing this.
-			if (ui_dropdown_get_dropdown(guimp.font_dropdown)->menu.show)
-				ui_dropdown_event(guimp.font_dropdown, e);
-			else if (ui_dropdown_get_dropdown(guimp.sticker_dropdown)->menu.show)
-				ui_dropdown_event(guimp.sticker_dropdown, e);
-			else
+
+			if (ui_dropdown_is_open(guimp.sticker_dropdown))
+				guimp.font_dropdown->event = 0;
+			else if (ui_dropdown_exit(guimp.sticker_dropdown))
+				guimp.font_dropdown->event = 0;
+			if (ui_dropdown_is_open(guimp.font_dropdown))
 			{
-				// Event
-				ui_layout_event(&guimp.layout, e);
-
-				// Layer
-				layer_event(&guimp);
-
-				ui_radio_event(&guimp.radio_layer, e);
+				guimp.circle_button->event = 0;
+				guimp.square_button->event = 0;
+				guimp.line_button->event = 0;
 			}
+
+			// Event
+			ui_layout_event(&guimp.layout, e);
+			guimp.circle_button->event = 1;
+			guimp.square_button->event = 1;
+			guimp.line_button->event = 1;
+			guimp.font_dropdown->event = 1;
+
+			// Layer
+			layer_event(&guimp);
+
+			ui_radio_event(&guimp.radio_layer, e);
 		}
 		// User
 		user_events(&guimp);

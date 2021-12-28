@@ -262,6 +262,7 @@ sticker_drop
 	bg_image_default : libs/libui/images/drop.png;
 	bg_image_hover : libs/libui/images/drop_hover.png;
 	bg_image_click : libs/libui/images/drop_click.png;
+	z : 2;
 };
 sticker_drop_menu
 {
@@ -286,6 +287,7 @@ font_drop
 	bg_image_default : libs/libui/images/drop.png;
 	bg_image_hover : libs/libui/images/drop_hover.png;
 	bg_image_click : libs/libui/images/drop_click.png;
+	z : 1;
 };
 font_drop_menu
 {
@@ -427,6 +429,7 @@ layer_image_elem
 {
 	xywh : 30, 5, 75, 20;
 	bg_color_default : 0xfff4d35e;
+	show : 0;
 };
 
 layer_select_button

@@ -72,38 +72,50 @@ void	flood_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos)
 			guimp->combined_color, actual_pos.x, actual_pos.y);
 }
 
+/*
+ * Checking for sticker_name.png/.bmp/.jpg
+ *	from directory 'stickers/';
+ *	(All the supported file formats)
+ *	Returns the first found;
+*/
+char	*get_sticker_path(char *sticker_name)
+{
+	char	*final;	
+
+	if (!sticker_name)
+		return (NULL);
+	final = ft_strjoiner("stickers/", sticker_name, ".png", NULL);
+	if (!access(final, F_OK))
+		return (final);
+	ft_strdel(&final);
+	final = ft_strjoiner("stickers/", sticker_name, ".jpg", NULL);
+	if (!access(final, F_OK))
+		return (final);
+	ft_strdel(&final);
+	final = ft_strjoiner("stickers/", sticker_name, ".bmp", NULL);
+	if (!access(final, F_OK))
+		return (final);
+	ft_strdel(&final);
+	return (NULL);
+}
+
 void	sticker_brush(t_guimp *guimp, t_layer *active_layer,
 	t_vec2i actual_pos, t_vec2i hidden_pos)
 {
-	SDL_Surface		*surface;
-	char			*sticker_text;
-	char			*full_path;
-	char			*including_type;
+	SDL_Surface	*surface;
+	char		*sticker_text;
+	char		*full_path;
 
 	sticker_text = ui_dropdown_active_text(guimp->sticker_dropdown);
-	if (!sticker_text)
+	full_path = get_sticker_path(sticker_text);
+	if (!full_path)
 		return ;
-	full_path = ft_strjoin("stickers/", sticker_text);
-	// Checking png
-	including_type = ft_strjoin(full_path, ".png");
-	// Checking jpg
-	if (access(including_type, F_OK))
-	{
-		ft_strdel(&including_type);
-		including_type = ft_strjoin(full_path, ".jpg");
-	}
-	// Checking bmp
-	if (access(including_type, F_OK))
-	{
-		ft_strdel(&including_type);
-		including_type = ft_strjoin(full_path, ".bmp");
-	}
-	surface = ui_surface_image_new(including_type);
-	ft_strdel(&including_type);
+	surface = ui_surface_image_new(full_path);
 	ft_strdel(&full_path);
 	if (!surface)
 	{
-		ft_printf("[%s] Sticker image doesnt exist.\n", __FUNCTION__);
+		ft_printf("[%s] Sticker surface <%s> couldn\'t be created.\n",
+			__FUNCTION__, full_path);
 		return ;
 	}
 	SDL_BlitScaled(surface, NULL, guimp->hidden_surface,
