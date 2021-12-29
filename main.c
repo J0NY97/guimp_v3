@@ -180,24 +180,27 @@ void	drag_n_drop_events(t_guimp *guimp, SDL_Event e)
 	}
 }
 
+void	initteroni(t_guimp *guimp)
+{
+	guimp_init(guimp);
+	toolbox_window_init(guimp);
+	new_layer_window_init(guimp);
+	edit_layer_window_init(guimp);
+	save_image_window_init(guimp);
+	ui_radio_new(guimp->win_toolbox, &guimp->radio_layer);
+	guimp->radio_buttons = guimp->radio_layer.children;
+	brush_init(guimp);
+	new_layer_combination(guimp);
+}
+
 int	main(void)
 {
 	t_guimp		guimp;
 	SDL_Event	e;
 
 	ui_sdl_init();
-
-	guimp_init(&guimp);
-	toolbox_window_init(&guimp);
-	new_layer_window_init(&guimp);
-	edit_layer_window_init(&guimp);
-	save_image_window_init(&guimp);
-	ui_radio_new(guimp.win_toolbox, &guimp.radio_layer);
-	guimp.radio_buttons = guimp.radio_layer.children;
-	brush_init(&guimp);
-	new_layer_combination(&guimp); // lets make default 1 layer;
+	initteroni(&guimp);
 	ft_printf("All Inits done.\n");
-
 	while (!guimp.win_toolbox->wants_to_close)
 	{
 		while (SDL_PollEvent(&e))
@@ -206,7 +209,6 @@ int	main(void)
 				guimp.win_toolbox->wants_to_close = 1;
 			reset_image_events(&guimp, e);
 			drag_n_drop_events(&guimp, e);
-
 			if (ui_dropdown_is_open(guimp.sticker_dropdown))
 				guimp.font_dropdown->event = 0;
 			else if (ui_dropdown_exit(guimp.sticker_dropdown))
@@ -217,27 +219,22 @@ int	main(void)
 				guimp.square_button->event = 0;
 				guimp.line_button->event = 0;
 			}
-
 			// Event
 			ui_layout_event(&guimp.layout, e);
 			guimp.circle_button->event = 1;
 			guimp.square_button->event = 1;
 			guimp.line_button->event = 1;
 			guimp.font_dropdown->event = 1;
-
 			// Layer
 			layer_event(&guimp);
-
 			ui_radio_event(&guimp.radio_layer, e);
 		}
 		// User
 		user_events(&guimp);
-		
 		// Layer
 		layer_elements_render(&guimp);
 		layer_draw(&guimp);
 		layer_render(&guimp);
-
 		// Render
 		ui_layout_render(&guimp.layout);
 	}

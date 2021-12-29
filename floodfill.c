@@ -82,9 +82,9 @@ static void	up_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor)
 		y = env->pos.y;
 		if (clr_compare(surface, env->oldcolor, x, y))
 		{
-			((Uint32 *)surface->pixels)[y *surface->w + x] = newcolor;
+			((Uint32 *)surface->pixels)[y * surface->w + x] = newcolor;
 			while (--y > -1 && clr_compare(surface, env->oldcolor, x, y))
-				((Uint32 *)surface->pixels)[y *surface->w + x] = newcolor;
+				((Uint32 *)surface->pixels)[y * surface->w + x] = newcolor;
 			if (y < i - 1 && x > 0)
 				push4(env, (t_ff_pos){y + 1, i, x - 1, LEFT});
 			else if (y > i + 1 && x < surface->w)
@@ -113,9 +113,9 @@ static void	down_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor)
 		y = env->pos.y;
 		if (clr_compare(surface, env->oldcolor, x, y))
 		{
-			((Uint32 *)surface->pixels)[y *surface->w + x] = newcolor;
+			((Uint32 *)surface->pixels)[y * surface->w + x] = newcolor;
 			while (++y < surface->h && clr_compare(surface, env->oldcolor, x, y))
-				((Uint32 *)surface->pixels)[y *surface->w + x] = newcolor;
+				((Uint32 *)surface->pixels)[y * surface->w + x] = newcolor;
 			if (y < i - 1 && x < surface->w)
 				push4(env, (t_ff_pos){y - 1, i, x, RIGHT});
 			else if (y > i + 1 && x > 0)
@@ -144,7 +144,7 @@ static void	left_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor)
 		x = env->pos.y;
 		if (clr_compare(surface, env->oldcolor, x, y))
 		{
-			((Uint32 *)surface->pixels)[y *surface->w + x] = newcolor;
+			((Uint32 *)surface->pixels)[y * surface->w + x] = newcolor;
 			while (--x > -1 && clr_compare(surface, env->oldcolor, x, y))
 				((Uint32 *)surface->pixels)[y * surface->w + x] = newcolor;
 			if (x < i - 1 && y > 0)
@@ -175,7 +175,7 @@ static void	right_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor)
 		x = env->pos.y;
 		if (clr_compare(surface, env->oldcolor, x, y))
 		{
-			((Uint32 *)surface->pixels)[y *surface->w + x] = newcolor;
+			((Uint32 *)surface->pixels)[y * surface->w + x] = newcolor;
 			while (++x < surface->w && clr_compare(surface, env->oldcolor, x, y))
 				((Uint32 *)surface->pixels)[y * surface->w + x] = newcolor;
 			if (x < i - 1 && y < surface->h)
@@ -223,8 +223,8 @@ void	flood_fill(SDL_Surface *surface, Uint32 newcolor, int x, int y)
 		((Uint32 *)surface->pixels)[y * surface->w + env.pos.x1] = newcolor;
 	env.pos.x1++;
 	if (y > 0)
-		push4(&env, (t_ff_pos){env.pos.x1, env.pos.x2, y - 1, UP});//2
+		push4(&env, (t_ff_pos){env.pos.x1, env.pos.x2, y - 1, UP});
 	if (y < surface->h - 1)
-		push4(&env, (t_ff_pos){env.pos.x1, env.pos.x2, y + 1, DOWN});//3
+		push4(&env, (t_ff_pos){env.pos.x1, env.pos.x2, y + 1, DOWN});
 	flood_fill2(surface, &env, newcolor);
 }
