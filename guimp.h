@@ -79,9 +79,6 @@ typedef struct s_layer
 #define MAX_LAYER_AMOUNT 5
 typedef struct s_guimp
 {
-	////////////////
-	// Main Win
-	////////////////
 	t_ui_window		*win_main;
 	SDL_Texture		*final_image_texture;
 	t_layer			final_image;
@@ -104,7 +101,7 @@ typedef struct s_guimp
 	t_ui_layout		layout;
 	t_ui_window		*win_toolbox;
 	t_ui_recipe		*layer_recipe;
-	t_ui_element	*layer_elems[5];
+	t_ui_element	*layer_elems[MAX_LAYER_AMOUNT];
 	t_ui_element	*layer_parent;
 
 	t_ui_element	*button_add_layer;

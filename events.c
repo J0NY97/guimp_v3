@@ -53,6 +53,29 @@ float	get_ratio(t_vec2i orig_wh, t_vec2i new_wh)
 	return (ratio_y);
 }
 
+void	small_image_drawer(t_guimp *guimp, t_vec4 img_pos, t_vec2i img_size)
+{
+	int			jj;
+	SDL_Surface	*img;
+
+	jj = -1;
+	while (++jj < guimp->layer_amount)
+	{
+		if (!guimp->layer_elems[jj]->texture)
+			continue ;
+		img = ui_surface_new(img_size.x, img_size.y);
+		SDL_BlitScaled(guimp->layers[jj].surface,
+			&(SDL_Rect){-guimp->layers[jj].pos.x, -guimp->layers[jj].pos.y,
+			guimp->final_image.pos.w, guimp->final_image.pos.h}, img, NULL);
+		SDL_UpdateTexture(guimp->layer_elems[jj]->texture,
+			&(SDL_Rect){img_pos.x + (img_pos.w / 2) - (img_size.x / 2),
+			img_pos.y + (img_pos.h / 2) - (img_size.y / 2),
+			img_size.x, img_size.y},
+			img->pixels, img->pitch);
+		SDL_FreeSurface(img);
+	}
+}
+
 /*
  * from guimp->layers (t_layer, that have the surface we draw on, specific to
  *	that layer) we take the surface and figure out the ratio so it fits inside
@@ -61,8 +84,6 @@ float	get_ratio(t_vec2i orig_wh, t_vec2i new_wh)
 */
 void	layer_elements_render(t_guimp *guimp)
 {
-	int			jj;
-	SDL_Surface	*tt;
 	t_vec4		pos;
 	t_vec2i		final;
 	float		ratio;
@@ -75,21 +96,7 @@ void	layer_elements_render(t_guimp *guimp)
 			vec2i(pos.w, pos.h));
 	final.x = guimp->final_image.pos.w * ratio;
 	final.y = guimp->final_image.pos.h * ratio;
-	jj = -1;
-	while (++jj < guimp->layer_amount)
-	{
-		if (!guimp->layer_elems[jj]->texture)
-			continue ;
-		tt = ui_surface_new(final.x, final.y);
-		SDL_BlitScaled(guimp->layers[jj].surface,
-			&(SDL_Rect){-guimp->layers[jj].pos.x, -guimp->layers[jj].pos.y,
-			guimp->final_image.pos.w, guimp->final_image.pos.h}, tt, NULL);
-		SDL_UpdateTexture(guimp->layer_elems[jj]->texture,
-			&(SDL_Rect){pos.x + (pos.w / 2) - (final.x / 2),
-			pos.y + (pos.h / 2) - (final.y / 2), final.x, final.y},
-			tt->pixels, tt->pitch);
-		SDL_FreeSurface(tt);
-	}
+	small_image_drawer(guimp, pos, final);
 }
 
 /*
@@ -141,24 +148,12 @@ void	button_add_layer_event(t_guimp *guimp)
 	}
 }
 
-/*
- * removes and reorders layer_elems;
- *
- * NOTE: the '40', in ...pos_set2(), comes from the offset on the menu;
-*/
-void	remove_nth_layer(t_guimp *guimp, int nth)
+void	reorder_layers(t_guimp *guimp)
 {
-	t_ui_element	*button;
-	int				i;
+	int	i;
 
-	if (nth < 0 || nth >= guimp->layer_amount)
-		return ;
-	layer_free(&guimp->layers[nth]);
-	ui_element_free(guimp->layer_elems[guimp->selected_layer],
-		sizeof(t_ui_element));
-	guimp->layer_elems[nth] = NULL;
-	i = nth - 1;
-	while (++i < guimp->layer_amount - 1)
+	i = -1;
+	while (++i < guimp->layer_amount)
 	{
 		if (guimp->layer_elems[i] == NULL)
 		{
@@ -170,7 +165,25 @@ void	remove_nth_layer(t_guimp *guimp, int nth)
 					(guimp->layer_elems[i]->pos.h * i) + (10 * i) + 40));
 		}
 	}
+}
+
+/*
+ * removes and reorders layer_elems;
+ *
+ * NOTE: the '40', in ...pos_set2(), comes from the offset on the menu;
+*/
+void	remove_nth_layer(t_guimp *guimp, int nth)
+{
+	t_ui_element	*button;
+
+	if (nth < 0 || nth >= guimp->layer_amount)
+		return ;
+	layer_free(&guimp->layers[nth]);
+	ui_element_free(guimp->layer_elems[guimp->selected_layer],
+		sizeof(t_ui_element));
+	guimp->layer_elems[nth] = NULL;
 	guimp->layer_amount--;
+	reorder_layers(guimp);
 	guimp->selected_layer
 		= ft_clamp(guimp->selected_layer - 1, 0, guimp->layer_amount);
 	if (guimp->layer_amount <= 0)
@@ -188,41 +201,91 @@ void	button_remove_layer_event(t_guimp *guimp)
 		remove_nth_layer(guimp, guimp->selected_layer);
 }
 
-void	button_edit_layer_event(t_guimp *guimp)
+void	edit_layer_event(t_guimp *guimp)
 {
 	char	temp[20];
 
+	ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_SHOW);
+	SDL_RaiseWindow(guimp->win_layer_edit->win);
+	ui_label_set_text(
+		ui_input_get_label_element(guimp->input_edit_layer_name),
+		guimp->layers[guimp->selected_layer].name);
+	ui_label_set_text(
+		ui_input_get_label_element(guimp->input_edit_layer_width),
+		ft_b_itoa(guimp->layers[guimp->selected_layer].pos.w, temp));
+	ui_label_set_text(
+		ui_input_get_label_element(guimp->input_edit_layer_height),
+		ft_b_itoa(guimp->layers[guimp->selected_layer].pos.h, temp));
+}
+
+void	apply_layer_edit_event(t_guimp *guimp)
+{
+	resize_layer(&guimp->layers[guimp->selected_layer],
+		vec2i(ft_atoi(ui_input_get_text(guimp->input_edit_layer_width)),
+			ft_atoi(ui_input_get_text(guimp->input_edit_layer_height))));
+	ft_strdel(&guimp->layers[guimp->selected_layer].name);
+	guimp->layers[guimp->selected_layer].name
+		= ft_strdup(ui_input_get_text(guimp->input_edit_layer_name));
+	ui_label_set_text(ui_button_get_label_element(
+			ui_list_get_element_by_id(
+				guimp->layer_elems[guimp->selected_layer]->children,
+				"layer_select_button")),
+		guimp->layers[guimp->selected_layer].name);
+	ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_HIDE);
+}
+
+void	button_edit_layer_event(t_guimp *guimp)
+{
 	if (guimp->selected_layer < 0 || guimp->selected_layer >= MAX_LAYER_AMOUNT)
 		return ;
 	if (ui_button(guimp->button_edit_layer) && guimp->layer_amount > 0)
-	{
-		ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_SHOW);
-		SDL_RaiseWindow(guimp->win_layer_edit->win);
-		ui_label_set_text(
-			ui_input_get_label_element(guimp->input_edit_layer_name),
-			guimp->layers[guimp->selected_layer].name);	
-		ui_label_set_text(
-			ui_input_get_label_element(guimp->input_edit_layer_width),
-			ft_b_itoa(guimp->layers[guimp->selected_layer].pos.w, temp));	
-		ui_label_set_text(
-			ui_input_get_label_element(guimp->input_edit_layer_height),
-			ft_b_itoa(guimp->layers[guimp->selected_layer].pos.h, temp));	
-	}
+		edit_layer_event(guimp);
 	if (ui_button(guimp->button_edit_layer_ok))
-	{
-		resize_layer(&guimp->layers[guimp->selected_layer],
-			vec2i(ft_atoi(ui_input_get_text(guimp->input_edit_layer_width)),
-				ft_atoi(ui_input_get_text(guimp->input_edit_layer_height))));
-		ft_strdel(&guimp->layers[guimp->selected_layer].name);
-		guimp->layers[guimp->selected_layer].name
-				= ft_strdup(ui_input_get_text(guimp->input_edit_layer_name));
-		ui_label_set_text(ui_button_get_label_element(
-				ui_list_get_element_by_id(
-					guimp->layer_elems[guimp->selected_layer]->children,
-					"layer_select_button")),
-			guimp->layers[guimp->selected_layer].name);
-		ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_HIDE);
-	}
+		apply_layer_edit_event(guimp);
+}
+
+/*
+ * Not moving the layer on the main_window,
+ * 	but moving the layer elements, on the win_toolbox, up and down;
+*/
+void	move_layer_up_event(t_guimp *guimp)
+{
+	t_ui_element	*temp;
+	t_layer			temporar;
+
+	if (guimp->selected_layer <= 0)
+		return ;
+	temporar = guimp->layers[guimp->selected_layer];
+	guimp->layers[guimp->selected_layer]
+		= guimp->layers[guimp->selected_layer - 1];
+	guimp->layers[guimp->selected_layer - 1] = temporar;
+	vec4_swap(&guimp->layer_elems[guimp->selected_layer - 1]->pos,
+		&guimp->layer_elems[guimp->selected_layer]->pos);
+	temp = guimp->layer_elems[guimp->selected_layer];
+	guimp->layer_elems[guimp->selected_layer]
+		= guimp->layer_elems[guimp->selected_layer - 1];
+	guimp->layer_elems[guimp->selected_layer - 1] = temp;
+	guimp->selected_layer--;
+}
+
+void	move_layer_down_event(t_guimp *guimp)
+{
+	t_ui_element	*temp;
+	t_layer			temporar;
+
+	if (guimp->selected_layer >= guimp->layer_amount - 1)
+		return ;
+	temporar = guimp->layers[guimp->selected_layer];
+	guimp->layers[guimp->selected_layer]
+		= guimp->layers[guimp->selected_layer + 1];
+	guimp->layers[guimp->selected_layer + 1] = temporar;
+	vec4_swap(&guimp->layer_elems[guimp->selected_layer + 1]->pos,
+		&guimp->layer_elems[guimp->selected_layer]->pos);
+	temp = guimp->layer_elems[guimp->selected_layer];
+	guimp->layer_elems[guimp->selected_layer]
+		= guimp->layer_elems[guimp->selected_layer + 1];
+	guimp->layer_elems[guimp->selected_layer + 1] = temp;
+	guimp->selected_layer++;
 }
 
 /*
@@ -230,82 +293,44 @@ void	button_edit_layer_event(t_guimp *guimp)
 */
 void	button_move_layer_event(t_guimp *guimp)
 {
-	t_layer			temporar;
-	t_ui_element	*temp;
-
 	if (ui_button(guimp->button_move_layer_up))
-	{
-		if (guimp->selected_layer <= 0)
-			return ;
-		temporar = guimp->layers[guimp->selected_layer];
-		guimp->layers[guimp->selected_layer]
-			= guimp->layers[guimp->selected_layer - 1];
-		guimp->layers[guimp->selected_layer - 1] = temporar;
-
-		vec4_swap(&guimp->layer_elems[guimp->selected_layer - 1]->pos,
-			&guimp->layer_elems[guimp->selected_layer]->pos);
-
-		temp = guimp->layer_elems[guimp->selected_layer];
-		guimp->layer_elems[guimp->selected_layer]
-			= guimp->layer_elems[guimp->selected_layer - 1];
-		guimp->layer_elems[guimp->selected_layer - 1] = temp;
-		guimp->selected_layer--;
-	}
+		move_layer_up_event(guimp);
 	else if (ui_button(guimp->button_move_layer_down))
+		move_layer_down_event(guimp);
+}
+
+void	color_slider_events(t_guimp *guimp)
+{
+	char	*temp;
+
+	guimp->combined_color = rgba_to_hex(rgba(
+				ui_slider_value_get(guimp->red_slider),
+				ui_slider_value_get(guimp->green_slider),
+				ui_slider_value_get(guimp->blue_slider),
+				ui_slider_value_get(guimp->alpha_slider)));
+	ui_element_color_set(guimp->color_swatch,
+		UI_STATE_DEFAULT, guimp->combined_color);
+	if (!guimp->color_swatch->is_click)
 	{
-		if (guimp->selected_layer >= guimp->layer_amount - 1)
-			return ;
-
-		temporar = guimp->layers[guimp->selected_layer];
-		guimp->layers[guimp->selected_layer]
-			= guimp->layers[guimp->selected_layer + 1];
-		guimp->layers[guimp->selected_layer + 1] = temporar;
-
-		vec4_swap(&guimp->layer_elems[guimp->selected_layer + 1]->pos,
-			&guimp->layer_elems[guimp->selected_layer]->pos);
-
-		temp = guimp->layer_elems[guimp->selected_layer];
-		guimp->layer_elems[guimp->selected_layer]
-			= guimp->layer_elems[guimp->selected_layer + 1];
-		guimp->layer_elems[guimp->selected_layer + 1] = temp;
-		guimp->selected_layer++;
+		temp = ft_itoa_base(guimp->combined_color, 16);
+		ui_input_set_text(guimp->color_swatch, temp);
+		ft_strdel(&temp);
 	}
 }
 
 void	color_swatch_event(t_guimp *guimp)
 {
-	char			*temp;
-	t_ui_slider		*red_slider;
-	t_ui_slider		*green_slider;
-	t_ui_slider		*blue_slider;
-	t_ui_slider		*alpha_slider;
-	t_ui_element	*input_label;
 	t_ui_label		*label;
 	t_rgba			input_rgba;
 
-	red_slider = guimp->red_slider->element;
-	green_slider = guimp->green_slider->element;
-	blue_slider = guimp->blue_slider->element;
-	alpha_slider = guimp->alpha_slider->element;
-	input_label = ui_input_get_label_element(guimp->color_swatch);
-	if (red_slider->update || green_slider->update
-		|| blue_slider->update || alpha_slider->update)
-	{
-		guimp->combined_color = rgba_to_hex(
-				rgba(red_slider->value, green_slider->value,
-					blue_slider->value, alpha_slider->value));
-		ui_element_color_set(guimp->color_swatch,
-			UI_STATE_DEFAULT, guimp->combined_color);
-		if (!guimp->color_swatch->is_click)
-		{
-			temp = ft_itoa_base(guimp->combined_color, 16);
-			ui_label_set_text(input_label, temp);
-			ft_strdel(&temp);
-		}
-	}
+	if (ui_slider_updated(guimp->red_slider)
+		|| ui_slider_updated(guimp->green_slider)
+		|| ui_slider_updated(guimp->blue_slider)
+		|| ui_slider_updated(guimp->alpha_slider))
+		color_slider_events(guimp);
 	else if (guimp->color_swatch->is_click)
 	{
-		label = input_label->element;
+		label = ui_input_get_label(guimp->color_swatch);
 		guimp->combined_color = (unsigned int)strtoul(label->text, NULL, 16);
 		input_rgba = hex_to_rgba(guimp->combined_color);
 		ui_slider_value_set(guimp->red_slider, input_rgba.r);
@@ -315,8 +340,8 @@ void	color_swatch_event(t_guimp *guimp)
 		ui_element_color_set(guimp->color_swatch,
 			UI_STATE_DEFAULT, guimp->combined_color);
 	}
-	if (((t_ui_slider *)guimp->size_slider->element)->update)
-		guimp->size = ((t_ui_slider *)guimp->size_slider->element)->value;
+	if (ui_slider_updated(guimp->size_slider))
+		guimp->size = ui_slider_value_get(guimp->size_slider);
 }
 
 void	save_button_event(t_guimp *guimp)
@@ -334,10 +359,16 @@ void	save_button_event(t_guimp *guimp)
 	}
 }
 
+/*
+ * NOTE:
+ * 	after resizing the image, we have to put the last_state of the layer_elems
+ * 	to something else so that the texture of them will be reset;
+*/
 void	edit_button_event(t_guimp *guimp)
 {
 	int	w;
 	int	h;
+	int	iii;
 
 	if (ui_button(guimp->edit_button))
 	{
@@ -356,15 +387,20 @@ void	edit_button_event(t_guimp *guimp)
 			guimp->final_image.surface->pixels,
 			guimp->final_image.surface->pitch);
 		ui_window_flag_set(guimp->win_image_edit, UI_WINDOW_HIDE);
+		iii = -1;
+		while (++iii < guimp->layer_amount)
+			guimp->layer_elems[iii]->last_state = -13;
 	}
 }
 
+/*
+ * Removing all the layers;
+*/
 void	clear_button_event(t_guimp *guimp)
 {
 	int	i;
 	int	amount;
 
-	// remove all layers.
 	if (ui_button(guimp->clear_button))
 	{
 		i = -1;
