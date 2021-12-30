@@ -1,7 +1,58 @@
 #include "guimp.h"
 
-void	user_events(t_guimp *guimp)
+/*
+ * Reseting the final_image to the center of the
+ * 	screen if it has disappeard somewhere.
+*/
+void	reset_image_events(t_guimp *guimp, SDL_Event e)
 {
+	if (e.key.keysym.scancode == SDL_SCANCODE_SPACE)
+	{
+		guimp->zoom = 1.0;
+		guimp->final_image.pos.x = guimp->win_main->pos.w / 2
+			- guimp->final_image.pos.w / 2;
+		guimp->final_image.pos.y = guimp->win_main->pos.h / 2
+			- guimp->final_image.pos.h / 2;
+	}
+}
+
+void	drag_n_drop_events(t_guimp *guimp, SDL_Event e)
+{
+	SDL_Surface	*dropped_image;
+
+	if (e.drop.type == SDL_DROPFILE
+		&& e.drop.windowID == guimp->win_main->window_id)
+	{
+		ft_printf("%s dropped on window id %d\n", e.drop.file, e.drop.windowID);
+		new_layer_combination(guimp);
+		ui_label_set_text(ui_button_get_label_element(ui_list_get_element_by_id(
+					guimp->layer_elems[guimp->layer_amount - 1]->children,
+					"layer_select_button")), e.drop.file);
+		dropped_image = ui_surface_image_new(e.drop.file);
+		resize_layer(&guimp->layers[guimp->layer_amount - 1],
+			vec2i(dropped_image->w, dropped_image->h));
+		SDL_BlitSurface(dropped_image, NULL,
+			guimp->layers[guimp->layer_amount - 1].surface, NULL);
+		SDL_FreeSurface(dropped_image);
+	}
+}
+
+void	user_events(t_guimp *guimp, SDL_Event e)
+{
+	if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+		guimp->win_toolbox->wants_to_close = 1;
+	reset_image_events(guimp, e);
+	drag_n_drop_events(guimp, e);
+	if (ui_dropdown_is_open(guimp->sticker_dropdown))
+		guimp->font_dropdown->event = 0;
+	else if (ui_dropdown_exit(guimp->sticker_dropdown))
+		guimp->font_dropdown->event = 0;
+	if (ui_dropdown_is_open(guimp->font_dropdown))
+	{
+		guimp->circle_button->event = 0;
+		guimp->square_button->event = 0;
+		guimp->line_button->event = 0;
+	}
 	button_add_layer_event(guimp);
 	button_remove_layer_event(guimp);
 	button_edit_layer_event(guimp);
@@ -143,43 +194,6 @@ void	brush_init(t_guimp *guimp)
 	guimp->line_button = ui_layout_get_element(&guimp->layout, "line_button");
 }
 
-/*
- * Reseting the final_image to the center of the
- * 	screen if it has disappeard somewhere.
-*/
-void	reset_image_events(t_guimp *guimp, SDL_Event e)
-{
-	if (e.key.keysym.scancode == SDL_SCANCODE_SPACE)
-	{
-		guimp->zoom = 1.0;
-		guimp->final_image.pos.x = guimp->win_main->pos.w / 2
-			- guimp->final_image.pos.w / 2;
-		guimp->final_image.pos.y = guimp->win_main->pos.h / 2
-			- guimp->final_image.pos.h / 2;
-	}
-}
-
-void	drag_n_drop_events(t_guimp *guimp, SDL_Event e)
-{
-	SDL_Surface	*dropped_image;
-
-	if (e.drop.type == SDL_DROPFILE
-		&& e.drop.windowID == guimp->win_main->window_id)
-	{
-		ft_printf("%s dropped on window id %d\n", e.drop.file, e.drop.windowID);
-		new_layer_combination(guimp);
-		ui_label_set_text(ui_button_get_label_element(ui_list_get_element_by_id(
-					guimp->layer_elems[guimp->layer_amount - 1]->children,
-					"layer_select_button")), e.drop.file);
-		dropped_image = ui_surface_image_new(e.drop.file);
-		resize_layer(&guimp->layers[guimp->layer_amount - 1],
-			vec2i(dropped_image->w, dropped_image->h));
-		SDL_BlitSurface(dropped_image, NULL,
-			guimp->layers[guimp->layer_amount - 1].surface, NULL);
-		SDL_FreeSurface(dropped_image);
-	}
-}
-
 void	initteroni(t_guimp *guimp)
 {
 	guimp_init(guimp);
@@ -200,42 +214,22 @@ int	main(void)
 
 	ui_sdl_init();
 	initteroni(&guimp);
-	ft_printf("All Inits done.\n");
 	while (!guimp.win_toolbox->wants_to_close)
 	{
 		while (SDL_PollEvent(&e))
 		{
-			if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-				guimp.win_toolbox->wants_to_close = 1;
-			reset_image_events(&guimp, e);
-			drag_n_drop_events(&guimp, e);
-			if (ui_dropdown_is_open(guimp.sticker_dropdown))
-				guimp.font_dropdown->event = 0;
-			else if (ui_dropdown_exit(guimp.sticker_dropdown))
-				guimp.font_dropdown->event = 0;
-			if (ui_dropdown_is_open(guimp.font_dropdown))
-			{
-				guimp.circle_button->event = 0;
-				guimp.square_button->event = 0;
-				guimp.line_button->event = 0;
-			}
-			// Event
+			user_events(&guimp, e);
 			ui_layout_event(&guimp.layout, e);
 			guimp.circle_button->event = 1;
 			guimp.square_button->event = 1;
 			guimp.line_button->event = 1;
 			guimp.font_dropdown->event = 1;
-			// Layer
 			layer_event(&guimp);
 			ui_radio_event(&guimp.radio_layer, e);
 		}
-		// User
-		user_events(&guimp);
-		// Layer
 		layer_elements_render(&guimp);
 		layer_draw(&guimp);
 		layer_render(&guimp);
-		// Render
 		ui_layout_render(&guimp.layout);
 	}
 	return (0);
