@@ -38,30 +38,42 @@ typedef struct s_layer
 	bool			*show;
 }					t_layer;
 
-
 /*
- * t_ui_window		*win_main;			main window where all the layers are and you draw on;
- * SDL_Texture		*final_image_texture;	the texture of the final image, which will be rendered on the main window;
- * t_layer			final_image;		this is the image where all the layers are blitted to and then showed on screen;
- * t_layer			*active_layer;		pointer to the currenctly selected layer, this is the one we will draw on;
+ * t_ui_window		*win_main;			main window where all the layers are
+ 										and you draw on;
+ * SDL_Texture		*final_image_texture;	the texture of the final image,
+ 									which will be rendered on the main window;
+ * t_layer			final_image;		this is the image where all the layers
+ 									are blitted to and then showed on screen;
+ * t_layer			*active_layer;		pointer to the currenctly selected
+ 										layer, this is the one we will draw on;
  * int				selected_layer;		the index of the selected layer;
- * t_layer			layers[5];			array of layers, we are capping this to 5 for now. included image at offset 0;
- * SDL_Surface		*hidden_surface;	the surface where all the tool preshowers will be drawn on;
- * SDL_Texture		*hidden_texture;	the texture where all the tool preshowers will be drawn on;
- * t_vec2i			real_image_pos;		position on image where mouse is, taking into consideration position and zoom;
- * t_vec2i			hidden_pos;			position on hidden layer where mouse is, taking into consideration position and zoom;
- * t_vec2i			actual_pos;			position on selected layer where mouse is, taking into consideration position and zoom;
+ * t_layer			layers[5];			array of layers, we are capping this to
+ * 										5 for now. included image at offset 0;
+ * SDL_Surface		*hidden_surface;	the surface where all the tool
+ * 											preshowers will be drawn on;
+ * SDL_Texture		*hidden_texture;	the texture where all the tool
+ * 											preshowers will be drawn on;
+ * t_vec2i			real_image_pos;		position on image where mouse is,
+ * 									taking into consideration position and zoom;
+ * t_vec2i			hidden_pos;			position on hidden layer where mouse is,
+ * 									taking into consideration position and zoom;
+ * t_vec2i			actual_pos;			position on selected layer where mouse
+ * 								is, taking into consideration position and zoom;
  *
  * t_ui_layout		layout;				the layout...;
  * t_ui_window		*win_toolbox;		window of the toolbox;
- * t_ui_recipe		*layer_recipe;		recipe for a new layer so that it will be easier to make a new one;
- * t_list			*layers;			list of layers, t_ui_element, created from the "layer_recipe";
- * t_ui_element		*layer_parent;		the parent elem you place all the layers on;
- * t_ui_element		*new_layer_button;	pretty self-explanatory, event : new_layer_button_event();
+ * t_ui_recipe		*layer_recipe;		recipe for a new layer so that it will
+ * 											be easier to make a new one;
+ * t_list			*layers;			list of layers, t_ui_element, created
+ * 											from the "layer_recipe";
+ * t_ui_element		*layer_parent;		parent elem you place all the layers on;
+ * t_ui_element		*new_layer_button;	pretty self-explanatory,
+ * 											event : new_layer_button_event();
  * int				layer_count;		amount of layers currently;
  *
- * t_list			*radio_buttons;		pointer to the layout element 'radio_buttons'->children; dont free!
- *
+ * t_list			*radio_buttons;		pointer to the layout element
+ * 										'radio_buttons'->children; dont free!
  * Color shower:
  * t_ui_element		*color_swatch;		final color of the color sliders;	
  * t_ui_element		*red_slider;		<-
@@ -73,10 +85,10 @@ typedef struct s_layer
  * char				*text_input_str;	the text of text_input label;
  *
  * Tools:
- * t_vec2i			first_pos;				screen position of first mouse click;
- * t_vec2i			first_pos_converted;	position on the actual layer position;
+ * t_vec2i			first_pos;			 screen position of first mouse click;
+ * t_vec2i			first_pos_converted; position on the actual layer position;
 */
-#define MAX_LAYER_AMOUNT 5
+# define MAX_LAYER_AMOUNT 5
 typedef struct s_guimp
 {
 	t_ui_window		*win_main;
@@ -125,69 +137,64 @@ typedef struct s_guimp
 	t_ui_element	*move_button;
 	t_ui_element	*shape_button;
 	t_ui_element	*pipette_button;
-	// shape tools
+
 	t_vec2i			first_pos;
 	t_vec2i			first_pos_converted;
 	bool			first_set;
 	t_ui_element	*circle_button;
 	t_ui_element	*square_button;
 	t_ui_element	*line_button;
-	// text input
+
 	t_ui_element	*text_input;
 	char			*text_input_str;
-	// drops
+
 	t_ui_element	*font_dropdown;
 	t_ui_element	*sticker_dropdown;
-	// buttons
+
 	t_ui_element	*save_button;
 	t_ui_element	*edit_button;
 	t_ui_element	*clear_button;
 
-	////////////////
-	// New Layer Win
-	/////////////////
 	t_ui_window		*win_layer_new;
 	t_ui_element	*new_layer_ok_button;
 	t_ui_label		*new_layer_name_input_label;
 	t_ui_label		*new_layer_width_input_label;
 	t_ui_label		*new_layer_height_input_label;
 
-	////////////////
-	// Edit Layer Win
-	/////////////////
 	t_ui_window		*win_layer_edit;
 	t_ui_element	*button_edit_layer_ok;
 	t_ui_element	*input_edit_layer_name;
 	t_ui_element	*input_edit_layer_width;
 	t_ui_element	*input_edit_layer_height;
 
-	////////////////
-	// New Image Win
-	/////////////////
 	t_ui_window		*win_image_edit;
 	t_ui_element	*new_image_ok_button;
 	t_ui_label		*new_image_width_input_label;
 	t_ui_label		*new_image_height_input_label;
 
-	////////////////
-	// Save Image Win
-	/////////////////
 	t_ui_window		*win_save_image;
 	t_ui_element	*input_save_image_name;
 	t_ui_element	*button_save_image_ok;
 }					t_guimp;
 
 // Draw
-void				flood_fill(SDL_Surface *surface, Uint32 newcolor, int x, int y);
+void				flood_fill(SDL_Surface *surface, Uint32 newcolor, int x,
+						int y);
 
 // Brushes
-void				draw_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_vec2i hidden_pos);
-void				text_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_vec2i hidden_pos);
-void				erase_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_vec2i hidden_pos);
-void				flood_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos);
-void				sticker_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_vec2i hidden_pos);
+void				draw_brush(t_guimp *guimp, t_layer *active_layer,
+						t_vec2i actual_pos, t_vec2i hidden_pos);
+void				text_brush(t_guimp *guimp, t_layer *active_layer,
+						t_vec2i actual_pos, t_vec2i hidden_pos);
+void				erase_brush(t_guimp *guimp, t_layer *active_layer,
+						t_vec2i actual_pos, t_vec2i hidden_pos);
+void				flood_brush(t_guimp *guimp, t_layer *active_layer,
+						t_vec2i actual_pos);
+void				sticker_brush(t_guimp *guimp, t_layer *active_layer,
+						t_vec2i actual_pos, t_vec2i hidden_pos);
 void				move_brush(t_guimp *guimp, t_layer *active_layer);
-void				shape_brush(t_guimp *guimp, t_layer *active_layer, t_vec2i actual_pos, t_vec2i hidden_pos);
+void				shape_brush(t_guimp *guimp, t_layer *active_layer,
+						t_vec2i actual_pos, t_vec2i hidden_pos);
 void				pipette_brush(t_guimp *guimp, t_vec2i actual_pos);
 
 // Events
@@ -204,7 +211,8 @@ void				clear_button_event(t_guimp *guimp);
 // Layer
 void				new_layer_combination(t_guimp *guimp);
 void				layer_elements_render(t_guimp *guimp);
-void				layer_new(t_layer *layer, char *name, t_vec4i pos, bool *show);
+void				layer_new(t_layer *layer, char *name, t_vec4i pos,
+						bool *show);
 void				layer_free(t_layer *layer);
 void				resize_layer(t_layer *layer, t_vec2i wh);
 void				layer_event(t_guimp *guimp);
@@ -214,7 +222,8 @@ void				layer_render(t_guimp *guimp);
 // Help
 t_rgba				rgba(Uint32 r, Uint32 g, Uint32 b, Uint32 a);
 void				set_sliders_to_color(t_guimp *guimp, Uint32 color);
-void				add_to_drop_menu(t_ui_element *dropdown_elem, t_ui_element *child);
+void				add_to_drop_menu(t_ui_element *dropdown_elem,
+						t_ui_element *child);
 void				get_dir_content(t_dir_content *content, char *path);
 void				free_dir_content(t_dir_content *content);
 void				save_surface(SDL_Surface *surface, char *file);
