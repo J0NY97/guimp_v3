@@ -86,7 +86,6 @@ Window toolbox_window
 	Menu yet_another_menu
 	{
 		Button clear_button {};	
-		Button open_button {};	
 		Button save_button {};	
 		Button edit_image_button {};	
 	};

@@ -1,5 +1,6 @@
 Window
 {
+//	bg_color : 0xff606060;
 	bg_color : 0xffb0b0b0;
 	flag : xhides;
 };
@@ -11,10 +12,14 @@ toolbox_window
 	title : Toolbox;
 };
 
-brush_buttons_menu
+menu_prefab
+{
+//	bg_color : 0xff454545;
+};
+
+brush_buttons_menu : menu_prefab
 {
 	xywh : 10, 10, 200, 100;
-	bg_color : 0xff95d7ae;
 };
 
 // Dont remove the title text, the font will not be created the first rendering,
@@ -22,6 +27,7 @@ brush_buttons_menu
 brush_button_label
 {
 	text_color : 0xff72e26c;
+//	text_color : 0xffffffff;
 	font : ShareTechMono-Regular.ttf;
 	text_align : center;
 	title : dont remove me even if not needed;
@@ -92,15 +98,14 @@ pipette_button : brush_button
 	y : 70;
 };
 
-brush_modifier_menu
+brush_modifier_menu : menu_prefab
 {
 	xywh : 10, 120, 200, 310;
 };
 
-slider_button
+slider_button : brush_button_label
 {
 	bg_color : 0xff003707;
-	text_color : 0xff72e26c;
 	font : ShareTechMono-Regular.ttf;
 	text_align : center;
 };
@@ -117,8 +122,8 @@ slider_label
 {
 	x : -15;
 	y : 2;
-	text_color : 0xff037171;
 	font_path : ShareTechMono-Regular.ttf;
+	text_color : 0xff037171;
 	text_align : none;
 	title : 0;
 };
@@ -223,7 +228,7 @@ size_slider_button : slider_button
 };
 size_text : slider_text
 {
-	title : Size;
+	title : S;
 };
 size_label_min : slider_label
 {
@@ -253,10 +258,9 @@ drop_button_prefab
 	font : ShareTechMono-Regular.ttf;
 };
 
-sticker_drop
+sticker_drop : brush_button_label
 {
 	xywh : 10, 190, 180, 20;
-	text_color : 0xff72e26c;
 	font : ShareTechMono-Regular.ttf;
 	text_align : center;
 	title : Stickers;
@@ -278,10 +282,9 @@ potato_drop_button : drop_button_prefab
 	title : potato;
 };
 
-font_drop
+font_drop : brush_button_label
 {
 	xywh : 10, 220, 180, 20;
-	text_color : 0xff72e26c;
 	font : ShareTechMono-Regular.ttf;
 	text_align : center;
 	title : Fonts;
@@ -340,21 +343,15 @@ text_input : brush_button
 // Yet Another Menu
 //////////////////////
 
-yet_another_menu
+yet_another_menu : menu_prefab
 {
-	xywh : 10, 440, 200, 70;
+	xywh : 10, 440, 200, 40;
 };
 
 clear_button : brush_button
 {
 	xywh : 10, 10, 50, 20;
 	title : Clear;
-};
-
-open_button : brush_button
-{
-	xywh : 70, 10, 50, 20;
-	title : Open;
 };
 
 save_button : brush_button
@@ -365,16 +362,16 @@ save_button : brush_button
 
 edit_image_button : brush_button
 {
-	xywh : 10, 40, 50, 20;
+	xywh : 70, 10, 50, 20;
 	title : Edit;
 };
 
 //////////////////////
 // Layer Menu
 //////////////////////
-layer_menu
+layer_menu : menu_prefab
 {
-	xywh : 10, 520, 200, 240;
+	xywh : 10, 490, 200, 240;
 	flags : event_children render_children;
 };
 
