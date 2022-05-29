@@ -212,6 +212,9 @@ void				edit_button_event(t_guimp *guimp);
 void				clear_button_event(t_guimp *guimp);
 
 // Layer
+void				new_element_from_recipe_with_parent(t_ui_element *elem,
+						int elem_type, char *recipe_id, t_ui_element *parent);
+float				get_ratio(t_vec2i orig_wh, t_vec2i new_wh);
 void				new_layer_combination(t_guimp *guimp);
 void				layer_elements_render(t_guimp *guimp);
 void				layer_new(t_layer *layer, char *name, t_vec4i pos,

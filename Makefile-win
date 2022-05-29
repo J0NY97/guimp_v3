@@ -2,10 +2,15 @@ NAME = guimp
 SRCS = \
 	main.c \
 	events.c \
+	brush_modifier_events.c \
 	layer.c \
+	layer_element.c \
+	layer_element_help.c \
 	help.c \
 	floodfill.c \
 	brushes.c \
+	brushes2.c \
+	brushes3.c \
 
 CDIR = srcs
 ODIR = obj

@@ -1,148 +1,5 @@
 #include "guimp.h"
 
-void	new_element_from_recipe_with_parent(
-	t_ui_element *elem, int elem_type, char *recipe_id, t_ui_element *parent)
-{
-	t_ui_recipe		*recipe;
-
-	recipe = ui_layout_get_recipe(parent->win->layout, recipe_id);
-	g_acceptable[elem_type].maker(parent->win, elem);
-	ui_element_set_parent(elem, parent, UI_TYPE_ELEMENT);
-	ui_element_edit(elem, recipe);
-	ui_element_set_id(elem, recipe_id);
-}
-
-t_ui_element	*new_layer_element(
-	t_guimp *guimp, char *layer_name, int nth_layer)
-{
-	t_ui_element	*menu;
-	t_ui_element	*show;
-	t_ui_element	*image;
-	t_ui_element	*select;
-	t_ui_recipe		*r_menu;
-
-	r_menu = ui_list_get_recipe_by_id(guimp->layout.recipes, "layer");
-	menu = ft_memalloc(sizeof(t_ui_element));
-	new_element_from_recipe_with_parent(
-		menu, UI_TYPE_MENU, "layer", guimp->layer_parent);
-	ui_element_pos_set(menu, vec4(r_menu->pos.x, (r_menu->pos.h * nth_layer)
-			+ (nth_layer * 10) + r_menu->pos.y, r_menu->pos.w, r_menu->pos.h));
-	image = ft_memalloc(sizeof(t_ui_element));
-	new_element_from_recipe_with_parent(
-		image, UI_TYPE_MENU, "layer_image_elem", menu);
-	show = ft_memalloc(sizeof(t_ui_element));
-	new_element_from_recipe_with_parent(
-		show, UI_TYPE_CHECKBOX, "layer_show_checkbox", menu);
-	select = ft_memalloc(sizeof(t_ui_element));
-	new_element_from_recipe_with_parent(
-		select, UI_TYPE_BUTTON, "layer_select_button", menu);
-	ui_label_set_text(&((t_ui_button *)select->element)->label, layer_name);
-	ui_checkbox_toggle_on(show);
-	return (menu);
-}
-
-float	get_ratio(t_vec2i orig_wh, t_vec2i new_wh)
-{
-	float	ratio_x;
-	float	ratio_y;
-
-	ratio_x = new_wh.x / (float)orig_wh.x;
-	ratio_y = new_wh.y / (float)orig_wh.y;
-	if (ratio_x < ratio_y)
-		return (ratio_x);
-	return (ratio_y);
-}
-
-void	small_image_drawer(t_guimp *guimp, t_vec4 img_pos, t_vec2i img_size)
-{
-	int			jj;
-	SDL_Surface	*img;
-
-	jj = -1;
-	while (++jj < guimp->layer_amount)
-	{
-		if (!guimp->layer_elems[jj]->texture)
-			continue ;
-		img = ui_surface_new(img_size.x, img_size.y);
-		SDL_BlitScaled(guimp->layers[jj].surface,
-			&(SDL_Rect){-guimp->layers[jj].pos.x, -guimp->layers[jj].pos.y,
-			guimp->final_image.pos.w, guimp->final_image.pos.h}, img, NULL);
-		SDL_UpdateTexture(guimp->layer_elems[jj]->texture,
-			&(SDL_Rect){img_pos.x + (img_pos.w / 2) - (img_size.x / 2),
-			img_pos.y + (img_pos.h / 2) - (img_size.y / 2),
-			img_size.x, img_size.y},
-			img->pixels, img->pitch);
-		SDL_FreeSurface(img);
-	}
-}
-
-/*
- * from guimp->layers (t_layer, that have the surface we draw on, specific to
- *	that layer) we take the surface and figure out the ratio so it fits inside
- *	a set dimension (the size of the layer_elems texture), and blit that surface
- *	with that ratio on the 'layer_elems' element->texture;
-*/
-void	layer_elements_render(t_guimp *guimp)
-{
-	t_vec4		pos;
-	t_vec2i		final;
-	float		ratio;
-
-	pos = vec4(30, 5, 72, 20);
-	if (guimp->layer_amount > 0)
-		pos = ui_list_get_element_by_id(guimp->layer_elems[0]->children,
-				"layer_image_elem")->pos;
-	ratio = get_ratio(vec2i(guimp->final_image.pos.w, guimp->final_image.pos.h),
-			vec2i(pos.w, pos.h));
-	final.x = guimp->final_image.pos.w * ratio;
-	final.y = guimp->final_image.pos.h * ratio;
-	small_image_drawer(guimp, pos, final);
-}
-
-/*
- * Create new layer element;
- * Add layer element button to radio buttons list;
- * Create new layer (t_layer);
- * Set the newly created layer (t_layer) the currently selected layer;
-*/
-void	new_layer_combination(t_guimp *guimp)
-{
-	t_ui_element	*layer_menu;
-	t_ui_element	*layer_button;
-
-	if (guimp->layer_amount >= MAX_LAYER_AMOUNT)
-	{
-		ft_printf("[%s] No new layer added, layer cap reached (%d).\n",
-			__FUNCTION__, MAX_LAYER_AMOUNT);
-		return ;
-	}
-	layer_menu = new_layer_element(guimp,
-			guimp->new_layer_name_input_label->text, guimp->layer_amount);
-	guimp->layer_elems[guimp->layer_amount] = layer_menu;
-	layer_button = ui_list_get_element_by_id(layer_menu->children,
-			"layer_select_button");
-	add_to_list(&guimp->radio_layer.children, layer_button, UI_TYPE_ELEMENT);
-	layer_new(&guimp->layers[guimp->layer_amount],
-		guimp->new_layer_name_input_label->text,
-		vec4i(0, 0, atoi(guimp->new_layer_width_input_label->text),
-			atoi(guimp->new_layer_height_input_label->text)),
-		&ui_list_get_element_by_id(layer_menu->children,
-			"layer_show_checkbox")->is_toggle);
-	guimp->selected_layer = guimp->layer_amount;
-	ui_radio_button_toggle_on(&guimp->radio_layer, layer_button);
-	guimp->layer_amount += 1;
-	ft_printf("[%s] Layer added. (%d)\n", __FUNCTION__, guimp->layer_amount);
-}
-
-void	rename_layer(t_guimp *guimp, int layer_index, char *name)
-{
-	ft_strdel(&guimp->layers[layer_index].name);
-	guimp->layers[layer_index].name = ft_strdup(name);
-	ui_label_set_text(ui_button_get_label_element(ui_list_get_element_by_id(
-				guimp->layer_elems[layer_index]->children,
-				"layer_select_button")), name);
-}
-
 void	button_add_layer_event(t_guimp *guimp)
 {
 	if (ui_button(guimp->button_add_layer))
@@ -250,45 +107,29 @@ void	button_edit_layer_event(t_guimp *guimp)
 /*
  * Not moving the layer on the main_window,
  * 	but moving the layer elements, on the win_toolbox, up and down;
+ * 
+ * 'dir' : either +1 or -1; (up / down);
 */
-void	move_layer_up_event(t_guimp *guimp)
+void	move_layer_in_dir(t_guimp *guimp, int dir)
 {
 	t_ui_element	*temp;
 	t_layer			temporar;
 
-	if (guimp->selected_layer <= 0)
+	if (dir == 1 && guimp->selected_layer >= guimp->layer_amount - 1)
+		return ;
+	else if (dir == -1 && guimp->selected_layer <= 0)
 		return ;
 	temporar = guimp->layers[guimp->selected_layer];
 	guimp->layers[guimp->selected_layer]
-		= guimp->layers[guimp->selected_layer - 1];
-	guimp->layers[guimp->selected_layer - 1] = temporar;
-	vec4_swap(&guimp->layer_elems[guimp->selected_layer - 1]->pos,
+		= guimp->layers[guimp->selected_layer + dir];
+	guimp->layers[guimp->selected_layer + dir] = temporar;
+	vec4_swap(&guimp->layer_elems[guimp->selected_layer + dir]->pos,
 		&guimp->layer_elems[guimp->selected_layer]->pos);
 	temp = guimp->layer_elems[guimp->selected_layer];
 	guimp->layer_elems[guimp->selected_layer]
-		= guimp->layer_elems[guimp->selected_layer - 1];
-	guimp->layer_elems[guimp->selected_layer - 1] = temp;
-	guimp->selected_layer--;
-}
-
-void	move_layer_down_event(t_guimp *guimp)
-{
-	t_ui_element	*temp;
-	t_layer			temporar;
-
-	if (guimp->selected_layer >= guimp->layer_amount - 1)
-		return ;
-	temporar = guimp->layers[guimp->selected_layer];
-	guimp->layers[guimp->selected_layer]
-		= guimp->layers[guimp->selected_layer + 1];
-	guimp->layers[guimp->selected_layer + 1] = temporar;
-	vec4_swap(&guimp->layer_elems[guimp->selected_layer + 1]->pos,
-		&guimp->layer_elems[guimp->selected_layer]->pos);
-	temp = guimp->layer_elems[guimp->selected_layer];
-	guimp->layer_elems[guimp->selected_layer]
-		= guimp->layer_elems[guimp->selected_layer + 1];
-	guimp->layer_elems[guimp->selected_layer + 1] = temp;
-	guimp->selected_layer++;
+		= guimp->layer_elems[guimp->selected_layer + dir];
+	guimp->layer_elems[guimp->selected_layer + dir] = temp;
+	guimp->selected_layer += dir;
 }
 
 /*
@@ -297,54 +138,9 @@ void	move_layer_down_event(t_guimp *guimp)
 void	button_move_layer_event(t_guimp *guimp)
 {
 	if (ui_button(guimp->button_move_layer_up))
-		move_layer_up_event(guimp);
+		move_layer_in_dir(guimp, -1);
 	else if (ui_button(guimp->button_move_layer_down))
-		move_layer_down_event(guimp);
-}
-
-void	color_slider_events(t_guimp *guimp)
-{
-	char	*temp;
-
-	guimp->combined_color = rgba_to_hex(rgba(
-				ui_slider_value_get(guimp->red_slider),
-				ui_slider_value_get(guimp->green_slider),
-				ui_slider_value_get(guimp->blue_slider),
-				ui_slider_value_get(guimp->alpha_slider)));
-	ui_element_color_set(guimp->color_swatch,
-		UI_STATE_DEFAULT, guimp->combined_color);
-	if (!guimp->color_swatch->is_click)
-	{
-		temp = ft_itoa_base(guimp->combined_color, 16);
-		ui_input_set_text(guimp->color_swatch, temp);
-		ft_strdel(&temp);
-	}
-}
-
-void	color_swatch_event(t_guimp *guimp)
-{
-	t_ui_label		*label;
-	t_rgba			input_rgba;
-
-	if (ui_slider_updated(guimp->red_slider)
-		|| ui_slider_updated(guimp->green_slider)
-		|| ui_slider_updated(guimp->blue_slider)
-		|| ui_slider_updated(guimp->alpha_slider))
-		color_slider_events(guimp);
-	else if (guimp->color_swatch->is_click)
-	{
-		label = ui_input_get_label(guimp->color_swatch);
-		guimp->combined_color = (unsigned int)strtoul(label->text, NULL, 16);
-		input_rgba = hex_to_rgba(guimp->combined_color);
-		ui_slider_value_set(guimp->red_slider, input_rgba.r);
-		ui_slider_value_set(guimp->green_slider, input_rgba.g);
-		ui_slider_value_set(guimp->blue_slider, input_rgba.b);
-		ui_slider_value_set(guimp->alpha_slider, input_rgba.a);
-		ui_element_color_set(guimp->color_swatch,
-			UI_STATE_DEFAULT, guimp->combined_color);
-	}
-	if (ui_slider_updated(guimp->size_slider))
-		guimp->size = ui_slider_value_get(guimp->size_slider);
+		move_layer_in_dir(guimp, 1);
 }
 
 void	save_button_event(t_guimp *guimp)

@@ -230,5 +230,6 @@ int	main(void)
 		layer_render(&guimp);
 		ui_layout_render(&guimp.layout);
 	}
+	ui_layout_free(&guimp.layout);
 	return (0);
 }
