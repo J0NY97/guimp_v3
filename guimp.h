@@ -3,6 +3,7 @@
 # include "libft.h"
 # include "libpf.h"
 # include "libui.h"
+# include "liblg.h"
 # include "SDL.h"
 # include "SDL_ttf.h"
 # include "SDL_image.h"
@@ -48,6 +49,7 @@ typedef struct s_layer
  * t_layer			*active_layer;		pointer to the currenctly selected
  										layer, this is the one we will draw on;
  * int				selected_layer;		the index of the selected layer;
+ * int				new_layer_selected; if new layer was selected this frame;
  * t_layer			layers[5];			array of layers, we are capping this to
  * 										5 for now. included image at offset 0;
  * SDL_Surface		*hidden_surface;	the surface where all the tool
@@ -95,6 +97,7 @@ typedef struct s_guimp
 	SDL_Texture		*final_image_texture;
 	t_layer			final_image;
 	int				selected_layer;
+	int				new_layer_selected;
 	t_layer			*active_layer;
 	t_layer			layers[MAX_LAYER_AMOUNT];
 	SDL_Surface		*hidden_surface;
@@ -215,6 +218,7 @@ void				layer_new(t_layer *layer, char *name, t_vec4i pos,
 						bool *show);
 void				layer_free(t_layer *layer);
 void				resize_layer(t_layer *layer, t_vec2i wh);
+void				rename_layer(t_guimp *guimp, int layer_index, char *name);
 void				layer_event(t_guimp *guimp);
 void				layer_draw(t_guimp *guimp);
 void				layer_render(t_guimp *guimp);

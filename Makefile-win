@@ -23,15 +23,17 @@ INCLUDES = \
 	-I$(LIB_FOLDER)/libft \
 	-I$(LIB_FOLDER)/libpf \
 	-I$(LIB_FOLDER)/libui \
+	-I$(LIB_FOLDER)/liblg \
 	$(SDL_INC) \
 
 LIB_FOLDERS = \
 	-L$(LIB_FOLDER)/libft \
 	-L$(LIB_FOLDER)/libpf \
 	-L$(LIB_FOLDER)/libui \
+	-L$(LIB_FOLDER)/liblg \
 	$(SDL_LIB_DIR) \
 
-LIB = $(SDL_LIB) -lui -lpf -lft
+LIB = $(SDL_LIB) -lui -lpf -lft -llg
 
 FLAGS = -Wall -Wextra
 

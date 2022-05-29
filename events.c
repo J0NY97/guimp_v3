@@ -134,6 +134,15 @@ void	new_layer_combination(t_guimp *guimp)
 	ft_printf("[%s] Layer added. (%d)\n", __FUNCTION__, guimp->layer_amount);
 }
 
+void	rename_layer(t_guimp *guimp, int layer_index, char *name)
+{
+	ft_strdel(&guimp->layers[layer_index].name);
+	guimp->layers[layer_index].name = ft_strdup(name);
+	ui_label_set_text(ui_button_get_label_element(ui_list_get_element_by_id(
+				guimp->layer_elems[layer_index]->children,
+				"layer_select_button")), name);
+}
+
 void	button_add_layer_event(t_guimp *guimp)
 {
 	if (ui_button(guimp->button_add_layer))
@@ -207,11 +216,9 @@ void	edit_layer_event(t_guimp *guimp)
 
 	ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_SHOW);
 	SDL_RaiseWindow(guimp->win_layer_edit->win);
-	ui_label_set_text(
-		ui_input_get_label_element(guimp->input_edit_layer_name),
+	ui_label_set_text(ui_input_get_label_element(guimp->input_edit_layer_name),
 		guimp->layers[guimp->selected_layer].name);
-	ui_label_set_text(
-		ui_input_get_label_element(guimp->input_edit_layer_width),
+	ui_label_set_text(ui_input_get_label_element(guimp->input_edit_layer_width),
 		ft_b_itoa(guimp->layers[guimp->selected_layer].pos.w, temp));
 	ui_label_set_text(
 		ui_input_get_label_element(guimp->input_edit_layer_height),
@@ -223,19 +230,15 @@ void	apply_layer_edit_event(t_guimp *guimp)
 	resize_layer(&guimp->layers[guimp->selected_layer],
 		vec2i(ft_atoi(ui_input_get_text(guimp->input_edit_layer_width)),
 			ft_atoi(ui_input_get_text(guimp->input_edit_layer_height))));
-	ft_strdel(&guimp->layers[guimp->selected_layer].name);
-	guimp->layers[guimp->selected_layer].name
-		= ft_strdup(ui_input_get_text(guimp->input_edit_layer_name));
-	ui_label_set_text(ui_button_get_label_element(
-			ui_list_get_element_by_id(
-				guimp->layer_elems[guimp->selected_layer]->children,
-				"layer_select_button")),
-		guimp->layers[guimp->selected_layer].name);
+	rename_layer(guimp, guimp->selected_layer,
+		ui_input_get_text(guimp->input_edit_layer_name));
 	ui_window_flag_set(guimp->win_layer_edit, UI_WINDOW_HIDE);
 }
 
 void	button_edit_layer_event(t_guimp *guimp)
 {
+	if (guimp->new_layer_selected && guimp->win_layer_edit->show)
+		edit_layer_event(guimp);
 	if (guimp->selected_layer < 0 || guimp->selected_layer >= MAX_LAYER_AMOUNT)
 		return ;
 	if (ui_button(guimp->button_edit_layer) && guimp->layer_amount > 0)

@@ -99,12 +99,18 @@ char	*get_sticker_path(char *sticker_name)
 	return (NULL);
 }
 
+/*
+ * 'adjusted_size[2]' : w/h for the sticker image taking the size slider into
+ *		consideration, the size_slider value is interpreted as % of the size
+ *		of the original image (5 on slider == 5% of original image w && h);
+*/
 void	sticker_brush(t_guimp *guimp, t_layer *active_layer,
 	t_vec2i actual_pos, t_vec2i hidden_pos)
 {
 	SDL_Surface	*surface;
 	char		*sticker_text;
 	char		*full_path;
+	int			adjusted_size[2];
 
 	sticker_text = ui_dropdown_active_text(guimp->sticker_dropdown);
 	full_path = get_sticker_path(sticker_text);
@@ -114,15 +120,16 @@ void	sticker_brush(t_guimp *guimp, t_layer *active_layer,
 	ft_strdel(&full_path);
 	if (!surface)
 	{
-		ft_printf("[%s] Sticker surface <%s> couldn\'t be created.\n",
-			__FUNCTION__, full_path);
+		LG_WARN("Sticker surface <%s> couldn\'t be created.", full_path);
 		return ;
 	}
-	SDL_BlitScaled(surface, NULL, guimp->hidden_surface,
-		&(SDL_Rect){hidden_pos.x, hidden_pos.y, surface->w, surface->h});
+	adjusted_size[0] = (guimp->size / 100.0f) * surface->w;
+	adjusted_size[1] = (guimp->size / 100.0f) * surface->h;
+	SDL_BlitScaled(surface, NULL, guimp->hidden_surface, &(SDL_Rect){
+		hidden_pos.x, hidden_pos.y, adjusted_size[0], adjusted_size[1]});
 	if (guimp->win_main->mouse_down == SDL_BUTTON_LEFT)
-		SDL_BlitSurface(surface, NULL, active_layer->surface,
-			&(SDL_Rect){actual_pos.x, actual_pos.y, surface->w, surface->h});
+		SDL_BlitScaled(surface, NULL, active_layer->surface, &(SDL_Rect){
+			actual_pos.x, actual_pos.y, adjusted_size[0], adjusted_size[1]});
 	SDL_FreeSurface(surface);
 }
 
@@ -140,30 +147,12 @@ void	move_brush(t_guimp *guimp, t_layer *active_layer)
 	active_layer->pos.y += mouse_pos.y / guimp->zoom;
 }
 
-void	line_tool_drawer(t_guimp *guimp, SDL_Surface *surface,
-	t_vec2i pos1, t_vec2i pos2)
-{
-	if (guimp->size > 1)
-	{
-		ui_surface_circle_draw_filled(surface,
-			pos1, guimp->size, guimp->combined_color);
-		ui_surface_line_draw_thicc(surface, pos1,
-			pos2, guimp->size, guimp->combined_color);
-		ui_surface_circle_draw_filled(surface,
-			pos2, guimp->size, guimp->combined_color);
-	}
-	else
-	{
-		ui_surface_line_draw(surface, pos1, pos2, guimp->combined_color);
-	}
-}
-
 void	line_tool_brush(t_guimp *guimp, t_layer *active_layer,
 	t_vec2i actual_pos, t_vec2i hidden_pos)
 {
 	if (guimp->first_set)
-		line_tool_drawer(guimp, guimp->hidden_surface,
-			guimp->first_pos, hidden_pos);
+		ui_surface_line_draw(guimp->hidden_surface, guimp->first_pos,
+			hidden_pos, guimp->combined_color);
 	if (guimp->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT)
 		return ;
 	if (!guimp->first_set)
@@ -174,8 +163,8 @@ void	line_tool_brush(t_guimp *guimp, t_layer *active_layer,
 	}
 	else
 	{
-		line_tool_drawer(guimp, active_layer->surface,
-			guimp->first_pos_converted, actual_pos);
+		ui_surface_line_draw(active_layer->surface, guimp->first_pos_converted,
+			actual_pos, guimp->combined_color);
 		guimp->first_set = 0;
 	}
 }

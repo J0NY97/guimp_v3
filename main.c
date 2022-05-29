@@ -25,9 +25,7 @@ void	drag_n_drop_events(t_guimp *guimp, SDL_Event e)
 	{
 		ft_printf("%s dropped on window id %d\n", e.drop.file, e.drop.windowID);
 		new_layer_combination(guimp);
-		ui_label_set_text(ui_button_get_label_element(ui_list_get_element_by_id(
-					guimp->layer_elems[guimp->layer_amount - 1]->children,
-					"layer_select_button")), e.drop.file);
+		rename_layer(guimp, guimp->layer_amount - 1, e.drop.file);
 		dropped_image = ui_surface_image_new(e.drop.file);
 		resize_layer(&guimp->layers[guimp->layer_amount - 1],
 			vec2i(dropped_image->w, dropped_image->h));
@@ -218,8 +216,8 @@ int	main(void)
 	{
 		while (SDL_PollEvent(&e))
 		{
-			user_events(&guimp, e);
 			ui_layout_event(&guimp.layout, e);
+			user_events(&guimp, e);
 			guimp.circle_button->event = 1;
 			guimp.square_button->event = 1;
 			guimp.line_button->event = 1;

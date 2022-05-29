@@ -75,6 +75,7 @@ void	layer_event(t_guimp *guimp)
 	t_ui_element	*button;
 
 	ii = -1;
+	guimp->new_layer_selected = 0;
 	while (++ii < guimp->layer_amount)
 	{
 		button = ui_list_get_element_by_id(guimp->layer_elems[ii]->children,
@@ -82,6 +83,7 @@ void	layer_event(t_guimp *guimp)
 		if (ui_button(button))
 		{
 			guimp->selected_layer = ii;
+			guimp->new_layer_selected = 1;
 			button->is_click = 1;
 			button->state = UI_STATE_CLICK;
 		}

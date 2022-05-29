@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 11:56:18 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 09:21:20 by jsalmi           ###   ########.fr       */
+/*   Updated: 2022/05/24 10:22:45 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ int					ft_compile_string(char *name, char *code);
 t_list				*ft_dellstnode(t_list **lst, t_list *del);
 char				*ft_fdtostr(int fd, int i);
 char				*ft_filetostr(char *file);
-char				*special_itoa(int nbr, int n);
 char				*ft_ftoa(double d, int precision);
 int					ft_isalnum(int c);
 int					ft_isalpha(int c);
@@ -122,6 +121,7 @@ char				**stringsplit(const char *s, char c, int *nb);
 void				ft_striter(char *s, void (*f)(char *));
 void				ft_striteri(char *s, void (*f)(unsigned int, char *));
 char				*ft_strjoin(char const *s1, char const *s2);
+char				*ft_b_strjoin(char *dest, const char *s1, const char *s2);
 char				*ft_strjoiner(char *first, ...);
 char				*ft_strjoinf(char *s1, const char *s2);
 size_t				ft_strlcat(char *dest, const char *src, size_t size);
@@ -164,6 +164,8 @@ char				**ft_arrjoin(char **to_this, char **from_this);
 double				ft_timer_end(void);
 void				ft_timer_start(void);
 void				ft_lstdelone_nonfree(t_list **lst, t_list *del);
-char				*ft_get_file_content(char *file);
+char				*get_file_content(const char *file);
+void				fill_elem_pos(int *elem_pos, char *str, char delim);
+int					get_elem_amount(const char *str, char delim);
 
 #endif
