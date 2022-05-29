@@ -8,6 +8,7 @@ toolbox_window
 {
 	xywh : 0, 25, 220, 1030;
 	flag : xdoesnthides;
+	title : Toolbox;
 };
 
 brush_buttons_menu
