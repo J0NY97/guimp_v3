@@ -15,7 +15,7 @@ void	draw_brush(t_guimp *guimp, t_layer *active_layer,
 		ui_surface_circle_draw_filled(active_layer->surface,
 			guimp->first_pos_converted, guimp->size, guimp->combined_color);
 		ui_surface_line_draw_thicc(active_layer->surface,
-			guimp->first_pos_converted, actual_pos, guimp->size,
+			(t_vec2i []){guimp->first_pos_converted, actual_pos}, guimp->size,
 			guimp->combined_color);
 		ui_surface_circle_draw_filled(active_layer->surface,
 			actual_pos, guimp->size, guimp->combined_color);
