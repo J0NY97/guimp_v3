@@ -205,6 +205,18 @@ void	initteroni(t_guimp *guimp)
 	new_layer_combination(guimp);
 }
 
+void	uninit(t_guimp *guimp)
+{
+	SDL_DestroyTexture(guimp->final_image_texture);
+	layer_free(&guimp->final_image);
+	for (int i = 0; i < MAX_LAYER_AMOUNT; i++)
+		layer_free(&guimp->layers[i]);
+	SDL_FreeSurface(guimp->hidden_surface);	
+	SDL_DestroyTexture(guimp->hidden_texture);
+
+	ui_layout_free(&guimp->layout);
+}
+
 int	main(void)
 {
 	t_guimp		guimp;
@@ -230,6 +242,6 @@ int	main(void)
 		layer_render(&guimp);
 		ui_layout_render(&guimp.layout);
 	}
-	ui_layout_free(&guimp.layout);
+	uninit(&guimp);
 	return (0);
 }
