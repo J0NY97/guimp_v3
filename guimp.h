@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/30 13:43:29 by nneronin          #+#    #+#             */
-/*   Updated: 2022/05/30 13:55:21 by nneronin         ###   ########.fr       */
+/*   Updated: 2022/05/30 14:31:08 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -284,7 +284,6 @@ float			get_ratio(t_vec2i orig_wh, t_vec2i new_wh);
 void			reset_image_events(t_guimp *guimp, SDL_Event e);
 void			drag_n_drop_events(t_guimp *guimp, SDL_Event e);
 void			user_events(t_guimp *guimp, SDL_Event e);
-void			uninit(t_guimp *guimp);
 
 //////////////////////////// Flood Fille ///////////////////////////////////////
 
