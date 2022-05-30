@@ -200,6 +200,7 @@ void	initteroni(t_guimp *guimp)
 	edit_layer_window_init(guimp);
 	save_image_window_init(guimp);
 	ui_radio_new(guimp->win_toolbox, &guimp->radio_layer);
+	guimp->radio_layer.free_me = 0;
 	guimp->radio_buttons = guimp->radio_layer.children;
 	brush_init(guimp);
 	new_layer_combination(guimp);
@@ -207,14 +208,13 @@ void	initteroni(t_guimp *guimp)
 
 void	uninit(t_guimp *guimp)
 {
+	ui_layout_free(&guimp->layout);
 	SDL_DestroyTexture(guimp->final_image_texture);
 	layer_free(&guimp->final_image);
 	for (int i = 0; i < MAX_LAYER_AMOUNT; i++)
 		layer_free(&guimp->layers[i]);
 	SDL_FreeSurface(guimp->hidden_surface);	
 	SDL_DestroyTexture(guimp->hidden_texture);
-
-	ui_layout_free(&guimp->layout);
 }
 
 int	main(void)
