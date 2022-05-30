@@ -9,6 +9,8 @@
 # include "SDL_image.h"
 # include "dirent.h"
 
+# define FF_STACK_SIZE 25000
+
 /*
  * char		*dir;			the path to the dir;
  * char		**files;		char * of all the file names in the directory;
@@ -234,5 +236,40 @@ void				add_to_drop_menu(t_ui_element *dropdown_elem,
 void				get_dir_content(t_dir_content *content, char *path);
 void				free_dir_content(t_dir_content *content);
 void				save_surface(SDL_Surface *surface, char *file);
+
+//////////////////////////// Flood Fille ///////////////////////////////////////
+
+enum
+{
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT
+};
+
+typedef struct s_ff_pos
+{
+	short	x1;
+	short	x2;
+	short	y;
+	short	dir;
+}					t_ff_pos;
+
+typedef struct s_flood_fill
+{
+	t_ff_pos	pos;
+	Uint32		old_clr;
+	int			stack_ptr;
+	t_ff_pos	stack[FF_STACK_SIZE];
+	int			x;
+	int			y;
+}				t_flood_fill;
+
+void	push4(t_flood_fill *env, t_ff_pos pos);
+bool	clr_comp(SDL_Surface *surface, Uint32 clr, int x, int y);
+void	up_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor);
+void	down_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor);
+void	left_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor);
+void	right_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor);
 
 #endif

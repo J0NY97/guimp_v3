@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2022/05/30 11:37:40 by nneronin         ###   ########.fr        #
+#    Updated: 2022/05/30 13:28:48 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,8 @@ CFILES		=	main.c\
 				layer_element.c\
 				layer.c\
 				help.c\
-				floodfill.c\
+				floodfill1.c\
+				floodfill2.c\
 				events.c\
 				brushes3.c\
 				brushes2.c\
@@ -69,7 +70,7 @@ LIB_INC		+=	\
 				-F $(LIB_DIR)/SDL_MAC/ \
 
 LIBS		+=	-framework SDL2 -framework SDL2_image -framework SDL2_ttf
-CFLAGS		=	-Wall -Wextra -MMD -O3 -Werror -Wfatal-errors #-g -fsanitize=address
+CFLAGS		=	-Wall -Wextra -MMD -O3 -Werror -Wfatal-errors -g -fsanitize=address
 
 else
 
