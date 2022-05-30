@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2022/05/30 13:28:48 by nneronin         ###   ########.fr        #
+#    Updated: 2022/05/30 13:46:24 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,15 +30,21 @@ RESET		=	"\e[0m"
 CFILES		=	main.c\
 				layer_element_help.c\
 				layer_element.c\
-				layer.c\
+				layer3.c\
+				layer2.c\
+				layer1.c\
+				init2.c\
+				init1.c\
 				help.c\
-				floodfill1.c\
 				floodfill2.c\
-				events.c\
+				floodfill1.c\
+				events3.c\
+				events2.c\
+				events1.c\
 				brushes3.c\
 				brushes2.c\
 				brushes.c\
-				brush_modifier_events.c
+				brush_modifier_events.c\
 
 NAME		=	guimp
 CDIR		=	./srcs

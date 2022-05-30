@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   guimp.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/05/30 13:43:29 by nneronin          #+#    #+#             */
+/*   Updated: 2022/05/30 13:55:21 by nneronin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef GUIMP_H
 # define GUIMP_H
 # include "libft.h"
@@ -93,6 +105,7 @@ typedef struct s_layer
  * t_vec2i			first_pos_converted; position on the actual layer position;
 */
 # define MAX_LAYER_AMOUNT 5
+
 typedef struct s_guimp
 {
 	t_ui_window		*win_main;
@@ -182,60 +195,96 @@ typedef struct s_guimp
 	t_ui_element	*button_save_image_ok;
 }					t_guimp;
 
-// Draw
-void				flood_fill(SDL_Surface *surface, Uint32 newcolor, int x,
-						int y);
-
-// Brushes
-void				draw_brush(t_guimp *guimp, t_layer *active_layer,
-						t_vec2i actual_pos, t_vec2i hidden_pos);
-void				text_brush(t_guimp *guimp, t_layer *active_layer,
-						t_vec2i actual_pos, t_vec2i hidden_pos);
-void				erase_brush(t_guimp *guimp, t_layer *active_layer,
-						t_vec2i actual_pos, t_vec2i hidden_pos);
-void				flood_brush(t_guimp *guimp, t_layer *active_layer,
-						t_vec2i actual_pos);
-void				sticker_brush(t_guimp *guimp, t_layer *active_layer,
-						t_vec2i actual_pos, t_vec2i hidden_pos);
-void				move_brush(t_guimp *guimp, t_layer *active_layer);
-void				shape_brush(t_guimp *guimp, t_layer *active_layer,
-						t_vec2i actual_pos, t_vec2i hidden_pos);
-void				pipette_brush(t_guimp *guimp, t_vec2i actual_pos);
-
-// Events
-void				color_swatch_event(t_guimp *guimp);
-void				button_add_layer_event(t_guimp *guimp);
-void				button_remove_layer_event(t_guimp *guimp);
-void				button_edit_layer_event(t_guimp *guimp);
-void				button_move_layer_event(t_guimp *guimp);
-void				new_layer_ok_button_event(t_guimp *guimp);
-void				save_button_event(t_guimp *guimp);
-void				edit_button_event(t_guimp *guimp);
-void				clear_button_event(t_guimp *guimp);
-
-// Layer
-void				new_element_from_recipe_with_parent(t_ui_element *elem,
-						int elem_type, char *recipe_id, t_ui_element *parent);
-float				get_ratio(t_vec2i orig_wh, t_vec2i new_wh);
-void				new_layer_combination(t_guimp *guimp);
-void				layer_elements_render(t_guimp *guimp);
-void				layer_new(t_layer *layer, char *name, t_vec4i pos,
-						bool *show);
-void				layer_free(t_layer *layer);
-void				resize_layer(t_layer *layer, t_vec2i wh);
-void				rename_layer(t_guimp *guimp, int layer_index, char *name);
-void				layer_event(t_guimp *guimp);
-void				layer_draw(t_guimp *guimp);
-void				layer_render(t_guimp *guimp);
-
-// Help
-t_rgba				rgba(Uint32 r, Uint32 g, Uint32 b, Uint32 a);
-void				set_sliders_to_color(t_guimp *guimp, Uint32 color);
-void				add_to_drop_menu(t_ui_element *dropdown_elem,
-						t_ui_element *child);
-void				get_dir_content(t_dir_content *content, char *path);
-void				free_dir_content(t_dir_content *content);
-void				save_surface(SDL_Surface *surface, char *file);
+/* File: srcs/brush_modifier_events.c */
+void			color_slider_events(t_guimp *guimp);
+void			color_swatch_event(t_guimp *guimp);
+/* File: srcs/brushes.c */
+void			draw_brush(t_guimp *guimp, t_layer *active_layer,
+					t_vec2i actual_pos, t_vec2i hidden_pos);
+void			text_brush(t_guimp *guimp, t_layer *active_layer,
+					t_vec2i actual_pos, t_vec2i hidden_pos);
+void			erase_brush(t_guimp *guimp, t_layer *active_layer,
+					t_vec2i actual_pos, t_vec2i hidden_pos);
+void			flood_brush(t_guimp *guimp, t_layer *active_layer,
+					t_vec2i actual_pos);
+void			move_brush(t_guimp *guimp, t_layer *active_layer);
+/* File: srcs/brushes2.c */
+char			*get_sticker_path(char *sticker_name);
+void			sticker_brush(t_guimp *guimp, t_layer *active_layer,
+					t_vec2i actual_pos, t_vec2i hidden_pos);
+void			pipette_brush(t_guimp *guimp, t_vec2i actual_pos);
+/* File: srcs/brushes3.c */
+void			line_tool_brush(t_guimp *guimp, t_layer *active_layer,
+					t_vec2i actual_pos, t_vec2i hidden_pos);
+void			square_tool_brush(t_guimp *guimp, t_layer *active_layer,
+					t_vec2i actual_pos, t_vec2i hidden_pos);
+void			circle_tool_brush(t_guimp *guimp, t_layer *active_layer,
+					t_vec2i actual_pos, t_vec2i hidden_pos);
+void			shape_brush(t_guimp *guimp, t_layer *active_layer,
+					t_vec2i actual_pos, t_vec2i hidden_pos);
+/* File: srcs/events1.c */
+void			move_layer_in_dir(t_guimp *guimp, int dir);
+void			button_move_layer_event(t_guimp *guimp);
+void			save_button_event(t_guimp *guimp);
+void			edit_button_event(t_guimp *guimp);
+void			clear_button_event(t_guimp *guimp);
+/* File: srcs/events2.c */
+void			button_add_layer_event(t_guimp *guimp);
+void			reorder_layers(t_guimp *guimp);
+void			remove_nth_layer(t_guimp *guimp, int nth);
+void			button_remove_layer_event(t_guimp *guimp);
+void			edit_layer_event(t_guimp *guimp);
+/* File: srcs/events3.c */
+void			apply_layer_edit_event(t_guimp *guimp);
+void			button_edit_layer_event(t_guimp *guimp);
+/* File: srcs/help.c */
+t_rgba			rgba(Uint32 r, Uint32 g, Uint32 b, Uint32 a);
+void			set_sliders_to_color(t_guimp *guimp, Uint32 color);
+void			get_dir_content(t_dir_content *content, char *path);
+void			free_dir_content(t_dir_content *content);
+void			save_surface(SDL_Surface *surface, char *file);
+/* File: srcs/init1.c */
+void			new_layer_window_init(t_guimp *guimp);
+void			edit_layer_window_init(t_guimp *guimp);
+void			save_image_window_init(t_guimp *guimp);
+void			brush_init(t_guimp *guimp);
+void			initteroni(t_guimp *guimp);
+/* File: srcs/init2.c */
+void			guimp_init(t_guimp *guimp);
+void			color_swatch_init(t_guimp *guimp);
+void			toolbox_window_init(t_guimp *guimp);
+/* File: srcs/layer1.c */
+void			draw_outlines(t_guimp *guimp, t_vec2 aspect);
+void			draw_with_selected_brush(t_guimp *guimp, t_vec2 aspect);
+void			layer_draw(t_guimp *guimp);
+void			render_all_layers(t_guimp *guimp);
+void			layer_render(t_guimp *guimp);
+/* File: srcs/layer2.c */
+void			layer_free(t_layer *layer);
+void			resize_layer(t_layer *layer, t_vec2i wh);
+void			move_image(t_guimp *guimp);
+void			zoom_image(t_guimp *guimp);
+void			layer_event(t_guimp *guimp);
+/* File: srcs/layer3.c */
+void			layer_new(t_layer *layer, char *name, t_vec4i pos,
+					bool *show);
+/* File: srcs/layer_element.c */
+t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name,
+					int nth_layer);
+void			small_image_drawer(t_guimp *guimp, t_vec4 img_pos,
+					t_vec2i img_size);
+void			layer_elements_render(t_guimp *guimp);
+void			new_layer_combination(t_guimp *guimp);
+void			rename_layer(t_guimp *guimp, int layer_index, char *name);
+/* File: srcs/layer_element_help.c */
+void			new_element_from_recipe_with_parent(t_ui_element *elem,
+					int elem_type, char *recipe_id, t_ui_element *parent);
+float			get_ratio(t_vec2i orig_wh, t_vec2i new_wh);
+/* File: srcs/main.c */
+void			reset_image_events(t_guimp *guimp, SDL_Event e);
+void			drag_n_drop_events(t_guimp *guimp, SDL_Event e);
+void			user_events(t_guimp *guimp, SDL_Event e);
+void			uninit(t_guimp *guimp);
 
 //////////////////////////// Flood Fille ///////////////////////////////////////
 
@@ -265,11 +314,19 @@ typedef struct s_flood_fill
 	int			y;
 }				t_flood_fill;
 
-void	push4(t_flood_fill *env, t_ff_pos pos);
-bool	clr_comp(SDL_Surface *surface, Uint32 clr, int x, int y);
-void	up_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor);
-void	down_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor);
-void	left_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor);
-void	right_fill(SDL_Surface *surface, t_flood_fill *env, Uint32 newcolor);
+/* File: srcs/floodfill1.c */
+bool			clr_comp(SDL_Surface *surface, Uint32 clr, int x, int y);
+void			push4(t_flood_fill *env, t_ff_pos pos);
+void			flood_fill(SDL_Surface *surface, Uint32 newcolor, int x,
+					int y);
+/* File: srcs/floodfill2.c */
+void			up_fill(SDL_Surface *surface, t_flood_fill *env,
+					Uint32 newcolor);
+void			down_fill(SDL_Surface *surface, t_flood_fill *env,
+					Uint32 newcolor);
+void			left_fill(SDL_Surface *surface, t_flood_fill *env,
+					Uint32 newcolor);
+void			right_fill(SDL_Surface *surface, t_flood_fill *env,
+					Uint32 newcolor);
 
 #endif

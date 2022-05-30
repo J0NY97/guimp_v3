@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   element_help.c                                     :+:      :+:    :+:   */
+/*   layer_element_help.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/29 13:55:10 by jsalmi            #+#    #+#             */
-/*   Updated: 2022/05/29 13:56:26 by jsalmi           ###   ########.fr       */
+/*   Updated: 2022/05/30 13:51:21 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "guimp.h"
 
-void	new_element_from_recipe_with_parent(
-	t_ui_element *elem, int elem_type, char *recipe_id, t_ui_element *parent)
+void	new_element_from_recipe_with_parent(t_ui_element *elem,
+	int elem_type, char *recipe_id, t_ui_element *parent)
 {
 	t_ui_recipe		*recipe;
 

@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   layer_element.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/29 13:54:32 by jsalmi            #+#    #+#             */
-/*   Updated: 2022/05/29 14:14:34 by jsalmi           ###   ########.fr       */
+/*   Updated: 2022/05/30 13:50:58 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "guimp.h"
 
-t_ui_element	*new_layer_element(
-	t_guimp *guimp, char *layer_name, int nth_layer)
+t_ui_element	*new_layer_element(t_guimp *guimp, char *layer_name,
+	int nth_layer)
 {
 	t_ui_element	*menu;
 	t_ui_element	*show;

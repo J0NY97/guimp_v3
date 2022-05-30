@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   brushes3.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/29 13:47:10 by jsalmi            #+#    #+#             */
-/*   Updated: 2022/05/29 13:47:11 by jsalmi           ###   ########.fr       */
+/*   Updated: 2022/05/30 13:51:46 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,7 @@ void	square_tool_brush(t_guimp *guimp, t_layer *active_layer,
 	}
 }
 
-void	circle_tool_brush(
-	t_guimp *guimp, t_layer *active_layer,
+void	circle_tool_brush(t_guimp *guimp, t_layer *active_layer,
 	t_vec2i actual_pos, t_vec2i hidden_pos)
 {
 	if (guimp->first_set)
@@ -87,8 +86,7 @@ void	circle_tool_brush(
  * unselect on right click;
  *	done here so that it applies to all the shape button tools;
  */
-void	shape_brush(
-	t_guimp *guimp, t_layer *active_layer,
+void	shape_brush(t_guimp *guimp, t_layer *active_layer,
 	t_vec2i actual_pos, t_vec2i hidden_pos)
 {
 	if (guimp->win_main->mouse_down_last_frame == SDL_BUTTON_RIGHT)
