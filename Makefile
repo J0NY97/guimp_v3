@@ -42,7 +42,7 @@ CFILES		=	main.c\
 NAME		=	guimp
 CDIR		=	./srcs
 ODIR		=	./obj
-INC			=	-I./
+INC			=	-I.
 SRCS		=	$(addprefix $(CDIR)/,$(CFILES))
 OBJ			=	$(addprefix $(ODIR)/,$(CFILES:.c=.o))
 DEP			=	$(OBJ:.o=.d)
@@ -52,24 +52,30 @@ LIB_DIR		=	./libs
 LIB_INC		=	-I $(LIB_DIR)/libft \
 				-I $(LIB_DIR)/libpf \
 				-I $(LIB_DIR)/libui \
-				-I $(LIB_DIR)/liblg
+				-I $(LIB_DIR)/liblg \
 
-LIBS		=	-L $(LIB_DIR)/libft -lft \
-				-L $(LIB_DIR)/libpf -lpf \
-				-L $(LIB_DIR)/libui -lui \
-				-L $(LIB_DIR)/liblg -llg
+LIBS		=	-L $(LIB_DIR)/libft \
+				-L $(LIB_DIR)/libpf \
+				-L $(LIB_DIR)/libui \
+				-L $(LIB_DIR)/liblg \
+				-lui -lpf -lft -llg \
 
 ifeq ($(SHELL_NAME), Darwin)
 
-LIB_INC		+=	-I ./libs/SDL_MAC/SDL2.framework/Headers -I ./libs/SDL_MAC/SDL2_image.framework/Headers -I ./libs/SDL_MAC/SDL2_ttf.framework/Headers -F ./libs/SDL_MAC/
-LIBS		+=	-framework SDL2 -framework SDL2_image -framework SDL2_ttf -F ./libs/SDL_MAC/
-CFLAGS		=	-Wall -Wextra -MMD -O3 -Werror -Wfatal-errors# -g -fsanitize=address
+LIB_INC		+=	\
+				-I $(LIB_DIR)/SDL_MAC/SDL2.framework/Headers \
+				-I $(LIB_DIR)/SDL_MAC/SDL2_image.framework/Headers \
+				-I $(LIB_DIR)/SDL_MAC/SDL2_ttf.framework/Headers \
+				-F $(LIB_DIR)/SDL_MAC/ \
+
+LIBS		+=	-framework SDL2 -framework SDL2_image -framework SDL2_ttf
+CFLAGS		=	-Wall -Wextra -MMD -O3 -Werror -Wfatal-errors #-g -fsanitize=address
 
 else
 
-LIB_INC		+=	-I ./libs/SDL_WIN/SDL2_includes
-LIBS		+=	-L ./libs/SDL_WIN/ -lSDL2 -lSDL2_ttf -lSDL2_image
-CFLAGS		=	-Wall -Wextra -MMD -Wno-unused-variable -O3 -flto #-Werror -Wfatal-errors
+LIB_INC		+=	-I $(LIB_DIR)/SDL_WIN/include
+LIBS		+=	-L $(LIB_DIR)/SDL_WIN/lib -lSDL2 -lSDL2_ttf -lSDL2_image
+CFLAGS		=	-Wall -Wextra -MMD -Wno-unused-variable -O3 #-Werror -Wfatal-errors
 
 endif
 
