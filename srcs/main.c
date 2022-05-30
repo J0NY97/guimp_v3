@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/30 13:40:21 by nneronin          #+#    #+#             */
-/*   Updated: 2022/05/30 13:43:18 by nneronin         ###   ########.fr       */
+/*   Updated: 2022/05/30 14:28:07 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	user_events(t_guimp *guimp, SDL_Event e)
 	clear_button_event(guimp);
 }
 
-void	uninit(t_guimp *guimp)
+int	uninit(t_guimp *guimp)
 {
 	int	i;
 
@@ -85,6 +85,7 @@ void	uninit(t_guimp *guimp)
 		layer_free(&guimp->layers[i]);
 	SDL_FreeSurface(guimp->hidden_surface);
 	SDL_DestroyTexture(guimp->hidden_texture);
+	return (1);
 }
 
 int	main(void)
@@ -94,7 +95,8 @@ int	main(void)
 
 	ui_sdl_init();
 	initteroni(&guimp);
-	while (!guimp.win_toolbox->wants_to_close)
+	while (!guimp.win_toolbox->wants_to_close
+		&& !guimp.win_main->wants_to_close)
 	{
 		while (SDL_PollEvent(&e))
 		{
@@ -112,6 +114,5 @@ int	main(void)
 		layer_render(&guimp);
 		ui_layout_render(&guimp.layout);
 	}
-	uninit(&guimp);
-	return (0);
+	return (uninit(&guimp));
 }
